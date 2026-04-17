@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { ActionButton } from '@/components/ActionButton';
+import { Celebration } from '@/components/Celebration';
 import { Colors, Font, Radius, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 
@@ -38,6 +39,8 @@ export default function Result() {
     ? 'Final sorusunu bilen oyuncu tur galibi.'
     : 'İki oyuncu da soruyu bilemedi. Tekrar dene!';
 
+  const hasWinner = !!winnerName;
+
   return (
     <ScreenContainer>
       <View style={styles.center}>
@@ -51,9 +54,12 @@ export default function Result() {
           <View style={styles.qBox}>
             <Text style={styles.qLabel}>Final sorusu</Text>
             <Text style={styles.qText}>{state.currentQuestion.question}</Text>
+            <Text style={styles.qAnswerLabel}>Cevap</Text>
+            <Text style={styles.qAnswerText}>{state.currentQuestion.answer}</Text>
           </View>
         )}
       </View>
+      <Celebration active={hasWinner} />
 
       <ActionButton
         label="Yeni Oyun (aynı ayar)"
@@ -113,4 +119,17 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   qText: { fontSize: Font.body + 1, color: Colors.text, fontWeight: '600' },
+  qAnswerLabel: {
+    fontSize: Font.small,
+    color: Colors.muted,
+    textTransform: 'uppercase',
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    marginTop: Spacing.sm,
+  },
+  qAnswerText: {
+    fontSize: Font.body + 1,
+    color: Colors.success,
+    fontWeight: '800',
+  },
 });

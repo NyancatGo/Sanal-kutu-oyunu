@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { ScreenContainer } from '@/components/ScreenContainer';
-import { ActionButton } from '@/components/ActionButton';
+import { HoldButton } from '@/components/HoldButton';
 import { Colors, Font, Radius, Spacing } from '@/constants/theme';
 
 export default function Home() {
@@ -27,12 +27,14 @@ export default function Home() {
 
       <View style={{ flex: 1 }} />
 
-      <ActionButton
-        label="Oyunu Kur"
-        variant="primary"
-        fullWidth
-        onPress={() => router.push('/setup')}
+      <HoldButton
+        label="Öğretmen — Oyunu Kur (basılı tut)"
+        holdLabel="Basılı tut… açılıyor"
+        onComplete={() => router.push('/setup')}
       />
+      <Text style={styles.gateHint}>
+        Öğrenciler setup ekranını açmasın diye basılı tutma gerekir.
+      </Text>
     </ScreenContainer>
   );
 }
@@ -99,4 +101,10 @@ const styles = StyleSheet.create({
   },
   ruleNumText: { color: '#fff', fontWeight: '800' },
   ruleText: { color: Colors.text, fontSize: Font.body, flex: 1 },
+  gateHint: {
+    color: Colors.muted,
+    fontSize: Font.small,
+    textAlign: 'center',
+    marginTop: Spacing.sm,
+  },
 });

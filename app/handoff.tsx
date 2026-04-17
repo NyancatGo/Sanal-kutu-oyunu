@@ -13,8 +13,11 @@ export default function Handoff() {
   const nextName = nextPlayer === 1 ? state.config.player1 : state.config.player2;
 
   useEffect(() => {
-    if (state.phase === 'question') router.replace('/question');
-    if (state.phase === 'result') router.replace('/result');
+    if (state.phase === 'setup') router.replace('/');
+    else if (state.phase === 'code') router.replace('/code-entry');
+    else if (state.phase === 'reveal') router.replace('/reveal');
+    else if (state.phase === 'question') router.replace('/question');
+    else if (state.phase === 'result') router.replace('/result');
   }, [state.phase]);
 
   const onContinue = () => {

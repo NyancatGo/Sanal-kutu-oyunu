@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { ScreenContainer } from '@/components/ScreenContainer';
@@ -7,12 +7,13 @@ import { QuestionCard } from '@/components/QuestionCard';
 import { Timer } from '@/components/Timer';
 import { PlayerBadge } from '@/components/PlayerBadge';
 import { ActionButton } from '@/components/ActionButton';
-import { Colors, Font, Spacing } from '@/constants/theme';
+import { Colors, Font, Radius, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 import { useTimer } from '@/hooks/useTimer';
 
 export default function QuestionScreen() {
   const { state, dispatch } = useGame();
+  const [showAnswer, setShowAnswer] = useState(false);
   const total = state.config.timeLimit || 30;
   const activeName =
     state.activePlayer === 1 ? state.config.player1 : state.config.player2;
@@ -30,14 +31,23 @@ export default function QuestionScreen() {
   });
 
   useEffect(() => {
-    if (state.phase === 'handoff') router.replace('/handoff');
-    if (state.phase === 'result') router.replace('/result');
+    setShowAnswer(false);
+  }, [state.currentQuestion?.id, state.activePlayer]);
+
+  useEffect(() => {
+    if (state.phase === 'setup') router.replace('/');
+    else if (state.phase === 'code') router.replace('/code-entry');
+    else if (state.phase === 'reveal') router.replace('/reveal');
+    else if (state.phase === 'handoff') router.replace('/handoff');
+    else if (state.phase === 'result') router.replace('/result');
   }, [state.phase]);
 
-  if (!state.currentQuestion) {
+  if (!state.currentQuestion || state.phase !== 'question') {
     return (
       <ScreenContainer>
-        <Text style={{ color: Colors.muted }}>Soru bulunamadı.</Text>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ color: Colors.muted }}>Hazırlanıyor…</Text>
+        </View>
       </ScreenContainer>
     );
   }
@@ -50,6 +60,12 @@ export default function QuestionScreen() {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
     dispatch({ type: 'ANSWER_WRONG_OR_TIMEOUT' });
   };
+  const toggleAnswer = () => {
+    Haptics.selectionAsync().catch(() => {});
+    setShowAnswer((v) => !v);
+  };
+
+  const { answer, teacherNote } = state.currentQuestion;
 
   return (
     <ScreenContainer scroll>
@@ -69,9 +85,27 @@ export default function QuestionScreen() {
         question={state.currentQuestion.question}
       />
 
-      <Text style={styles.hint}>
-        Oyuncu cevabı sözlü verir. Öğretmen sonucu işaretler.
-      </Text>
+      <Pressable
+        onPress={toggleAnswer}
+        onLongPress={toggleAnswer}
+        style={({ pressed }) => [
+          styles.answerBox,
+          showAnswer && styles.answerBoxRevealed,
+          pressed && { opacity: 0.85 },
+        ]}
+      >
+        <Text style={styles.answerLabel}>
+          {showAnswer ? '🔓 Öğretmen notu' : '🔒 Dokun · öğretmen cevabı görür'}
+        </Text>
+        {showAnswer && (
+          <>
+            <Text style={styles.answerText}>{answer}</Text>
+            {teacherNote && <Text style={styles.noteText}>{teacherNote}</Text>}
+          </>
+        )}
+      </Pressable>
+
+      <Text style={styles.hint}>Oyuncu sözlü cevap verir. Öğretmen sonucu işaretler.</Text>
 
       <View style={styles.actions}>
         <ActionButton label="Doğru" variant="success" fullWidth onPress={onCorrect} />
@@ -101,4 +135,37 @@ const styles = StyleSheet.create({
   },
   actions: { marginTop: Spacing.sm },
   row: { flexDirection: 'row' },
+  answerBox: {
+    marginTop: Spacing.md,
+    padding: Spacing.md,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: Colors.border,
+    backgroundColor: Colors.surface,
+    gap: 6,
+  },
+  answerBoxRevealed: {
+    borderStyle: 'solid',
+    borderColor: Colors.success,
+    backgroundColor: '#ECFDF5',
+  },
+  answerLabel: {
+    fontSize: Font.small,
+    color: Colors.muted,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  answerText: {
+    fontSize: Font.body + 2,
+    fontWeight: '800',
+    color: Colors.success,
+    textAlign: 'center',
+  },
+  noteText: {
+    fontSize: Font.small,
+    color: Colors.muted,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
 });

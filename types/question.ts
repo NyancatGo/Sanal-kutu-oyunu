@@ -12,6 +12,8 @@ export type Question = {
   category: Category;
   difficulty: Difficulty;
   question: string;
+  answer: string;
+  teacherNote?: string;
   type: 'spoken';
   timeLimit?: number;
 };

@@ -1,6 +1,12 @@
 import type { Category, Difficulty, Question } from './question';
 
-export type Phase = 'setup' | 'code' | 'question' | 'handoff' | 'result';
+export type Phase =
+  | 'setup'
+  | 'code'
+  | 'reveal'
+  | 'question'
+  | 'handoff'
+  | 'result';
 
 export type PlayerId = 1 | 2;
 
@@ -33,6 +39,7 @@ export type GameAction =
   | { type: 'CODE_FAIL'; payload: { lockUntil: number; message: string } }
   | { type: 'CLEAR_CODE_ERROR' }
   | { type: 'CODE_SUCCESS'; payload: { question: Question } }
+  | { type: 'START_QUESTION' }
   | { type: 'ANSWER_CORRECT' }
   | { type: 'ANSWER_WRONG_OR_TIMEOUT' }
   | { type: 'CONTINUE_HANDOFF' }

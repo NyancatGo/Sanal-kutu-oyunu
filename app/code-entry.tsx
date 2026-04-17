@@ -5,7 +5,7 @@ import * as Haptics from 'expo-haptics';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { Keypad } from '@/components/Keypad';
 import { PlayerBadge } from '@/components/PlayerBadge';
-import { ActionButton } from '@/components/ActionButton';
+import { HoldButton } from '@/components/HoldButton';
 import { Colors, Font, Radius, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 import { validateCode } from '@/utils/validateCode';
@@ -28,9 +28,11 @@ export default function CodeEntry() {
   const lockRemaining = locked ? Math.ceil((state.lockUntil - nowTick) / 1000) : 0;
 
   useEffect(() => {
-    if (state.phase === 'question') {
-      router.replace('/question');
-    }
+    if (state.phase === 'setup') router.replace('/setup');
+    else if (state.phase === 'reveal') router.replace('/reveal');
+    else if (state.phase === 'question') router.replace('/question');
+    else if (state.phase === 'handoff') router.replace('/handoff');
+    else if (state.phase === 'result') router.replace('/result');
   }, [state.phase]);
 
   const handleDigit = (d: string) => {
@@ -75,7 +77,7 @@ export default function CodeEntry() {
       : input.split('').map(() => '●').join(' ');
 
   return (
-    <ScreenContainer>
+    <ScreenContainer scroll>
       <View style={styles.header}>
         <PlayerBadge name={state.config.player1} playerNumber={1} compact />
         <Text style={styles.vs}>vs</Text>
@@ -93,9 +95,7 @@ export default function CodeEntry() {
 
         <View style={styles.statusRow}>
           {locked ? (
-            <Text style={styles.lockText}>
-              Kilitli · {lockRemaining} sn
-            </Text>
+            <Text style={styles.lockText}>Kilitli · {lockRemaining} sn</Text>
           ) : state.lastCodeError ? (
             <Text style={styles.errorText}>{state.lastCodeError}</Text>
           ) : (
@@ -112,10 +112,10 @@ export default function CodeEntry() {
       />
 
       <View style={{ height: Spacing.md }} />
-      <ActionButton
-        label="Kuruluma Dön"
-        variant="ghost"
-        onPress={() => router.replace('/setup')}
+      <HoldButton
+        label="Öğretmen — Kuruluma Dön (basılı tut)"
+        holdLabel="Basılı tut…"
+        onComplete={() => router.replace('/setup')}
       />
     </ScreenContainer>
   );

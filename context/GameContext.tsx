@@ -26,15 +26,21 @@ function reducer(state: GameState, action: GameAction): GameState {
       return { ...state, lastCodeError: null };
 
     case 'CODE_SUCCESS':
+      if (state.phase !== 'code') return state;
       return {
         ...state,
-        phase: 'question',
+        phase: 'reveal',
         currentQuestion: action.payload.question,
         usedQuestionIds: [...state.usedQuestionIds, action.payload.question.id],
         lastCodeError: null,
       };
 
+    case 'START_QUESTION':
+      if (state.phase !== 'reveal') return state;
+      return { ...state, phase: 'question' };
+
     case 'ANSWER_CORRECT':
+      if (state.phase !== 'question') return state;
       return {
         ...state,
         phase: 'result',
@@ -42,6 +48,7 @@ function reducer(state: GameState, action: GameAction): GameState {
       };
 
     case 'ANSWER_WRONG_OR_TIMEOUT':
+      if (state.phase !== 'question') return state;
       if (state.firstAttempterFailed) {
         return { ...state, phase: 'result', result: 'none' };
       }
@@ -52,6 +59,7 @@ function reducer(state: GameState, action: GameAction): GameState {
       };
 
     case 'CONTINUE_HANDOFF':
+      if (state.phase !== 'handoff') return state;
       return {
         ...state,
         phase: 'question',
