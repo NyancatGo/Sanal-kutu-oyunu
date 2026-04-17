@@ -4,6 +4,12 @@ import { INITIAL_STATE, newRoundState } from '@/utils/resetGame';
 
 function reducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
+    case 'UNLOCK_TEACHER':
+      return { ...state, teacherUnlocked: true };
+
+    case 'LOCK_TEACHER':
+      return { ...state, teacherUnlocked: false };
+
     case 'SETUP_GAME':
       return {
         ...INITIAL_STATE,

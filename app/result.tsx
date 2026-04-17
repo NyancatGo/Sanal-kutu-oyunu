@@ -12,12 +12,26 @@ export default function Result() {
   const { state, dispatch } = useGame();
 
   useEffect(() => {
+    if (state.phase !== 'result' || !state.result) {
+      router.replace('/');
+      return;
+    }
     if (state.result === 'p1' || state.result === 'p2') {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     } else if (state.result === 'none') {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
     }
-  }, [state.result]);
+  }, [state.phase, state.result]);
+
+  if (state.phase !== 'result' || !state.result) {
+    return (
+      <ScreenContainer>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ color: Colors.muted }}>Yönlendiriliyor…</Text>
+        </View>
+      </ScreenContainer>
+    );
+  }
 
   const winnerName =
     state.result === 'p1'
@@ -42,7 +56,7 @@ export default function Result() {
   const hasWinner = !!winnerName;
 
   return (
-    <ScreenContainer>
+    <ScreenContainer scroll>
       <View style={styles.center}>
         <View style={[styles.trophy, { backgroundColor: accentColor }]}>
           <Text style={styles.emoji}>{emoji}</Text>
@@ -85,7 +99,12 @@ export default function Result() {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm },
+  center: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.lg,
+  },
   trophy: {
     width: 128,
     height: 128,

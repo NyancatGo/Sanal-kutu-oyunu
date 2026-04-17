@@ -28,7 +28,7 @@ export default function CodeEntry() {
   const lockRemaining = locked ? Math.ceil((state.lockUntil - nowTick) / 1000) : 0;
 
   useEffect(() => {
-    if (state.phase === 'setup') router.replace('/setup');
+    if (state.phase === 'setup') router.replace('/');
     else if (state.phase === 'reveal') router.replace('/reveal');
     else if (state.phase === 'question') router.replace('/question');
     else if (state.phase === 'handoff') router.replace('/handoff');
@@ -115,7 +115,10 @@ export default function CodeEntry() {
       <HoldButton
         label="Öğretmen — Kuruluma Dön (basılı tut)"
         holdLabel="Basılı tut…"
-        onComplete={() => router.replace('/setup')}
+        onComplete={() => {
+          dispatch({ type: 'UNLOCK_TEACHER' });
+          router.replace('/setup');
+        }}
       />
     </ScreenContainer>
   );

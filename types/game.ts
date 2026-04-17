@@ -31,9 +31,12 @@ export type GameState = {
   lockUntil: number;
   lastCodeError: string | null;
   result: GameResult | null;
+  teacherUnlocked: boolean;
 };
 
 export type GameAction =
+  | { type: 'UNLOCK_TEACHER' }
+  | { type: 'LOCK_TEACHER' }
   | { type: 'SETUP_GAME'; payload: GameConfig }
   | { type: 'START_CODE_ENTRY' }
   | { type: 'CODE_FAIL'; payload: { lockUntil: number; message: string } }

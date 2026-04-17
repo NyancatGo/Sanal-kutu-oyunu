@@ -19,6 +19,7 @@ export const INITIAL_STATE: GameState = {
   lockUntil: 0,
   lastCodeError: null,
   result: null,
+  teacherUnlocked: false,
 };
 
 export function newRoundState(prev: GameState): GameState {

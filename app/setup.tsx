@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { ScreenContainer } from '@/components/ScreenContainer';
@@ -26,11 +26,21 @@ export default function Setup() {
   const [timeLimit, setTimeLimit] = useState<number>(state.config.timeLimit || 30);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!state.teacherUnlocked) {
+      router.replace('/');
+    }
+  }, [state.teacherUnlocked]);
+
   const canStart = useMemo(() => {
     if (!player1.trim() || !player2.trim()) return false;
     if (!/^\d{3,8}$/.test(secretCode)) return false;
     return true;
   }, [player1, player2, secretCode]);
+
+  if (!state.teacherUnlocked) {
+    return null;
+  }
 
   const onStart = () => {
     if (!player1.trim() || !player2.trim()) {
@@ -153,7 +163,10 @@ export default function Setup() {
         label="İptal"
         variant="ghost"
         fullWidth
-        onPress={() => router.back()}
+        onPress={() => {
+          dispatch({ type: 'LOCK_TEACHER' });
+          router.replace('/');
+        }}
       />
     </ScreenContainer>
   );

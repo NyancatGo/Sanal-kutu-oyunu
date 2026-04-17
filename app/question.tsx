@@ -7,6 +7,7 @@ import { QuestionCard } from '@/components/QuestionCard';
 import { Timer } from '@/components/Timer';
 import { PlayerBadge } from '@/components/PlayerBadge';
 import { ActionButton } from '@/components/ActionButton';
+import { HoldButton } from '@/components/HoldButton';
 import { Colors, Font, Radius, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 import { useTimer } from '@/hooks/useTimer';
@@ -60,11 +61,6 @@ export default function QuestionScreen() {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
     dispatch({ type: 'ANSWER_WRONG_OR_TIMEOUT' });
   };
-  const toggleAnswer = () => {
-    Haptics.selectionAsync().catch(() => {});
-    setShowAnswer((v) => !v);
-  };
-
   const { answer, teacherNote } = state.currentQuestion;
 
   return (
@@ -85,25 +81,28 @@ export default function QuestionScreen() {
         question={state.currentQuestion.question}
       />
 
-      <Pressable
-        onPress={toggleAnswer}
-        onLongPress={toggleAnswer}
-        style={({ pressed }) => [
-          styles.answerBox,
-          showAnswer && styles.answerBoxRevealed,
-          pressed && { opacity: 0.85 },
-        ]}
-      >
-        <Text style={styles.answerLabel}>
-          {showAnswer ? '🔓 Öğretmen notu' : '🔒 Dokun · öğretmen cevabı görür'}
-        </Text>
-        {showAnswer && (
-          <>
-            <Text style={styles.answerText}>{answer}</Text>
-            {teacherNote && <Text style={styles.noteText}>{teacherNote}</Text>}
-          </>
-        )}
-      </Pressable>
+      {showAnswer ? (
+        <Pressable
+          onPress={() => setShowAnswer(false)}
+          style={({ pressed }) => [
+            styles.answerBox,
+            styles.answerBoxRevealed,
+            pressed && { opacity: 0.85 },
+          ]}
+        >
+          <Text style={styles.answerLabel}>🔓 Gizlemek için dokun</Text>
+          <Text style={styles.answerText}>{answer}</Text>
+          {teacherNote && <Text style={styles.noteText}>{teacherNote}</Text>}
+        </Pressable>
+      ) : (
+        <HoldButton
+          label="🔒 Öğretmen — Cevabı Göster (basılı tut)"
+          holdLabel="Basılı tut…"
+          durationMs={900}
+          onComplete={() => setShowAnswer(true)}
+          style={styles.answerHold}
+        />
+      )}
 
       <Text style={styles.hint}>Oyuncu sözlü cevap verir. Öğretmen sonucu işaretler.</Text>
 
@@ -150,6 +149,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.success,
     backgroundColor: '#ECFDF5',
   },
+  answerHold: { marginTop: Spacing.md, borderColor: Colors.muted },
   answerLabel: {
     fontSize: Font.small,
     color: Colors.muted,

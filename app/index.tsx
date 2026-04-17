@@ -4,10 +4,12 @@ import { router } from 'expo-router';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { HoldButton } from '@/components/HoldButton';
 import { Colors, Font, Radius, Spacing } from '@/constants/theme';
+import { useGame } from '@/context/GameContext';
 
 export default function Home() {
+  const { dispatch } = useGame();
   return (
-    <ScreenContainer>
+    <ScreenContainer scroll>
       <View style={styles.hero}>
         <View style={styles.lockBadge}>
           <Text style={styles.lockEmoji}>🔐</Text>
@@ -25,12 +27,15 @@ export default function Home() {
         <RuleRow n="4" text="Sözlü cevabı öğretmen değerlendirir." />
       </View>
 
-      <View style={{ flex: 1 }} />
+      <View style={styles.spacer} />
 
       <HoldButton
         label="Öğretmen — Oyunu Kur (basılı tut)"
         holdLabel="Basılı tut… açılıyor"
-        onComplete={() => router.push('/setup')}
+        onComplete={() => {
+          dispatch({ type: 'UNLOCK_TEACHER' });
+          router.push('/setup');
+        }}
       />
       <Text style={styles.gateHint}>
         Öğrenciler setup ekranını açmasın diye basılı tutma gerekir.
@@ -107,4 +112,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: Spacing.sm,
   },
+  spacer: { height: Spacing.xl },
 });
