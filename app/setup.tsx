@@ -27,10 +27,10 @@ export default function Setup() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!state.teacherUnlocked) {
+    if (state.phase === 'setup' && !state.teacherUnlocked) {
       router.replace('/');
     }
-  }, [state.teacherUnlocked]);
+  }, [state.phase, state.teacherUnlocked]);
 
   const canStart = useMemo(() => {
     if (!player1.trim() || !player2.trim()) return false;
@@ -38,7 +38,7 @@ export default function Setup() {
     return true;
   }, [player1, player2, secretCode]);
 
-  if (!state.teacherUnlocked) {
+  if (state.phase === 'setup' && !state.teacherUnlocked) {
     return null;
   }
 
