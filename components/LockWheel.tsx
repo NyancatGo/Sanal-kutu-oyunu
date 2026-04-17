@@ -1,51 +1,114 @@
-import React, { useCallback, useMemo } from 'react';
-import { PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { Animated, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
 import { Colors, Font, Radius, Shadow } from '@/constants/theme';
 
+const ITEM_H = 44;
+const VISIBLE_HALF = 2; // 2 cells above + current + 2 below = 5 visible
+const OFFSETS = [-3, -2, -1, 0, 1, 2, 3];
+
+type Status = 'idle' | 'locked' | 'error' | 'success';
+
 type Props = {
   value: number;
   disabled?: boolean;
-  status?: 'idle' | 'locked' | 'error' | 'success';
+  status?: Status;
   onChange: (value: number) => void;
 };
 
-function nextDigit(value: number, direction: 1 | -1) {
-  return (value + direction + 10) % 10;
+function mod10(n: number) {
+  return ((n % 10) + 10) % 10;
 }
 
 export function LockWheel({ value, disabled, status = 'idle', onChange }: Props) {
-  const changeBy = useCallback(
-    (direction: 1 | -1) => {
-      if (disabled) return;
-      Haptics.selectionAsync().catch(() => {});
-      onChange(nextDigit(value, direction));
+  const drag = useRef(new Animated.Value(0)).current;
+  const lastStepRef = useRef(0);
+  const committingRef = useRef(false);
+
+  // Reset the strip position whenever `value` prop changes externally
+  // (e.g. after commit snaps back, we want drag=0 with new value shown).
+  useEffect(() => {
+    drag.stopAnimation();
+    drag.setValue(0);
+    committingRef.current = false;
+  }, [drag, value]);
+
+  const commit = useCallback(
+    (steps: number) => {
+      if (committingRef.current) return;
+      if (steps === 0) {
+        Animated.spring(drag, {
+          toValue: 0,
+          tension: 220,
+          friction: 22,
+          useNativeDriver: true,
+        }).start();
+        return;
+      }
+      committingRef.current = true;
+      const target = -steps * ITEM_H;
+      Animated.timing(drag, {
+        toValue: target,
+        duration: 140,
+        useNativeDriver: true,
+      }).start(({ finished }) => {
+        if (finished) {
+          // Snap back to zero position BEFORE propagating the new value,
+          // so the next render uses drag=0 with the new value and there's
+          // no single-frame "future-value" flash in the window.
+          drag.setValue(0);
+          onChange(mod10(value + steps));
+        } else {
+          committingRef.current = false;
+        }
+      });
     },
-    [disabled, onChange, value],
+    [drag, onChange, value],
   );
 
   const panResponder = useMemo(
     () =>
       PanResponder.create({
-        onMoveShouldSetPanResponder: (_, gesture) =>
-          !disabled && Math.abs(gesture.dy) > Math.abs(gesture.dx) && Math.abs(gesture.dy) > 8,
-        onPanResponderRelease: (_, gesture) => {
-          if (Math.abs(gesture.dy) < 12) return;
-          changeBy(gesture.dy < 0 ? 1 : -1);
+        onStartShouldSetPanResponder: () => !disabled,
+        onMoveShouldSetPanResponder: (_, g) =>
+          !disabled && Math.abs(g.dy) > 4 && Math.abs(g.dy) > Math.abs(g.dx),
+        onPanResponderGrant: () => {
+          lastStepRef.current = 0;
+          drag.stopAnimation();
+          drag.setValue(0);
         },
+        onPanResponderMove: (_, g) => {
+          if (committingRef.current) return;
+          drag.setValue(g.dy);
+          const steps = Math.round(-g.dy / ITEM_H);
+          if (steps !== lastStepRef.current) {
+            lastStepRef.current = steps;
+            Haptics.selectionAsync().catch(() => {});
+          }
+        },
+        onPanResponderRelease: (_, g) => {
+          commit(Math.round(-g.dy / ITEM_H));
+        },
+        onPanResponderTerminate: () => commit(0),
       }),
-    [changeBy, disabled],
+    [commit, disabled, drag],
   );
 
-  const previous = nextDigit(value, -1);
-  const next = nextDigit(value, 1);
+  const step = useCallback(
+    (direction: 1 | -1) => {
+      if (disabled || committingRef.current) return;
+      Haptics.selectionAsync().catch(() => {});
+      commit(direction);
+    },
+    [commit, disabled],
+  );
+
   const isError = status === 'error';
   const isSuccess = status === 'success';
 
   return (
     <View
-      {...panResponder.panHandlers}
       style={[
         styles.wheel,
         disabled && styles.wheelDisabled,
@@ -54,90 +117,188 @@ export function LockWheel({ value, disabled, status = 'idle', onChange }: Props)
       ]}
     >
       <Pressable
-        onPress={() => changeBy(1)}
+        onPress={() => step(1)}
         disabled={disabled}
         style={styles.chevron}
         hitSlop={6}
+        accessibilityLabel="Rakamı artır"
       >
-        <Ionicons name="chevron-up" size={18} color={disabled ? Colors.metalDark : Colors.teal} />
+        <Ionicons
+          name="chevron-up"
+          size={18}
+          color={disabled ? Colors.metalDark : Colors.teal}
+        />
       </Pressable>
 
-      <Text style={styles.sideNumber}>{previous}</Text>
-      <View style={styles.window}>
-        <Text style={[styles.currentNumber, isError && styles.errorText, isSuccess && styles.successText]}>
-          {value}
-        </Text>
+      <View style={styles.reelWrap} {...panResponder.panHandlers}>
+        <View style={styles.window} pointerEvents="none">
+          <View
+            style={[
+              styles.windowInner,
+              isError && styles.windowError,
+              isSuccess && styles.windowSuccess,
+            ]}
+          />
+        </View>
+
+        <View style={styles.strip} pointerEvents="none">
+          {OFFSETS.map((off) => {
+            const digit = mod10(value + off);
+            const translateY = drag.interpolate({
+              inputRange: [-1, 1],
+              outputRange: [-1 + off * ITEM_H, 1 + off * ITEM_H],
+              extrapolate: 'extend',
+            });
+            return (
+              <Animated.View
+                key={off}
+                style={[styles.cell, { transform: [{ translateY }] }]}
+              >
+                <Text
+                  style={[
+                    styles.digit,
+                    isError && styles.digitError,
+                    isSuccess && styles.digitSuccess,
+                  ]}
+                >
+                  {digit}
+                </Text>
+              </Animated.View>
+            );
+          })}
+        </View>
+
+        <View pointerEvents="none" style={styles.fadeTop} />
+        <View pointerEvents="none" style={styles.fadeBottom} />
       </View>
-      <Text style={styles.sideNumber}>{next}</Text>
 
       <Pressable
-        onPress={() => changeBy(-1)}
+        onPress={() => step(-1)}
         disabled={disabled}
         style={styles.chevron}
         hitSlop={6}
+        accessibilityLabel="Rakamı azalt"
       >
-        <Ionicons name="chevron-down" size={18} color={disabled ? Colors.metalDark : Colors.teal} />
+        <Ionicons
+          name="chevron-down"
+          size={18}
+          color={disabled ? Colors.metalDark : Colors.teal}
+        />
       </Pressable>
     </View>
   );
 }
 
+const REEL_H = (VISIBLE_HALF * 2 + 1) * ITEM_H; // 5 cells visible
+
 const styles = StyleSheet.create({
   wheel: {
-    width: 64,
-    height: 158,
+    width: 62,
     borderRadius: Radius.lg,
-    backgroundColor: '#F8FBFF',
+    backgroundColor: Colors.ink,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: '#1F2F40',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
+    paddingVertical: 6,
     overflow: 'hidden',
     ...Shadow.sm,
   },
   wheelDisabled: {
-    opacity: 0.6,
+    opacity: 0.65,
   },
   wheelError: {
     borderColor: Colors.danger,
-    backgroundColor: Colors.dangerSoft,
   },
   wheelSuccess: {
     borderColor: Colors.success,
-    backgroundColor: Colors.successSoft,
   },
   chevron: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 24,
+    minHeight: 26,
   },
-  sideNumber: {
-    fontSize: Font.body + 2,
-    fontWeight: '800',
-    color: Colors.metalDark,
+  reelWrap: {
+    width: '100%',
+    height: REEL_H,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  window: {
-    width: 54,
-    height: 48,
-    borderRadius: Radius.md,
-    backgroundColor: Colors.ink,
+  strip: {
+    position: 'absolute',
+    top: '50%',
+    left: 0,
+    right: 0,
+    height: ITEM_H,
+    marginTop: -ITEM_H / 2,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: Colors.accent,
   },
-  currentNumber: {
-    fontSize: Font.heading + 10,
-    lineHeight: Font.heading + 14,
+  cell: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: ITEM_H,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  digit: {
+    fontSize: Font.heading + 6,
     fontWeight: '900',
     color: Colors.surface,
+    textAlign: 'center',
+    lineHeight: ITEM_H - 2,
+    includeFontPadding: false,
   },
-  errorText: {
-    color: Colors.danger,
+  digitError: {
+    color: '#FFD4D4',
   },
-  successText: {
-    color: Colors.success,
+  digitSuccess: {
+    color: '#CFF7E3',
+  },
+  window: {
+    position: 'absolute',
+    left: 4,
+    right: 4,
+    top: (REEL_H - ITEM_H) / 2,
+    height: ITEM_H,
+    borderRadius: Radius.md,
+    alignItems: 'stretch',
+    justifyContent: 'center',
+  },
+  windowInner: {
+    flex: 1,
+    borderRadius: Radius.md,
+    borderWidth: 2,
+    borderColor: Colors.accent,
+    backgroundColor: 'rgba(248, 197, 55, 0.18)',
+  },
+  windowError: {
+    borderColor: Colors.danger,
+    backgroundColor: 'rgba(217, 65, 65, 0.22)',
+  },
+  windowSuccess: {
+    borderColor: Colors.success,
+    backgroundColor: 'rgba(15, 159, 110, 0.22)',
+  },
+  fadeTop: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: ITEM_H * 0.85,
+    backgroundColor: Colors.ink,
+    opacity: 0.55,
+  },
+  fadeBottom: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: ITEM_H * 0.85,
+    backgroundColor: Colors.ink,
+    opacity: 0.55,
   },
 });

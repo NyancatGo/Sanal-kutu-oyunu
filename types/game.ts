@@ -21,6 +21,8 @@ export type GameConfig = {
   timeLimit: number;
 };
 
+export type Scores = { p1: number; p2: number };
+
 export type GameState = {
   phase: Phase;
   config: GameConfig;
@@ -32,6 +34,8 @@ export type GameState = {
   lastCodeError: string | null;
   result: GameResult | null;
   teacherUnlocked: boolean;
+  scores: Scores;
+  roundNumber: number;
 };
 
 export type GameAction =

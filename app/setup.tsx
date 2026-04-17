@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Easing, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { ActionButton } from '@/components/ActionButton';
@@ -17,6 +17,20 @@ const CATEGORIES: Category[] = ['genel-kultur', 'matematik', 'fen', 'tarih', 'ze
 const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard'];
 const TIME_OPTIONS = [15, 30, 45, 60];
 
+const CATEGORY_ICONS: Record<Category, React.ComponentProps<typeof Ionicons>['name']> = {
+  'genel-kultur': 'earth-outline',
+  matematik: 'calculator-outline',
+  fen: 'flask-outline',
+  tarih: 'time-outline',
+  zeka: 'bulb-outline',
+};
+
+const DIFFICULTY_COLORS: Record<Difficulty, string> = {
+  easy: Colors.success,
+  medium: Colors.highlight,
+  hard: Colors.danger,
+};
+
 export default function Setup() {
   const { state, dispatch } = useGame();
   const [player1, setPlayer1] = useState(state.config.player1);
@@ -26,6 +40,45 @@ export default function Setup() {
   const [difficulty, setDifficulty] = useState<Difficulty>(state.config.difficulty);
   const [timeLimit, setTimeLimit] = useState<number>(state.config.timeLimit || 30);
   const [error, setError] = useState<string | null>(null);
+  const [showCode, setShowCode] = useState(false);
+
+  // Digit box entrance animations
+  const digitAnims = useRef([
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+  ]).current;
+
+  useEffect(() => {
+    Animated.stagger(
+      60,
+      digitAnims.map((a) =>
+        Animated.spring(a, {
+          toValue: 1,
+          tension: 160,
+          friction: 10,
+          useNativeDriver: true,
+        }),
+      ),
+    ).start();
+  }, [digitAnims]);
+
+  // Animate digit boxes when code changes
+  useEffect(() => {
+    const codeDigits = secretCode.split('');
+    codeDigits.forEach((_, i) => {
+      if (digitAnims[i]) {
+        digitAnims[i].setValue(0.85);
+        Animated.spring(digitAnims[i], {
+          toValue: 1,
+          tension: 200,
+          friction: 8,
+          useNativeDriver: true,
+        }).start();
+      }
+    });
+  }, [secretCode, digitAnims]);
 
   useEffect(() => {
     if (state.phase === 'setup' && !state.teacherUnlocked) {
@@ -67,6 +120,8 @@ export default function Setup() {
     router.replace('/code-entry');
   };
 
+  const codeDigits = secretCode.padEnd(4, ' ').split('').slice(0, 4);
+
   return (
     <ScreenContainer scroll>
       <View style={styles.header}>
@@ -84,8 +139,8 @@ export default function Setup() {
         <Text style={styles.ruleText}>Bu sürüm 4 haneli mekanik kilit ile oynanır.</Text>
       </View>
 
-      <Section title="Oyuncular" icon="people-outline">
-        <Field label="Oyuncu 1">
+      <Section title="Oyuncular" icon="people-outline" accent={Colors.teal}>
+        <Field label="Oyuncu 1" hint="Birinci oyuncunun adı">
           <TextInput
             style={styles.input}
             value={player1}
@@ -95,7 +150,7 @@ export default function Setup() {
             maxLength={20}
           />
         </Field>
-        <Field label="Oyuncu 2">
+        <Field label="Oyuncu 2" hint="İkinci oyuncunun adı">
           <TextInput
             style={styles.input}
             value={player2}
@@ -107,27 +162,67 @@ export default function Setup() {
         </Field>
       </Section>
 
-      <Section title="Şifre" icon="keypad-outline">
-        <Field label="Doğru şifre (4 rakam)">
-          <TextInput
-            style={[styles.input, styles.codeInput]}
-            value={secretCode}
-            onChangeText={(v) => setSecretCode(v.replace(/\D/g, '').slice(0, 4))}
-            placeholder="Örn: 2468"
-            placeholderTextColor={Colors.muted}
-            keyboardType="number-pad"
-            maxLength={4}
-            secureTextEntry
-          />
-        </Field>
+      <Section title="Şifre" icon="keypad-outline" accent={Colors.accent}>
+        <View style={styles.codeBlock}>
+          <View style={styles.digitRow}>
+            {codeDigits.map((d, i) => {
+              const filled = d.trim() !== '';
+              const scale = digitAnims[i]?.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.4, 1],
+              }) ?? 1;
+              return (
+                <Animated.View
+                  key={i}
+                  style={[
+                    styles.digitBox,
+                    filled && styles.digitBoxFilled,
+                    { transform: [{ scale }], opacity: digitAnims[i] ?? 1 },
+                  ]}
+                >
+                  <Text style={[styles.digitText, filled && styles.digitTextFilled]}>
+                    {filled ? (showCode ? d : '•') : '–'}
+                  </Text>
+                </Animated.View>
+              );
+            })}
+          </View>
+          <View style={styles.codeInputRow}>
+            <TextInput
+              style={[styles.input, styles.codeInput]}
+              value={secretCode}
+              onChangeText={(v) => setSecretCode(v.replace(/\D/g, '').slice(0, 4))}
+              placeholder="4 rakam gir"
+              placeholderTextColor={Colors.muted}
+              keyboardType="number-pad"
+              maxLength={4}
+            />
+            <Pressable
+              onPress={() => setShowCode(!showCode)}
+              style={styles.eyeButton}
+            >
+              <Ionicons
+                name={showCode ? 'eye-off-outline' : 'eye-outline'}
+                size={20}
+                color={Colors.muted}
+              />
+            </Pressable>
+          </View>
+          <Text style={styles.codeHint}>
+            {secretCode.length === 4
+              ? '✓ Şifre hazır'
+              : `${4 - secretCode.length} rakam daha`}
+          </Text>
+        </View>
       </Section>
 
-      <Section title="Kategori" icon="library-outline">
+      <Section title="Kategori" icon="library-outline" accent={Colors.primary}>
         <View style={styles.chipRow}>
           {CATEGORIES.map((c) => (
             <Chip
               key={c}
               label={CategoryLabels[c]}
+              icon={CATEGORY_ICONS[c]}
               selected={category === c}
               onPress={() => setCategory(c)}
             />
@@ -135,29 +230,47 @@ export default function Setup() {
         </View>
       </Section>
 
-      <Section title="Zorluk" icon="sparkles-outline">
-        <View style={styles.chipRow}>
-          {DIFFICULTIES.map((d) => (
-            <Chip
-              key={d}
-              label={DifficultyLabels[d]}
-              selected={difficulty === d}
-              onPress={() => setDifficulty(d)}
-            />
-          ))}
+      <Section title="Zorluk" icon="sparkles-outline" accent={Colors.highlight}>
+        <View style={styles.segmentRow}>
+          {DIFFICULTIES.map((d) => {
+            const sel = difficulty === d;
+            const color = DIFFICULTY_COLORS[d];
+            return (
+              <Pressable
+                key={d}
+                onPress={() => setDifficulty(d)}
+                style={[
+                  styles.segment,
+                  sel && { backgroundColor: color, borderColor: color },
+                ]}
+              >
+                <View style={[styles.segmentDot, { backgroundColor: sel ? '#fff' : color }]} />
+                <Text style={[styles.segmentText, sel && { color: '#fff' }]}>
+                  {DifficultyLabels[d]}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
       </Section>
 
-      <Section title="Süre" icon="timer-outline">
-        <View style={styles.chipRow}>
-          {TIME_OPTIONS.map((t) => (
-            <Chip
-              key={t}
-              label={`${t} sn`}
-              selected={timeLimit === t}
-              onPress={() => setTimeLimit(t)}
-            />
-          ))}
+      <Section title="Süre" icon="timer-outline" accent={Colors.coral}>
+        <View style={styles.timeRow}>
+          {TIME_OPTIONS.map((t) => {
+            const sel = timeLimit === t;
+            return (
+              <Pressable
+                key={t}
+                onPress={() => setTimeLimit(t)}
+                style={[styles.timeCard, sel && styles.timeCardSelected]}
+              >
+                <Text style={[styles.timeNumber, sel && styles.timeNumberSelected]}>
+                  {t}
+                </Text>
+                <Text style={[styles.timeUnit, sel && styles.timeUnitSelected]}>sn</Text>
+              </Pressable>
+            );
+          })}
         </View>
       </Section>
 
@@ -190,16 +303,20 @@ export default function Setup() {
 function Section({
   title,
   icon,
+  accent,
   children,
 }: {
   title: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
+  accent?: string;
   children: React.ReactNode;
 }) {
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Ionicons name={icon} size={18} color={Colors.primary} />
+        <View style={[styles.sectionIconBox, accent ? { backgroundColor: accent } : null]}>
+          <Ionicons name={icon} size={16} color="#fff" />
+        </View>
         <Text style={styles.sectionTitle}>{title}</Text>
       </View>
       {children}
@@ -207,21 +324,24 @@ function Section({
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <View style={{ gap: 6 }}>
       <Text style={styles.label}>{label}</Text>
       {children}
+      {hint && <Text style={styles.fieldHint}>{hint}</Text>}
     </View>
   );
 }
 
 function Chip({
   label,
+  icon,
   selected,
   onPress,
 }: {
   label: string;
+  icon?: React.ComponentProps<typeof Ionicons>['name'];
   selected: boolean;
   onPress: () => void;
 }) {
@@ -234,6 +354,9 @@ function Chip({
         pressed && { opacity: 0.85 },
       ]}
     >
+      {icon && (
+        <Ionicons name={icon} size={14} color={selected ? '#fff' : Colors.primary} />
+      )}
       <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{label}</Text>
     </Pressable>
   );
@@ -278,7 +401,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     gap: Spacing.sm,
     backgroundColor: Colors.surface,
-    borderRadius: Radius.md,
+    borderRadius: Radius.lg,
     borderWidth: 1,
     borderColor: Colors.border,
     padding: Spacing.md,
@@ -289,14 +412,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.sm,
   },
+  sectionIconBox: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   sectionTitle: {
     fontSize: Font.body,
     fontWeight: '900',
     color: Colors.primaryDark,
     textTransform: 'uppercase',
-    letterSpacing: 0,
+    letterSpacing: 0.5,
   },
   label: { fontSize: Font.small, color: Colors.muted, fontWeight: '800' },
+  fieldHint: { fontSize: 11, color: Colors.muted, fontWeight: '600', fontStyle: 'italic' },
   input: {
     backgroundColor: '#F9FBFD',
     borderWidth: 1,
@@ -307,14 +439,73 @@ const styles = StyleSheet.create({
     fontSize: Font.body + 1,
     color: Colors.text,
   },
+  // ── Code preview ──
+  codeBlock: {
+    gap: Spacing.sm,
+    alignItems: 'center',
+  },
+  digitRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+  },
+  digitBox: {
+    width: 52,
+    height: 62,
+    borderRadius: Radius.md,
+    borderWidth: 2,
+    borderColor: Colors.border,
+    backgroundColor: '#F9FBFD',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  digitBoxFilled: {
+    borderColor: Colors.accent,
+    backgroundColor: Colors.ink,
+    ...Shadow.sm,
+  },
+  digitText: {
+    fontSize: Font.heading + 4,
+    fontWeight: '900',
+    color: Colors.muted,
+    lineHeight: Font.heading + 8,
+  },
+  digitTextFilled: {
+    color: Colors.accent,
+  },
+  codeInputRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    width: '100%',
+  },
   codeInput: {
+    flex: 1,
     fontSize: Font.heading,
-    letterSpacing: 6,
+    letterSpacing: 10,
     fontWeight: '900',
     textAlign: 'center',
   },
+  eyeButton: {
+    width: 48,
+    height: 48,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: '#F9FBFD',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  codeHint: {
+    fontSize: Font.small,
+    color: Colors.muted,
+    fontWeight: '700',
+  },
+  // ── Chips / Categories ──
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
     borderRadius: Radius.pill,
@@ -325,6 +516,70 @@ const styles = StyleSheet.create({
   chipSelected: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   chipText: { fontSize: Font.small + 1, fontWeight: '900', color: Colors.text },
   chipTextSelected: { color: '#fff' },
+  // ── Difficulty segments ──
+  segmentRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  segment: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 14,
+    borderRadius: Radius.md,
+    borderWidth: 2,
+    borderColor: Colors.border,
+    backgroundColor: '#F9FBFD',
+  },
+  segmentDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  segmentText: {
+    fontSize: Font.small + 1,
+    fontWeight: '900',
+    color: Colors.text,
+  },
+  // ── Time cards ──
+  timeRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  timeCard: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Spacing.md,
+    borderRadius: Radius.md,
+    borderWidth: 2,
+    borderColor: Colors.border,
+    backgroundColor: '#F9FBFD',
+  },
+  timeCardSelected: {
+    borderColor: Colors.coral,
+    backgroundColor: Colors.ink,
+    ...Shadow.sm,
+  },
+  timeNumber: {
+    fontSize: Font.heading,
+    fontWeight: '900',
+    color: Colors.text,
+  },
+  timeNumberSelected: {
+    color: Colors.coral,
+  },
+  timeUnit: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: Colors.muted,
+    textTransform: 'uppercase',
+  },
+  timeUnitSelected: {
+    color: Colors.metal,
+  },
   error: {
     color: Colors.danger,
     textAlign: 'center',

@@ -20,6 +20,8 @@ export const INITIAL_STATE: GameState = {
   lastCodeError: null,
   result: null,
   teacherUnlocked: false,
+  scores: { p1: 0, p2: 0 },
+  roundNumber: 1,
 };
 
 export function newRoundState(prev: GameState): GameState {
@@ -28,5 +30,10 @@ export function newRoundState(prev: GameState): GameState {
     config: prev.config,
     phase: 'code',
     usedQuestionIds: prev.usedQuestionIds,
+    scores: prev.scores,
+    roundNumber: prev.roundNumber + 1,
+    // The player who lost the previous round starts the next one.
+    activePlayer:
+      prev.result === 'p1' ? 2 : prev.result === 'p2' ? 1 : prev.activePlayer,
   };
 }

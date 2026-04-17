@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { CombinationLock, type CombinationLockStatus } from '@/components/CombinationLock';
 import { HoldButton } from '@/components/HoldButton';
-import { PlayerBadge } from '@/components/PlayerBadge';
+import { ScoreStrip } from '@/components/ScoreStrip';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { Colors, Font, Shadow, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
@@ -96,11 +96,14 @@ export default function CodeEntry() {
 
   return (
     <ScreenContainer scroll>
-      <View style={styles.header}>
-        <PlayerBadge name={state.config.player1} playerNumber={1} compact />
-        <Text style={styles.vs}>vs</Text>
-        <PlayerBadge name={state.config.player2} playerNumber={2} compact />
-      </View>
+      <ScoreStrip
+        player1={state.config.player1}
+        player2={state.config.player2}
+        scoreP1={state.scores.p1}
+        scoreP2={state.scores.p2}
+        roundNumber={state.roundNumber}
+        activePlayer={state.activePlayer}
+      />
 
       <View style={styles.centerBlock}>
         <View style={styles.kicker}>
@@ -145,13 +148,6 @@ export default function CodeEntry() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: Spacing.sm,
-  },
-  vs: { fontWeight: '900', color: Colors.muted },
   centerBlock: { alignItems: 'center', gap: Spacing.xs, marginVertical: Spacing.md },
   kicker: {
     paddingHorizontal: Spacing.md,

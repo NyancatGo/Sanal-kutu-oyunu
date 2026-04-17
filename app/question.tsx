@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { ActionButton } from '@/components/ActionButton';
 import { HoldButton } from '@/components/HoldButton';
-import { PlayerBadge } from '@/components/PlayerBadge';
 import { QuestionCard } from '@/components/QuestionCard';
+import { ScoreStrip } from '@/components/ScoreStrip';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { Timer } from '@/components/Timer';
 import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
@@ -17,8 +17,6 @@ export default function QuestionScreen() {
   const { state, dispatch } = useGame();
   const [showAnswer, setShowAnswer] = useState(false);
   const total = state.config.timeLimit || 30;
-  const activeName =
-    state.activePlayer === 1 ? state.config.player1 : state.config.player2;
 
   const handleTimeout = useCallback(() => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
@@ -32,9 +30,56 @@ export default function QuestionScreen() {
     resetKey: `${state.activePlayer}-${state.currentQuestion?.id}`,
   });
 
+  // Entrance animations — re-run when question or active player changes.
+  const timerAnim = useRef(new Animated.Value(0)).current;
+  const cardAnim = useRef(new Animated.Value(0)).current;
+  const decisionAnim = useRef(new Animated.Value(0)).current;
+  const secondaryAnim = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     setShowAnswer(false);
-  }, [state.currentQuestion?.id, state.activePlayer]);
+
+    timerAnim.setValue(0);
+    cardAnim.setValue(0);
+    decisionAnim.setValue(0);
+    secondaryAnim.setValue(0);
+
+    Animated.sequence([
+      Animated.spring(timerAnim, {
+        toValue: 1,
+        tension: 140,
+        friction: 9,
+        useNativeDriver: true,
+      }),
+      Animated.timing(cardAnim, {
+        toValue: 1,
+        duration: 380,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.stagger(90, [
+        Animated.spring(decisionAnim, {
+          toValue: 1,
+          tension: 160,
+          friction: 10,
+          useNativeDriver: true,
+        }),
+        Animated.spring(secondaryAnim, {
+          toValue: 1,
+          tension: 160,
+          friction: 10,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+  }, [
+    state.currentQuestion?.id,
+    state.activePlayer,
+    cardAnim,
+    decisionAnim,
+    secondaryAnim,
+    timerAnim,
+  ]);
 
   useEffect(() => {
     if (state.phase === 'setup') router.replace('/');
@@ -64,23 +109,80 @@ export default function QuestionScreen() {
   };
   const { answer, teacherNote } = state.currentQuestion;
 
+  const timerScale = timerAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.7, 1],
+  });
+  const timerTranslate = timerAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-12, 0],
+  });
+  const cardTranslate = cardAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [22, 0],
+  });
+  const decisionTranslate = decisionAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [18, 0],
+  });
+  const secondaryTranslate = secondaryAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [14, 0],
+  });
+
+  const attemptLabel = state.firstAttempterFailed ? 'İkinci Deneme' : 'İlk Deneme';
+  const attemptColor = state.firstAttempterFailed ? Colors.coral : Colors.teal;
+
   return (
     <ScreenContainer scroll>
-      <View style={styles.topRow}>
-        <PlayerBadge name={activeName} playerNumber={state.activePlayer} active />
+      <ScoreStrip
+        player1={state.config.player1}
+        player2={state.config.player2}
+        scoreP1={state.scores.p1}
+        scoreP2={state.scores.p2}
+        roundNumber={state.roundNumber}
+        activePlayer={state.activePlayer}
+      />
+
+      <View style={styles.attemptRow}>
+        <View style={[styles.attemptPill, { borderColor: attemptColor }]}>
+          <Ionicons
+            name={state.firstAttempterFailed ? 'refresh' : 'flash'}
+            size={12}
+            color={attemptColor}
+          />
+          <Text style={[styles.attemptText, { color: attemptColor }]}>
+            {attemptLabel}
+          </Text>
+        </View>
       </View>
 
-      <View style={styles.timerWrap}>
+      <Animated.View
+        style={[
+          styles.timerWrap,
+          {
+            opacity: timerAnim,
+            transform: [{ scale: timerScale }, { translateY: timerTranslate }],
+          },
+        ]}
+      >
         <Timer remaining={remaining} total={total} />
-      </View>
+      </Animated.View>
 
       <View style={{ height: Spacing.md }} />
 
-      <QuestionCard
-        category={state.currentQuestion.category}
-        difficulty={state.currentQuestion.difficulty}
-        question={state.currentQuestion.question}
-      />
+      <Animated.View
+        style={{
+          opacity: cardAnim,
+          transform: [{ translateY: cardTranslate }],
+        }}
+      >
+        <QuestionCard
+          category={state.currentQuestion.category}
+          difficulty={state.currentQuestion.difficulty}
+          question={state.currentQuestion.question}
+        />
+      </Animated.View>
 
       {showAnswer ? (
         <Pressable
@@ -112,17 +214,51 @@ export default function QuestionScreen() {
       <Text style={styles.hint}>Oyuncu sözlü cevap verir. Öğretmen sonucu işaretler.</Text>
 
       <View style={styles.actions}>
-        <ActionButton label="Doğru" variant="success" fullWidth onPress={onCorrect} icon="checkmark" />
+        <Animated.View
+          style={{
+            opacity: decisionAnim,
+            transform: [{ translateY: decisionTranslate }],
+          }}
+        >
+          <ActionButton
+            label="Doğru"
+            variant="success"
+            fullWidth
+            onPress={onCorrect}
+            icon="checkmark-circle"
+          />
+        </Animated.View>
+
         <View style={{ height: Spacing.sm }} />
-        <View style={styles.row}>
-          <View style={{ flex: 1 }}>
-            <ActionButton label="Yanlış" variant="danger" fullWidth onPress={onWrong} icon="close" />
+
+        <Animated.View
+          style={{
+            opacity: secondaryAnim,
+            transform: [{ translateY: secondaryTranslate }],
+          }}
+        >
+          <View style={styles.row}>
+            <View style={{ flex: 1 }}>
+              <ActionButton
+                label="Yanlış"
+                variant="danger"
+                fullWidth
+                onPress={onWrong}
+                icon="close-circle"
+              />
+            </View>
+            <View style={{ width: Spacing.sm }} />
+            <View style={{ flex: 1 }}>
+              <ActionButton
+                label="Süre Doldu"
+                variant="outline"
+                fullWidth
+                onPress={onWrong}
+                icon="timer-outline"
+              />
+            </View>
           </View>
-          <View style={{ width: Spacing.sm }} />
-          <View style={{ flex: 1 }}>
-            <ActionButton label="Süre Doldu" variant="outline" fullWidth onPress={onWrong} icon="timer-outline" />
-          </View>
-        </View>
+        </Animated.View>
       </View>
     </ScreenContainer>
   );
@@ -130,8 +266,28 @@ export default function QuestionScreen() {
 
 const styles = StyleSheet.create({
   loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  topRow: { alignItems: 'center', marginBottom: Spacing.md },
   timerWrap: { alignItems: 'center' },
+  attemptRow: {
+    alignItems: 'center',
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
+  attemptPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 4,
+    borderRadius: Radius.pill,
+    borderWidth: 1.5,
+    backgroundColor: Colors.surface,
+  },
+  attemptText: {
+    fontSize: 10,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
   hint: {
     color: Colors.muted,
     fontSize: Font.small,

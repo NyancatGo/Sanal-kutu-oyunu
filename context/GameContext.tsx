@@ -45,13 +45,19 @@ function reducer(state: GameState, action: GameAction): GameState {
       if (state.phase !== 'reveal') return state;
       return { ...state, phase: 'question' };
 
-    case 'ANSWER_CORRECT':
+    case 'ANSWER_CORRECT': {
       if (state.phase !== 'question') return state;
+      const winner: 'p1' | 'p2' = state.activePlayer === 1 ? 'p1' : 'p2';
       return {
         ...state,
         phase: 'result',
-        result: state.activePlayer === 1 ? 'p1' : 'p2',
+        result: winner,
+        scores: {
+          ...state.scores,
+          [winner]: state.scores[winner] + 1,
+        },
       };
+    }
 
     case 'ANSWER_WRONG_OR_TIMEOUT':
       if (state.phase !== 'question') return state;
