@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { ScreenContainer } from '@/components/ScreenContainer';
-import { QuestionCard } from '@/components/QuestionCard';
-import { Timer } from '@/components/Timer';
-import { PlayerBadge } from '@/components/PlayerBadge';
 import { ActionButton } from '@/components/ActionButton';
 import { HoldButton } from '@/components/HoldButton';
-import { Colors, Font, Radius, Spacing } from '@/constants/theme';
+import { PlayerBadge } from '@/components/PlayerBadge';
+import { QuestionCard } from '@/components/QuestionCard';
+import { ScreenContainer } from '@/components/ScreenContainer';
+import { Timer } from '@/components/Timer';
+import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 import { useTimer } from '@/hooks/useTimer';
 
@@ -46,8 +47,8 @@ export default function QuestionScreen() {
   if (!state.currentQuestion || state.phase !== 'question') {
     return (
       <ScreenContainer>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ color: Colors.muted }}>Hazırlanıyor…</Text>
+        <View style={styles.loading}>
+          <Text style={{ color: Colors.muted }}>Hazırlanıyor...</Text>
         </View>
       </ScreenContainer>
     );
@@ -90,14 +91,18 @@ export default function QuestionScreen() {
             pressed && { opacity: 0.85 },
           ]}
         >
-          <Text style={styles.answerLabel}>🔓 Gizlemek için dokun</Text>
+          <View style={styles.answerHeader}>
+            <Ionicons name="eye-off-outline" size={18} color={Colors.success} />
+            <Text style={styles.answerLabel}>Gizlemek için dokun</Text>
+          </View>
           <Text style={styles.answerText}>{answer}</Text>
           {teacherNote && <Text style={styles.noteText}>{teacherNote}</Text>}
         </Pressable>
       ) : (
         <HoldButton
-          label="🔒 Öğretmen — Cevabı Göster (basılı tut)"
-          holdLabel="Basılı tut…"
+          label="Öğretmen · Cevabı Göster"
+          holdLabel="Açılıyor..."
+          icon="eye-outline"
           durationMs={900}
           onComplete={() => setShowAnswer(true)}
           style={styles.answerHold}
@@ -107,15 +112,15 @@ export default function QuestionScreen() {
       <Text style={styles.hint}>Oyuncu sözlü cevap verir. Öğretmen sonucu işaretler.</Text>
 
       <View style={styles.actions}>
-        <ActionButton label="Doğru" variant="success" fullWidth onPress={onCorrect} />
+        <ActionButton label="Doğru" variant="success" fullWidth onPress={onCorrect} icon="checkmark" />
         <View style={{ height: Spacing.sm }} />
         <View style={styles.row}>
           <View style={{ flex: 1 }}>
-            <ActionButton label="Yanlış" variant="danger" fullWidth onPress={onWrong} />
+            <ActionButton label="Yanlış" variant="danger" fullWidth onPress={onWrong} icon="close" />
           </View>
           <View style={{ width: Spacing.sm }} />
           <View style={{ flex: 1 }}>
-            <ActionButton label="Süre Doldu" variant="outline" fullWidth onPress={onWrong} />
+            <ActionButton label="Süre Doldu" variant="outline" fullWidth onPress={onWrong} icon="timer-outline" />
           </View>
         </View>
       </View>
@@ -124,6 +129,7 @@ export default function QuestionScreen() {
 }
 
 const styles = StyleSheet.create({
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   topRow: { alignItems: 'center', marginBottom: Spacing.md },
   timerWrap: { alignItems: 'center' },
   hint: {
@@ -131,6 +137,7 @@ const styles = StyleSheet.create({
     fontSize: Font.small,
     textAlign: 'center',
     marginVertical: Spacing.md,
+    fontWeight: '700',
   },
   actions: { marginTop: Spacing.sm },
   row: { flexDirection: 'row' },
@@ -139,26 +146,31 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: Radius.md,
     borderWidth: 1,
-    borderStyle: 'dashed',
     borderColor: Colors.border,
     backgroundColor: Colors.surface,
-    gap: 6,
+    gap: 8,
+    ...Shadow.sm,
   },
   answerBoxRevealed: {
-    borderStyle: 'solid',
     borderColor: Colors.success,
-    backgroundColor: '#ECFDF5',
+    backgroundColor: Colors.successSoft,
   },
   answerHold: { marginTop: Spacing.md, borderColor: Colors.muted },
+  answerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    alignItems: 'center',
+  },
   answerLabel: {
     fontSize: Font.small,
     color: Colors.muted,
-    fontWeight: '600',
+    fontWeight: '800',
     textAlign: 'center',
   },
   answerText: {
     fontSize: Font.body + 2,
-    fontWeight: '800',
+    fontWeight: '900',
     color: Colors.success,
     textAlign: 'center',
   },
@@ -167,5 +179,6 @@ const styles = StyleSheet.create({
     color: Colors.muted,
     textAlign: 'center',
     fontStyle: 'italic',
+    fontWeight: '700',
   },
 });

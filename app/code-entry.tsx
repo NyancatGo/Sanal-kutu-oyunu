@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { ScreenContainer } from '@/components/ScreenContainer';
-import { Keypad } from '@/components/Keypad';
-import { PlayerBadge } from '@/components/PlayerBadge';
+import { CombinationLock, type CombinationLockStatus } from '@/components/CombinationLock';
 import { HoldButton } from '@/components/HoldButton';
-import { Colors, Font, Radius, Spacing } from '@/constants/theme';
+import { PlayerBadge } from '@/components/PlayerBadge';
+import { ScreenContainer } from '@/components/ScreenContainer';
+import { Colors, Font, Shadow, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
-import { validateCode } from '@/utils/validateCode';
 import { getRandomQuestion } from '@/utils/getRandomQuestion';
+import { validateCode } from '@/utils/validateCode';
 
 const LOCK_MS = 3000;
+const EMPTY_CODE = [0, 0, 0, 0];
 
 export default function CodeEntry() {
   const { state, dispatch } = useGame();
-  const [input, setInput] = useState('');
+  const [digits, setDigits] = useState(EMPTY_CODE);
+  const [lockStatus, setLockStatus] = useState<CombinationLockStatus>('idle');
   const [nowTick, setNowTick] = useState(Date.now());
+  const successTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (state.phase !== 'code') return;
@@ -24,8 +27,16 @@ export default function CodeEntry() {
     return () => clearInterval(id);
   }, [state.phase]);
 
+  useEffect(
+    () => () => {
+      if (successTimer.current) clearTimeout(successTimer.current);
+    },
+    [],
+  );
+
   const locked = nowTick < state.lockUntil;
   const lockRemaining = locked ? Math.ceil((state.lockUntil - nowTick) / 1000) : 0;
+  const displayedStatus: CombinationLockStatus = locked ? 'locked' : lockStatus;
 
   useEffect(() => {
     if (state.phase === 'setup') router.replace('/');
@@ -35,22 +46,30 @@ export default function CodeEntry() {
     else if (state.phase === 'result') router.replace('/result');
   }, [state.phase]);
 
-  const handleDigit = (d: string) => {
+  useEffect(() => {
+    if (!locked && lockStatus === 'error') {
+      setLockStatus('idle');
+    }
+  }, [locked, lockStatus]);
+
+  const handleDigitsChange = (nextDigits: number[]) => {
     if (locked) return;
-    if (input.length >= 8) return;
-    setInput((prev) => prev + d);
+    setDigits(nextDigits);
+    if (lockStatus !== 'idle') setLockStatus('idle');
     if (state.lastCodeError) dispatch({ type: 'CLEAR_CODE_ERROR' });
   };
 
-  const handleClear = () => {
+  const handleReset = () => {
     if (locked) return;
-    setInput('');
+    setDigits(EMPTY_CODE);
+    setLockStatus('idle');
     if (state.lastCodeError) dispatch({ type: 'CLEAR_CODE_ERROR' });
   };
 
   const handleSubmit = () => {
-    const result = validateCode(input, state.config.secretCode, Date.now(), state.lockUntil);
+    const result = validateCode(digits.join(''), state.config.secretCode, Date.now(), state.lockUntil);
     if (!result.ok) {
+      setLockStatus('error');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       dispatch({
         type: 'CODE_FAIL',
@@ -59,22 +78,21 @@ export default function CodeEntry() {
           message: result.message,
         },
       });
-      setInput('');
+      setDigits(EMPTY_CODE);
       return;
     }
+
+    setLockStatus('success');
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     const question = getRandomQuestion(
       state.config.category,
       state.config.difficulty,
       state.usedQuestionIds,
     );
-    dispatch({ type: 'CODE_SUCCESS', payload: { question } });
+    successTimer.current = setTimeout(() => {
+      dispatch({ type: 'CODE_SUCCESS', payload: { question } });
+    }, 320);
   };
-
-  const maskedInput =
-    input.length === 0
-      ? '— — — —'
-      : input.split('').map(() => '●').join(' ');
 
   return (
     <ScreenContainer scroll>
@@ -85,13 +103,21 @@ export default function CodeEntry() {
       </View>
 
       <View style={styles.centerBlock}>
-        <Text style={styles.vaultEmoji}>🗝️</Text>
-        <Text style={styles.title}>Şifreyi Gir</Text>
-        <Text style={styles.sub}>Kartlardan çözdüğünüz kodu yazın.</Text>
-
-        <View style={[styles.display, locked && styles.displayLocked]}>
-          <Text style={styles.displayText}>{maskedInput}</Text>
+        <View style={styles.kicker}>
+          <Text style={styles.kickerText}>Şifre Kutusu</Text>
         </View>
+        <Text style={styles.title}>Kilidi Çöz</Text>
+        <Text style={styles.sub}>Kartlardan gelen 4 haneli kodu kilitte ayarla.</Text>
+
+        <CombinationLock
+          digits={digits}
+          onChange={handleDigitsChange}
+          onReset={handleReset}
+          onSubmit={handleSubmit}
+          disabled={locked || lockStatus === 'success'}
+          status={displayedStatus}
+          lockRemaining={lockRemaining}
+        />
 
         <View style={styles.statusRow}>
           {locked ? (
@@ -99,22 +125,16 @@ export default function CodeEntry() {
           ) : state.lastCodeError ? (
             <Text style={styles.errorText}>{state.lastCodeError}</Text>
           ) : (
-            <Text style={styles.hintText}>{input.length} hane</Text>
+            <Text style={styles.hintText}>Mekanik kilit hazır</Text>
           )}
         </View>
       </View>
 
-      <Keypad
-        onDigit={handleDigit}
-        onClear={handleClear}
-        onSubmit={handleSubmit}
-        disabled={locked}
-      />
-
       <View style={{ height: Spacing.md }} />
       <HoldButton
-        label="Öğretmen — Kuruluma Dön (basılı tut)"
-        holdLabel="Basılı tut…"
+        label="Öğretmen · Kuruluma Dön"
+        holdLabel="Açılıyor..."
+        icon="school-outline"
         onComplete={() => {
           dispatch({ type: 'UNLOCK_TEACHER' });
           router.replace('/setup');
@@ -131,30 +151,42 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: Spacing.sm,
   },
-  vs: { fontWeight: '800', color: Colors.muted },
+  vs: { fontWeight: '900', color: Colors.muted },
   centerBlock: { alignItems: 'center', gap: Spacing.xs, marginVertical: Spacing.md },
-  vaultEmoji: { fontSize: 56 },
-  title: { fontSize: Font.title, fontWeight: '800', color: Colors.primaryDark },
-  sub: { color: Colors.muted, marginBottom: Spacing.md },
-  display: {
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
-    backgroundColor: Colors.surface,
-    borderRadius: Radius.lg,
-    borderWidth: 2,
-    borderColor: Colors.primary,
-    minWidth: 220,
+  kicker: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 6,
+    backgroundColor: Colors.cream,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: Colors.accent,
+    ...Shadow.sm,
+  },
+  kickerText: {
+    color: Colors.primaryDark,
+    fontSize: Font.small,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+  },
+  title: {
+    fontSize: Font.title + 2,
+    fontWeight: '900',
+    color: Colors.primaryDark,
+    textAlign: 'center',
+  },
+  sub: {
+    color: Colors.muted,
+    marginBottom: Spacing.sm,
+    textAlign: 'center',
+    lineHeight: Font.body * 1.35,
+  },
+  statusRow: {
+    minHeight: 30,
+    marginTop: 2,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  displayLocked: { borderColor: Colors.danger },
-  displayText: {
-    fontSize: Font.huge - 12,
-    fontWeight: '800',
-    color: Colors.primaryDark,
-    letterSpacing: 2,
-  },
-  statusRow: { minHeight: 28, marginTop: 8, justifyContent: 'center' },
-  lockText: { color: Colors.danger, fontWeight: '700' },
-  errorText: { color: Colors.danger, fontWeight: '600' },
+  lockText: { color: Colors.danger, fontWeight: '800' },
+  errorText: { color: Colors.danger, fontWeight: '700' },
   hintText: { color: Colors.muted, fontSize: Font.small },
 });

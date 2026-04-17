@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
-import { Colors, Font, Radius, Spacing } from '@/constants/theme';
+import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
+
+type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
 type Props = {
   label: string;
@@ -9,6 +12,7 @@ type Props = {
   durationMs?: number;
   onComplete: () => void;
   style?: ViewStyle;
+  icon?: IconName;
 };
 
 export function HoldButton({
@@ -17,6 +21,7 @@ export function HoldButton({
   durationMs = 1200,
   onComplete,
   style,
+  icon = 'lock-closed-outline',
 }: Props) {
   const progress = useRef(new Animated.Value(0)).current;
   const [holding, setHolding] = useState(false);
@@ -64,6 +69,11 @@ export function HoldButton({
     >
       <Animated.View style={[styles.fill, { width: widthInterp }]} />
       <View style={styles.content}>
+        <Ionicons
+          name={holding ? 'timer-outline' : icon}
+          size={19}
+          color={holding ? Colors.primaryDark : Colors.primary}
+        />
         <Text style={styles.label}>{holding ? holdLabel : label}</Text>
       </View>
     </Pressable>
@@ -73,27 +83,34 @@ export function HoldButton({
 const styles = StyleSheet.create({
   wrap: {
     minHeight: 52,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.md,
     borderWidth: 2,
-    borderColor: Colors.primary,
+    borderColor: Colors.teal,
     backgroundColor: Colors.surface,
     overflow: 'hidden',
     justifyContent: 'center',
     paddingHorizontal: Spacing.md,
+    ...Shadow.sm,
   },
   fill: {
     position: 'absolute',
     top: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: Colors.primary,
-    opacity: 0.18,
+    backgroundColor: Colors.accent,
+    opacity: 0.38,
   },
-  content: { alignItems: 'center', justifyContent: 'center' },
+  content: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
   label: {
     fontSize: Font.body,
-    fontWeight: '700',
+    fontWeight: '800',
     color: Colors.primary,
-    letterSpacing: 0.3,
+    letterSpacing: 0,
+    textAlign: 'center',
   },
 });

@@ -1,103 +1,85 @@
-# Şifre Kutusu 🔐
+# Şifre Kutusu
 
-Fiziksel ipucu kartlarıyla mobil uygulamayı birleştiren, sınıf içi oynanmak üzere tasarlanmış hibrit bir eğitsel challenge oyunu. İki oyuncu kartlardan şifreyi çözer, telefona girer, doğru şifre rastgele bir final sorusu açar — öğretmen sözlü cevabı değerlendirir.
+Fiziksel ipucu kartlarıyla mobil uygulamayı birleştiren, sınıf içi oynanmak üzere tasarlanmış hibrit bir eğitsel challenge oyunu. İki oyuncu kartlardan 4 haneli şifreyi çözer, telefondaki mekanik kilidi ayarlar, doğru şifre final sorusunu açar.
 
-> **MVP durumu:** tek cihazda, internetsiz, iki oyuncu karşılıklı.
-
----
+> MVP durumu: tek cihazda, internetsiz, iki oyunculu, öğretmen kontrollü.
 
 ## Oynanış
 
-1. **Kurulum:** Öğretmen oyuncu adları, doğru şifre, kategori, zorluk ve süre seçer.
-2. **Şifre:** Oyuncular fiziksel kartlardan şifreyi çözer. Çözen oyuncu telefona girer.
-3. **Final sorusu:** Doğru şifre rastgele bir soru açar, süre başlar.
-4. **Değerlendirme:** Oyuncu sözlü cevap verir. Öğretmen ekrandan `Doğru` / `Yanlış` / `Süre Doldu` işaretler.
-5. **Hak geçişi:** İlk oyuncu bilemezse aynı soru ikinci oyuncuya geçer, süre yeniden başlar.
-6. **Sonuç:** Doğru cevaplayan kazanır. İkisi de bilemezse "Kazanan Yok".
-
----
+1. Öğretmen oyuncu adlarını, 4 haneli doğru şifreyi, kategori, zorluk ve süreyi seçer.
+2. Oyuncular fiziksel kartlardan şifreyi çözer.
+3. Çözen oyuncu telefondaki 4 haneli valiz tipi kilidi parmağıyla ayarlar.
+4. Doğru şifre final sorusunu açar ve süre başlar.
+5. Oyuncu sözlü cevap verir; öğretmen sonucu işaretler.
+6. İlk oyuncu bilemezse aynı soru ikinci oyuncuya geçer.
 
 ## Kurulum
 
 ```bash
 npm install
-npm start           # QR kodu Expo Go ile okut
-# veya
-npm run android
-npm run ios         # macOS gerekir
-npm run web
+npm start
 ```
 
-Test için fiziksel kart gerekmez — şifreyi setup ekranında görebilirsin.
+Expo Go ile QR kodu okut. Bağlantı sorunu olursa:
 
----
+```bash
+npx expo start --tunnel
+```
 
-## Öğretmen kontrolleri
+## Öğretmen Kontrolleri
 
-- **Ana ekrandaki "Oyunu Kur" butonu basılı tutmayla açılır.** Çocuk kazara ayarlara giremesin.
-- **Şifre ekranındaki "Kuruluma Dön" da basılı tut gerektirir.** Çocuk şifreyi değiştiremesin.
-- **Final soru ekranında "Öğretmen cevabı görür" kutusu.** Dokununca doğru cevap ve öğretmen notu (varsa) açılır — çocuk görmeyecek açıdan tutulur.
-- **Şifre yanlışsa 3 saniye kilit.** Rastgele denemeyi azaltır.
-
----
+- Ana ekrandaki kurulum girişi basılı tutma ile açılır.
+- Şifre ekranından kuruluma dönüş yine basılı tutma ister.
+- Setup ekranına doğrudan URL/deep-link ile girilirse ana ekrana dönülür.
+- Final soru ekranındaki cevap anahtarı basılı tutma ile açılır.
+- Yanlış şifrede mekanik kilit 3 saniye kilitlenir.
 
 ## Teknoloji
 
-- Expo (SDK 54) + React Native + TypeScript (strict)
-- expo-router (dosya tabanlı routing)
-- Context + `useReducer` (merkezi oyun state'i, phase guardlı)
-- Local JSON soru havuzu (46 soru, 5 kategori × 3 zorluk)
-- expo-haptics — oyuncaksı dokunma geri bildirimi
+- Expo SDK 54 + React Native + TypeScript strict
+- Expo Router
+- Context + `useReducer`
+- Local JSON soru havuzu
+- `expo-haptics`, React Native `Animated`, `PanResponder`
+- Backend, hesap sistemi ve internet gereksinimi yok
 
-Backend yok, internet gerekmez, kullanıcı hesabı yok.
+## Proje Yapısı
 
----
-
-## Proje yapısı
-
-```
-app/                  # Ekranlar (expo-router)
-  _layout.tsx         # Kök layout + GameProvider
-  index.tsx           # Ana ekran (hold-to-open)
-  setup.tsx           # Öğretmen kurulum
-  code-entry.tsx      # Şifre girişi + keypad
-  reveal.tsx          # "Şifre Doğru!" geçiş ekranı
-  question.tsx        # Final soru + timer + öğretmen kararı
-  handoff.tsx         # Hak geçiş ekranı
-  result.tsx          # Sonuç + kutlama animasyonu
-components/           # UI parçaları (Keypad, Timer, QuestionCard, ...)
-context/              # GameContext + reducer
-hooks/                # useGame, useTimer
-utils/                # validateCode, getRandomQuestion, resetGame
-data/questions.json   # Soru havuzu
-types/                # TypeScript tipleri
-constants/theme.ts    # Renk / spacing / radius / font
-```
-
----
-
-## Oyun durumu akışı
-
-```
-setup → code → reveal → question ─┬─ (doğru) ─→ result
-                                  └─ (yanlış/süre) ─→ handoff → question ─→ result
+```text
+app/
+  index.tsx           Ana ekran
+  setup.tsx           Öğretmen kurulum
+  code-entry.tsx      4 haneli mekanik kilit
+  reveal.tsx          Şifre doğru geçişi
+  question.tsx        Final soru + timer
+  handoff.tsx         Hak geçişi
+  result.tsx          Sonuç ekranı
+components/
+  CombinationLock.tsx Mekanik kilit gövdesi
+  LockWheel.tsx       Tek haneli kaydırmalı tambur
+  Timer.tsx
+  QuestionCard.tsx
+  PlayerBadge.tsx
+context/
+data/
+hooks/
+utils/
+types/
+constants/
 ```
 
-Her ekran phase'i doğrular; geçersiz phase'de uygun ekrana yönlendirir. Reducer'daki her action da phase guard ile korunur — süre bitimi ile öğretmen butonu çakışırsa çift işlem yapılmaz.
+## Kontroller
 
----
+```bash
+npm run lint
+npx tsc --noEmit
+npx expo export --platform web
+```
 
-## Bilinen sınırlar / yol haritası
+## Yol Haritası
 
-- [ ] Birim testler (reducer, validateCode, getRandomQuestion, useTimer)
-- [ ] Özel ikon / splash / proje kimliği görselleri
-- [ ] Yaş seviyesi ayarı (sorularda `ageGroup` alanı)
-- [ ] Skor/tur takibi (birden fazla tur)
-- [ ] Soru havuzunda editörden soru ekleme
-- [ ] Online çok oyunculu (ileride)
-
----
-
-## Lisans
-
-Eğitim amaçlı — özgür kullan.
+- Birim testler
+- Özel ikon ve splash görselleri
+- Yaş seviyesi filtresi
+- Birden fazla tur için skor takibi
+- Öğretmen soru editörü

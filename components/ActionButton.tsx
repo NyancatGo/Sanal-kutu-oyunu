@@ -7,10 +7,12 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
-import { Colors, Font, Radius, Spacing } from '@/constants/theme';
+import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 
 type Variant = 'primary' | 'accent' | 'success' | 'danger' | 'ghost' | 'outline';
+type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
 type Props = {
   label: string;
@@ -21,11 +23,12 @@ type Props = {
   fullWidth?: boolean;
   style?: ViewStyle;
   haptic?: boolean;
+  icon?: IconName;
 };
 
-const VARIANT_STYLES: Record<Variant, { bg: string; text: string; border?: string }> = {
+const VARIANT_STYLES: Record<Variant, { bg: string; text: string; border?: string; shadow?: boolean }> = {
   primary: { bg: Colors.primary, text: '#FFFFFF' },
-  accent: { bg: Colors.accent, text: Colors.primaryDark },
+  accent: { bg: Colors.accent, text: Colors.primaryDark, shadow: true },
   success: { bg: Colors.success, text: '#FFFFFF' },
   danger: { bg: Colors.danger, text: '#FFFFFF' },
   ghost: { bg: 'transparent', text: Colors.primary },
@@ -41,6 +44,7 @@ export function ActionButton({
   fullWidth,
   style,
   haptic = true,
+  icon,
 }: Props) {
   const vs = VARIANT_STYLES[variant];
   return (
@@ -63,6 +67,7 @@ export function ActionButton({
           width: fullWidth ? '100%' : undefined,
           transform: [{ scale: pressed ? 0.98 : 1 }],
         },
+        vs.shadow && !disabled && Shadow.sm,
         style,
       ]}
     >
@@ -70,7 +75,10 @@ export function ActionButton({
         {loading ? (
           <ActivityIndicator color={vs.text} />
         ) : (
-          <Text style={[styles.label, { color: vs.text }]}>{label}</Text>
+          <>
+            {icon && <Ionicons name={icon} size={20} color={vs.text} />}
+            <Text style={[styles.label, { color: vs.text }]}>{label}</Text>
+          </>
         )}
       </View>
     </Pressable>
@@ -79,12 +87,17 @@ export function ActionButton({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: Radius.lg,
+    borderRadius: Radius.md,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
     minHeight: 56,
     justifyContent: 'center',
   },
-  inner: { alignItems: 'center', justifyContent: 'center' },
-  label: { fontSize: Font.body + 2, fontWeight: '700', letterSpacing: 0.3 },
+  inner: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  label: { fontSize: Font.body + 1, fontWeight: '800', letterSpacing: 0 },
 });

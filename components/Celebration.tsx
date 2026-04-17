@@ -1,16 +1,19 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Colors } from '@/constants/theme';
 
-const EMOJIS = ['🎉', '⭐', '✨', '🎊', '🏆', '🥳'];
+const SYMBOLS = ['★', '✦', '◆', '●'];
+const PALETTE = [Colors.accent, Colors.teal, Colors.coral, Colors.success];
 const { width: W, height: H } = Dimensions.get('window');
 
 type Piece = {
   anim: Animated.Value;
   x: number;
   delay: number;
-  emoji: string;
+  symbol: string;
   rotate: Animated.Value;
   size: number;
+  color: string;
 };
 
 function makePieces(count: number): Piece[] {
@@ -18,14 +21,15 @@ function makePieces(count: number): Piece[] {
     anim: new Animated.Value(0),
     rotate: new Animated.Value(0),
     x: Math.random() * W,
-    delay: Math.random() * 400,
-    emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
-    size: 22 + Math.floor(Math.random() * 22),
+    delay: Math.random() * 420,
+    symbol: SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+    size: 18 + Math.floor(Math.random() * 18),
+    color: PALETTE[Math.floor(Math.random() * PALETTE.length)],
   }));
 }
 
 export function Celebration({ active }: { active: boolean }) {
-  const piecesRef = useRef<Piece[]>(makePieces(18));
+  const piecesRef = useRef<Piece[]>(makePieces(16));
 
   useEffect(() => {
     if (!active) return;
@@ -36,13 +40,13 @@ export function Celebration({ active }: { active: boolean }) {
       Animated.parallel([
         Animated.timing(p.anim, {
           toValue: 1,
-          duration: 1800 + Math.random() * 800,
+          duration: 1800 + Math.random() * 700,
           delay: p.delay,
           useNativeDriver: true,
         }),
         Animated.timing(p.rotate, {
           toValue: 1,
-          duration: 1800 + Math.random() * 800,
+          duration: 1800 + Math.random() * 700,
           delay: p.delay,
           useNativeDriver: true,
         }),
@@ -77,7 +81,7 @@ export function Celebration({ active }: { active: boolean }) {
               opacity,
             }}
           >
-            <Text style={{ fontSize: p.size }}>{p.emoji}</Text>
+            <Text style={{ fontSize: p.size, color: p.color, fontWeight: '900' }}>{p.symbol}</Text>
           </Animated.View>
         );
       })}

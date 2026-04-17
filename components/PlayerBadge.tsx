@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Colors, Font, Radius, Spacing } from '@/constants/theme';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 
 type Props = {
   name: string;
@@ -10,22 +11,26 @@ type Props = {
 };
 
 export function PlayerBadge({ name, playerNumber, active, compact }: Props) {
-  const accent = playerNumber === 1 ? Colors.primary : Colors.highlight;
+  const accent = playerNumber === 1 ? Colors.teal : Colors.coral;
   return (
     <View
       style={[
         styles.wrap,
         compact && styles.wrapCompact,
+        compact && styles.compactWidth,
         { borderColor: active ? accent : Colors.border },
-        active && styles.active,
+        active && { backgroundColor: playerNumber === 1 ? Colors.softBlue : Colors.cream },
       ]}
     >
       <View style={[styles.dot, { backgroundColor: accent }]}>
-        <Text style={styles.dotText}>{playerNumber}</Text>
+        <Ionicons name="person" size={compact ? 14 : 16} color="#fff" />
       </View>
-      <Text style={[styles.name, compact && { fontSize: Font.body }]} numberOfLines={1}>
-        {name || `Oyuncu ${playerNumber}`}
-      </Text>
+      <View style={{ flexShrink: 1 }}>
+        {!compact && <Text style={styles.label}>Oyuncu {playerNumber}</Text>}
+        <Text style={[styles.name, compact && styles.nameCompact]} numberOfLines={1}>
+          {name || `Oyuncu ${playerNumber}`}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -40,16 +45,23 @@ const styles = StyleSheet.create({
     borderRadius: Radius.pill,
     borderWidth: 2,
     backgroundColor: Colors.surface,
+    ...Shadow.sm,
   },
   wrapCompact: { paddingVertical: 6, paddingHorizontal: Spacing.sm },
-  active: { backgroundColor: '#FFF8E1' },
+  compactWidth: { maxWidth: '48%' },
   dot: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  dotText: { color: '#fff', fontWeight: '800', fontSize: Font.small + 1 },
-  name: { fontSize: Font.body + 1, fontWeight: '700', color: Colors.text },
+  label: {
+    color: Colors.muted,
+    fontSize: Font.small - 2,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+  },
+  name: { fontSize: Font.body, fontWeight: '900', color: Colors.text },
+  nameCompact: { fontSize: Font.small + 1 },
 });

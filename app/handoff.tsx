@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import { ScreenContainer } from '@/components/ScreenContainer';
-import { PlayerBadge } from '@/components/PlayerBadge';
 import { ActionButton } from '@/components/ActionButton';
-import { Colors, Font, Radius, Spacing } from '@/constants/theme';
+import { PlayerBadge } from '@/components/PlayerBadge';
+import { ScreenContainer } from '@/components/ScreenContainer';
+import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 
 export default function Handoff() {
@@ -27,58 +28,64 @@ export default function Handoff() {
   return (
     <ScreenContainer>
       <View style={styles.center}>
-        <Text style={styles.emoji}>🔄</Text>
-        <Text style={styles.title}>Sıra diğer oyuncuda</Text>
-        <Text style={styles.sub}>Aynı soru, yeni süre.</Text>
-
-        <View style={styles.badgeWrap}>
-          <PlayerBadge name={nextName} playerNumber={nextPlayer} active />
+        <View style={styles.swapBadge}>
+          <Ionicons name="swap-horizontal" size={54} color={Colors.primaryDark} />
         </View>
+        <Text style={styles.title}>Sıra değişti</Text>
+        <Text style={styles.sub}>Aynı final sorusu, yeni süre.</Text>
 
-        <View style={styles.info}>
-          <Text style={styles.infoText}>
-            {`İlk oyuncu bilemedi. Şimdi sıra ${nextName}'da.`}
-          </Text>
-          <Text style={styles.infoTextSmall}>
-            {'Telefonu ona uzat. Hazır olunca “Devam Et”e bas.'}
-          </Text>
+        <View style={styles.playerPanel}>
+          <Text style={styles.panelLabel}>Şimdi sıra</Text>
+          <PlayerBadge name={nextName} playerNumber={nextPlayer} active />
+          <Text style={styles.infoText}>İlk oyuncu doğru cevap veremedi.</Text>
         </View>
       </View>
 
-      <ActionButton label="Devam Et" variant="accent" fullWidth onPress={onContinue} />
+      <ActionButton label="Devam Et" variant="accent" fullWidth onPress={onContinue} icon="arrow-forward" />
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm },
-  emoji: { fontSize: 72 },
+  swapBadge: {
+    width: 132,
+    height: 132,
+    borderRadius: 40,
+    backgroundColor: Colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.md,
+    ...Shadow.lg,
+  },
   title: {
-    fontSize: Font.title,
-    fontWeight: '800',
+    fontSize: Font.title + 2,
+    fontWeight: '900',
     color: Colors.primaryDark,
     textAlign: 'center',
   },
-  sub: { color: Colors.muted, fontSize: Font.body, marginBottom: Spacing.lg },
-  badgeWrap: { marginBottom: Spacing.lg },
-  info: {
+  sub: { color: Colors.muted, fontSize: Font.body, fontWeight: '700', marginBottom: Spacing.lg },
+  playerPanel: {
     backgroundColor: Colors.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.md,
     padding: Spacing.lg,
     borderWidth: 1,
     borderColor: Colors.border,
-    gap: 6,
+    gap: Spacing.sm,
     alignItems: 'center',
+    width: '100%',
+    ...Shadow.md,
   },
-  infoText: {
-    fontSize: Font.body + 1,
-    color: Colors.text,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-  infoTextSmall: {
+  panelLabel: {
     fontSize: Font.small,
     color: Colors.muted,
+    textTransform: 'uppercase',
+    fontWeight: '900',
+  },
+  infoText: {
+    fontSize: Font.small,
+    color: Colors.muted,
+    fontWeight: '700',
     textAlign: 'center',
   },
 });

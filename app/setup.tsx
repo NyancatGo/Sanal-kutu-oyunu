@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import { ScreenContainer } from '@/components/ScreenContainer';
 import { ActionButton } from '@/components/ActionButton';
-import { Colors, Font, Radius, Spacing } from '@/constants/theme';
+import { ScreenContainer } from '@/components/ScreenContainer';
+import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 import {
   CategoryLabels,
@@ -34,7 +35,7 @@ export default function Setup() {
 
   const canStart = useMemo(() => {
     if (!player1.trim() || !player2.trim()) return false;
-    if (!/^\d{3,8}$/.test(secretCode)) return false;
+    if (!/^\d{4}$/.test(secretCode)) return false;
     return true;
   }, [player1, player2, secretCode]);
 
@@ -47,8 +48,8 @@ export default function Setup() {
       setError('Oyuncu adları boş olamaz.');
       return;
     }
-    if (!/^\d{3,8}$/.test(secretCode)) {
-      setError('Şifre 3–8 haneli sayı olmalı.');
+    if (!/^\d{4}$/.test(secretCode)) {
+      setError('Şifre tam 4 rakam olmalı.');
       return;
     }
     setError(null);
@@ -68,10 +69,22 @@ export default function Setup() {
 
   return (
     <ScreenContainer scroll>
-      <Text style={styles.title}>Oyun Kurulumu</Text>
-      <Text style={styles.sub}>Öğretmen alanı — oyunu ayarla ve başlat.</Text>
+      <View style={styles.header}>
+        <View style={styles.teacherMark}>
+          <Ionicons name="school-outline" size={22} color={Colors.primaryDark} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.title}>Oyun Kurulumu</Text>
+          <Text style={styles.sub}>Öğretmen paneli</Text>
+        </View>
+      </View>
 
-      <Section title="Oyuncular">
+      <View style={styles.ruleStrip}>
+        <Ionicons name="lock-closed-outline" size={18} color={Colors.primaryDark} />
+        <Text style={styles.ruleText}>Bu sürüm 4 haneli mekanik kilit ile oynanır.</Text>
+      </View>
+
+      <Section title="Oyuncular" icon="people-outline">
         <Field label="Oyuncu 1">
           <TextInput
             style={styles.input}
@@ -94,22 +107,22 @@ export default function Setup() {
         </Field>
       </Section>
 
-      <Section title="Şifre">
-        <Field label="Doğru şifre (3–8 rakam)">
+      <Section title="Şifre" icon="keypad-outline">
+        <Field label="Doğru şifre (4 rakam)">
           <TextInput
             style={[styles.input, styles.codeInput]}
             value={secretCode}
-            onChangeText={(v) => setSecretCode(v.replace(/\D/g, '').slice(0, 8))}
+            onChangeText={(v) => setSecretCode(v.replace(/\D/g, '').slice(0, 4))}
             placeholder="Örn: 2468"
             placeholderTextColor={Colors.muted}
             keyboardType="number-pad"
-            maxLength={8}
+            maxLength={4}
             secureTextEntry
           />
         </Field>
       </Section>
 
-      <Section title="Kategori">
+      <Section title="Kategori" icon="library-outline">
         <View style={styles.chipRow}>
           {CATEGORIES.map((c) => (
             <Chip
@@ -122,7 +135,7 @@ export default function Setup() {
         </View>
       </Section>
 
-      <Section title="Zorluk">
+      <Section title="Zorluk" icon="sparkles-outline">
         <View style={styles.chipRow}>
           {DIFFICULTIES.map((d) => (
             <Chip
@@ -135,7 +148,7 @@ export default function Setup() {
         </View>
       </Section>
 
-      <Section title="Süre">
+      <Section title="Süre" icon="timer-outline">
         <View style={styles.chipRow}>
           {TIME_OPTIONS.map((t) => (
             <Chip
@@ -157,12 +170,14 @@ export default function Setup() {
         fullWidth
         disabled={!canStart}
         onPress={onStart}
+        icon="play"
       />
       <View style={{ height: Spacing.sm }} />
       <ActionButton
         label="İptal"
-        variant="ghost"
+        variant="outline"
         fullWidth
+        icon="close"
         onPress={() => {
           dispatch({ type: 'LOCK_TEACHER' });
           router.replace('/');
@@ -172,10 +187,21 @@ export default function Setup() {
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: React.ComponentProps<typeof Ionicons>['name'];
+  children: React.ReactNode;
+}) {
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.sectionHeader}>
+        <Ionicons name={icon} size={18} color={Colors.primary} />
+        <Text style={styles.sectionTitle}>{title}</Text>
+      </View>
       {children}
     </View>
   );
@@ -214,19 +240,65 @@ function Chip({
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: Font.title, fontWeight: '800', color: Colors.primaryDark },
-  sub: { color: Colors.muted, marginTop: 4, marginBottom: Spacing.lg },
-  section: { marginBottom: Spacing.lg, gap: Spacing.sm },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    marginBottom: Spacing.lg,
+  },
+  teacherMark: {
+    width: 54,
+    height: 54,
+    borderRadius: 18,
+    backgroundColor: Colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Shadow.sm,
+  },
+  title: { fontSize: Font.title, fontWeight: '900', color: Colors.primaryDark },
+  sub: { color: Colors.muted, marginTop: 2, fontWeight: '700' },
+  ruleStrip: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    alignItems: 'center',
+    backgroundColor: Colors.cream,
+    borderRadius: Radius.md,
+    padding: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.accent,
+    marginBottom: Spacing.lg,
+  },
+  ruleText: {
+    flex: 1,
+    color: Colors.primaryDark,
+    fontWeight: '800',
+    lineHeight: Font.body * 1.35,
+  },
+  section: {
+    marginBottom: Spacing.lg,
+    gap: Spacing.sm,
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    padding: Spacing.md,
+    ...Shadow.sm,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
   sectionTitle: {
     fontSize: Font.body,
-    fontWeight: '700',
+    fontWeight: '900',
     color: Colors.primaryDark,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0,
   },
-  label: { fontSize: Font.small, color: Colors.muted, fontWeight: '600' },
+  label: { fontSize: Font.small, color: Colors.muted, fontWeight: '800' },
   input: {
-    backgroundColor: Colors.surface,
+    backgroundColor: '#F9FBFD',
     borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: Radius.md,
@@ -238,7 +310,7 @@ const styles = StyleSheet.create({
   codeInput: {
     fontSize: Font.heading,
     letterSpacing: 6,
-    fontWeight: '700',
+    fontWeight: '900',
     textAlign: 'center',
   },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
@@ -248,15 +320,15 @@ const styles = StyleSheet.create({
     borderRadius: Radius.pill,
     borderWidth: 2,
     borderColor: Colors.border,
-    backgroundColor: Colors.surface,
+    backgroundColor: '#F9FBFD',
   },
   chipSelected: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  chipText: { fontSize: Font.small + 1, fontWeight: '700', color: Colors.text },
+  chipText: { fontSize: Font.small + 1, fontWeight: '900', color: Colors.text },
   chipTextSelected: { color: '#fff' },
   error: {
     color: Colors.danger,
     textAlign: 'center',
-    fontWeight: '600',
+    fontWeight: '800',
     marginBottom: Spacing.sm,
   },
 });

@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { ScreenContainer } from '@/components/ScreenContainer';
 import { ActionButton } from '@/components/ActionButton';
 import { Celebration } from '@/components/Celebration';
-import { Colors, Font, Radius, Spacing } from '@/constants/theme';
+import { ScreenContainer } from '@/components/ScreenContainer';
+import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 
 export default function Result() {
@@ -26,8 +27,8 @@ export default function Result() {
   if (state.phase !== 'result' || !state.result) {
     return (
       <ScreenContainer>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ color: Colors.muted }}>Yönlendiriliyor…</Text>
+        <View style={styles.redirect}>
+          <Text style={{ color: Colors.muted }}>Yönlendiriliyor...</Text>
         </View>
       </ScreenContainer>
     );
@@ -41,14 +42,9 @@ export default function Result() {
       : null;
 
   const accentColor =
-    state.result === 'p1'
-      ? Colors.primary
-      : state.result === 'p2'
-      ? Colors.highlight
-      : Colors.muted;
+    state.result === 'p1' ? Colors.teal : state.result === 'p2' ? Colors.coral : Colors.muted;
 
   const title = winnerName ? `${winnerName} kazandı!` : 'Kazanan Yok';
-  const emoji = winnerName ? '🏆' : '🤝';
   const sub = winnerName
     ? 'Final sorusunu bilen oyuncu tur galibi.'
     : 'İki oyuncu da soruyu bilemedi. Tekrar dene!';
@@ -59,7 +55,7 @@ export default function Result() {
     <ScreenContainer scroll>
       <View style={styles.center}>
         <View style={[styles.trophy, { backgroundColor: accentColor }]}>
-          <Text style={styles.emoji}>{emoji}</Text>
+          <Ionicons name={hasWinner ? 'trophy' : 'hand-left-outline'} size={62} color="#fff" />
         </View>
         <Text style={[styles.title, { color: accentColor }]}>{title}</Text>
         <Text style={styles.sub}>{sub}</Text>
@@ -68,6 +64,7 @@ export default function Result() {
           <View style={styles.qBox}>
             <Text style={styles.qLabel}>Final sorusu</Text>
             <Text style={styles.qText}>{state.currentQuestion.question}</Text>
+            <View style={styles.answerDivider} />
             <Text style={styles.qAnswerLabel}>Cevap</Text>
             <Text style={styles.qAnswerText}>{state.currentQuestion.answer}</Text>
           </View>
@@ -76,9 +73,10 @@ export default function Result() {
       <Celebration active={hasWinner} />
 
       <ActionButton
-        label="Yeni Oyun (aynı ayar)"
+        label="Yeni Oyun"
         variant="primary"
         fullWidth
+        icon="reload"
         onPress={() => {
           dispatch({ type: 'NEW_ROUND' });
           router.replace('/code-entry');
@@ -89,6 +87,7 @@ export default function Result() {
         label="Ana Menü"
         variant="outline"
         fullWidth
+        icon="home-outline"
         onPress={() => {
           dispatch({ type: 'RESET_GAME' });
           router.replace('/');
@@ -99,6 +98,7 @@ export default function Result() {
 }
 
 const styles = StyleSheet.create({
+  redirect: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   center: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -106,49 +106,53 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.lg,
   },
   trophy: {
-    width: 128,
-    height: 128,
-    borderRadius: 64,
+    width: 132,
+    height: 132,
+    borderRadius: 42,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.md,
-    shadowColor: '#000',
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 6,
+    ...Shadow.lg,
   },
-  emoji: { fontSize: 72 },
-  title: { fontSize: Font.title + 2, fontWeight: '800', textAlign: 'center' },
-  sub: { color: Colors.muted, textAlign: 'center', marginBottom: Spacing.lg },
+  title: { fontSize: Font.title + 2, fontWeight: '900', textAlign: 'center' },
+  sub: {
+    color: Colors.muted,
+    textAlign: 'center',
+    marginBottom: Spacing.lg,
+    fontWeight: '700',
+    lineHeight: Font.body * 1.35,
+  },
   qBox: {
     backgroundColor: Colors.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.md,
     padding: Spacing.lg,
     borderWidth: 1,
     borderColor: Colors.border,
     width: '100%',
-    gap: 6,
+    gap: 7,
+    ...Shadow.md,
   },
   qLabel: {
     fontSize: Font.small,
     color: Colors.muted,
     textTransform: 'uppercase',
-    fontWeight: '700',
-    letterSpacing: 0.5,
+    fontWeight: '900',
   },
-  qText: { fontSize: Font.body + 1, color: Colors.text, fontWeight: '600' },
+  qText: { fontSize: Font.body + 1, color: Colors.text, fontWeight: '800', lineHeight: 24 },
+  answerDivider: {
+    height: 1,
+    backgroundColor: Colors.border,
+    marginVertical: Spacing.sm,
+  },
   qAnswerLabel: {
     fontSize: Font.small,
     color: Colors.muted,
     textTransform: 'uppercase',
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    marginTop: Spacing.sm,
+    fontWeight: '900',
   },
   qAnswerText: {
     fontSize: Font.body + 1,
     color: Colors.success,
-    fontWeight: '800',
+    fontWeight: '900',
   },
 });

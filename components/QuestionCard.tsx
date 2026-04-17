@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Colors, Font, Radius, Spacing } from '@/constants/theme';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 import {
   CategoryLabels,
   DifficultyLabels,
@@ -17,16 +18,17 @@ type Props = {
 export function QuestionCard({ category, difficulty, question }: Props) {
   return (
     <View style={styles.card}>
-      <View style={styles.tags}>
-        <View style={[styles.tag, styles.tagPrimary]}>
-          <Text style={[styles.tagText, { color: '#fff' }]}>
-            {CategoryLabels[category]}
-          </Text>
+      <View style={styles.header}>
+        <View style={styles.iconBox}>
+          <Ionicons name="help-buoy-outline" size={24} color={Colors.primaryDark} />
         </View>
-        <View style={[styles.tag, styles.tagAccent]}>
-          <Text style={[styles.tagText, { color: Colors.primaryDark }]}>
-            {DifficultyLabels[difficulty]}
-          </Text>
+        <View style={styles.tags}>
+          <View style={[styles.tag, styles.tagPrimary]}>
+            <Text style={[styles.tagText, { color: '#fff' }]}>{CategoryLabels[category]}</Text>
+          </View>
+          <View style={[styles.tag, styles.tagAccent]}>
+            <Text style={[styles.tagText, { color: Colors.ink }]}>{DifficultyLabels[difficulty]}</Text>
+          </View>
         </View>
       </View>
       <Text style={styles.question}>{question}</Text>
@@ -37,24 +39,38 @@ export function QuestionCard({ category, difficulty, question }: Props) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.surface,
-    borderRadius: Radius.xl,
+    borderRadius: Radius.md,
     padding: Spacing.lg,
     borderWidth: 1,
     borderColor: Colors.border,
     gap: Spacing.md,
+    ...Shadow.md,
   },
-  tags: { flexDirection: 'row', gap: Spacing.sm, flexWrap: 'wrap' },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  iconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: Radius.md,
+    backgroundColor: Colors.cream,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tags: { flexDirection: 'row', gap: Spacing.sm, flexWrap: 'wrap', flex: 1 },
   tag: {
     paddingHorizontal: Spacing.md,
-    paddingVertical: 6,
+    paddingVertical: 7,
     borderRadius: Radius.pill,
   },
   tagPrimary: { backgroundColor: Colors.primary },
   tagAccent: { backgroundColor: Colors.accent },
-  tagText: { fontSize: Font.small, fontWeight: '700' },
+  tagText: { fontSize: Font.small, fontWeight: '900' },
   question: {
     fontSize: Font.heading,
-    fontWeight: '700',
+    fontWeight: '900',
     color: Colors.text,
     lineHeight: Font.heading * 1.35,
   },

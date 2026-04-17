@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { ScreenContainer } from '@/components/ScreenContainer';
 import { PlayerBadge } from '@/components/PlayerBadge';
-import { Colors, Font, Spacing } from '@/constants/theme';
+import { ScreenContainer } from '@/components/ScreenContainer';
+import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 
 const REVEAL_MS = 1800;
@@ -33,13 +34,14 @@ export default function Reveal() {
   return (
     <ScreenContainer>
       <View style={styles.center}>
-        <View style={styles.checkBadge}>
-          <Text style={styles.checkEmoji}>✓</Text>
+        <View style={styles.successBadge}>
+          <Ionicons name="lock-open" size={64} color={Colors.surface} />
         </View>
         <Text style={styles.title}>Şifre Doğru!</Text>
-        <Text style={styles.sub}>Final sorusu yükleniyor…</Text>
+        <Text style={styles.sub}>Final sorusu hazırlanıyor.</Text>
 
-        <View style={styles.badgeWrap}>
+        <View style={styles.playerPanel}>
+          <Text style={styles.panelLabel}>Sıradaki oyuncu</Text>
           <PlayerBadge name={activeName} playerNumber={state.activePlayer} active />
         </View>
       </View>
@@ -49,26 +51,40 @@ export default function Reveal() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.md },
-  checkBadge: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+  successBadge: {
+    width: 148,
+    height: 148,
+    borderRadius: 44,
     backgroundColor: Colors.success,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.success,
-    shadowOpacity: 0.4,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 8,
+    borderWidth: 8,
+    borderColor: Colors.successSoft,
+    ...Shadow.lg,
   },
-  checkEmoji: { color: '#fff', fontSize: 80, fontWeight: '900', marginTop: -8 },
   title: {
     fontSize: Font.title + 4,
-    fontWeight: '800',
+    fontWeight: '900',
     color: Colors.success,
     marginTop: Spacing.md,
+    textAlign: 'center',
   },
-  sub: { color: Colors.muted, fontSize: Font.body },
-  badgeWrap: { marginTop: Spacing.lg },
+  sub: { color: Colors.muted, fontSize: Font.body, fontWeight: '700', textAlign: 'center' },
+  playerPanel: {
+    marginTop: Spacing.lg,
+    padding: Spacing.md,
+    borderRadius: Radius.md,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    alignItems: 'center',
+    gap: Spacing.sm,
+    ...Shadow.sm,
+  },
+  panelLabel: {
+    color: Colors.muted,
+    fontSize: Font.small,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+  },
 });
