@@ -1,5 +1,13 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import {
+  Animated,
+  Easing,
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
 import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
@@ -26,9 +34,21 @@ export function CombinationLock({
   status = 'idle',
   lockRemaining = 0,
 }: Props) {
+  const { width } = useWindowDimensions();
+  const isCompact = width < 380;
   const shake = useRef(new Animated.Value(0)).current;
   const successLift = useRef(new Animated.Value(0)).current;
   const pulse = useRef(new Animated.Value(0)).current;
+  const digitsRef = useRef(digits);
+  const onChangeRef = useRef(onChange);
+
+  useEffect(() => {
+    digitsRef.current = digits;
+  }, [digits]);
+
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
 
   useEffect(() => {
     if (status === 'error') {
@@ -78,11 +98,16 @@ export function CombinationLock({
     return () => loop.stop();
   }, [pulse, status]);
 
-  const setDigit = (index: number, value: number) => {
-    const next = [...digits];
+  const setDigit = useCallback((index: number, value: number) => {
+    const next = [...digitsRef.current];
     next[index] = value;
-    onChange(next);
-  };
+    onChangeRef.current(next);
+  }, []);
+
+  const wheelChangeHandlers = useMemo(
+    () => [0, 1, 2, 3].map((index) => (value: number) => setDigit(index, value)),
+    [setDigit],
+  );
 
   const translateX = shake.interpolate({
     inputRange: [-1, 0, 1],
@@ -115,10 +140,11 @@ export function CombinationLock({
 
   return (
     <Animated.View style={[styles.wrap, { transform: [{ translateX }] }]}>
-      <View style={styles.shackleSlot}>
+      <View style={[styles.shackleSlot, isCompact && styles.shackleSlotCompact]}>
         <Animated.View
           style={[
             styles.shackle,
+            isCompact && styles.shackleCompact,
             {
               borderColor: accent,
               transform: [{ translateY: shackleLift }, { rotate: shackleRotate }],
@@ -130,6 +156,7 @@ export function CombinationLock({
       <View
         style={[
           styles.body,
+          isCompact && styles.bodyCompact,
           status === 'success' && styles.bodySuccess,
           (status === 'error' || status === 'locked') && styles.bodyError,
         ]}
@@ -161,14 +188,15 @@ export function CombinationLock({
           </Text>
         </View>
 
-        <View style={styles.wheelsRow}>
+        <View style={[styles.wheelsRow, isCompact && styles.wheelsRowCompact]}>
           {digits.map((digit, index) => (
             <LockWheel
               key={index}
               value={digit}
               status={status}
               disabled={isLocked}
-              onChange={(value) => setDigit(index, value)}
+              compact={isCompact}
+              onChange={wheelChangeHandlers[index]}
             />
           ))}
         </View>
@@ -234,6 +262,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
+  shackleSlotCompact: {
+    height: 50,
+    width: 144,
+    marginBottom: -12,
+  },
   shackle: {
     width: 168,
     height: 120,
@@ -244,6 +277,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 84,
     borderTopRightRadius: 84,
     backgroundColor: 'transparent',
+  },
+  shackleCompact: {
+    width: 144,
+    height: 106,
+    borderTopWidth: 15,
+    borderLeftWidth: 15,
+    borderRightWidth: 15,
+    borderTopLeftRadius: 72,
+    borderTopRightRadius: 72,
   },
   body: {
     width: '100%',
@@ -256,6 +298,13 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.md,
     gap: Spacing.md,
     ...Shadow.lg,
+  },
+  bodyCompact: {
+    borderRadius: 22,
+    paddingHorizontal: 12,
+    paddingTop: Spacing.md,
+    paddingBottom: 12,
+    gap: 12,
   },
   bodySuccess: {
     borderColor: Colors.success,
@@ -304,6 +353,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     gap: Spacing.sm,
+  },
+  wheelsRowCompact: {
+    gap: 6,
   },
   codeRail: {
     flexDirection: 'row',
