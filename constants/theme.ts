@@ -40,6 +40,8 @@ export const Spacing = {
   xl: 32,
 };
 
+export const LOCK_MS = 5000;
+
 export const Font = {
   title: 32,
   heading: 24,

@@ -19,7 +19,11 @@ export default function Result() {
 
   useEffect(() => {
     if (state.phase !== 'result' || !state.result) {
-      router.replace('/');
+      if (state.phase === 'player-select') router.replace('/player-select');
+      else if (state.phase === 'code') router.replace('/code-entry');
+      else if (state.phase === 'reveal') router.replace('/reveal');
+      else if (state.phase === 'question') router.replace('/question');
+      else router.replace('/');
       return;
     }
     if (state.result === 'p1' || state.result === 'p2') {
@@ -219,7 +223,7 @@ export default function Result() {
         icon="arrow-forward-circle"
         onPress={() => {
           dispatch({ type: 'NEW_ROUND' });
-          router.replace('/code-entry');
+          router.replace('/player-select');
         }}
       />
       <View style={{ height: Spacing.sm }} />

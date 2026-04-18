@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Easing, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { ActionButton } from '@/components/ActionButton';
@@ -117,7 +117,7 @@ export default function Setup() {
         timeLimit,
       },
     });
-    router.replace('/code-entry');
+    router.replace('/player-select');
   };
 
   const codeDigits = secretCode.padEnd(4, ' ').split('').slice(0, 4);

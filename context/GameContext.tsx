@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useMemo } from 'react';
 import type { GameAction, GameState } from '@/types/game';
-import { INITIAL_STATE, newRoundState } from '@/utils/resetGame';
+import { EMPTY_COOLDOWN, INITIAL_STATE, newRoundState } from '@/utils/resetGame';
 
 function reducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
@@ -14,17 +14,47 @@ function reducer(state: GameState, action: GameAction): GameState {
       return {
         ...INITIAL_STATE,
         config: action.payload,
-        phase: 'code',
+        phase: 'player-select',
         activePlayer: 1,
+        playerCooldownUntil: { ...EMPTY_COOLDOWN },
       };
 
-    case 'START_CODE_ENTRY':
-      return { ...state, phase: 'code', lastCodeError: null };
-
-    case 'CODE_FAIL':
+    case 'SELECT_PLAYER_FOR_CODE': {
+      if (state.phase !== 'player-select') return state;
+      if (state.currentQuestion !== null) return state;
+      const cooldownUntil = state.playerCooldownUntil[action.payload.playerId] ?? 0;
+      if (action.payload.now < cooldownUntil) return state;
       return {
         ...state,
-        lockUntil: action.payload.lockUntil,
+        phase: 'code',
+        activePlayer: action.payload.playerId,
+        lastCodeError: null,
+      };
+    }
+
+    case 'SELECT_PLAYER_FOR_QUESTION': {
+      if (state.phase !== 'player-select') return state;
+      if (!state.currentQuestion || state.failedQuestionPlayer === null) return state;
+      if (state.failedQuestionPlayer === action.payload.playerId) return state;
+      const cooldownUntil = state.playerCooldownUntil[action.payload.playerId] ?? 0;
+      if (action.payload.now < cooldownUntil) return state;
+      return {
+        ...state,
+        phase: 'question',
+        activePlayer: action.payload.playerId,
+      };
+    }
+
+    case 'CODE_FAIL':
+      if (state.phase !== 'code') return state;
+      if (action.payload.playerId !== state.activePlayer) return state;
+      return {
+        ...state,
+        phase: 'player-select',
+        playerCooldownUntil: {
+          ...state.playerCooldownUntil,
+          [action.payload.playerId]: action.payload.cooldownUntil,
+        },
         lastCodeError: action.payload.message,
       };
 
@@ -59,24 +89,21 @@ function reducer(state: GameState, action: GameAction): GameState {
       };
     }
 
-    case 'ANSWER_WRONG_OR_TIMEOUT':
+    case 'ANSWER_WRONG_OR_TIMEOUT': {
       if (state.phase !== 'question') return state;
-      if (state.firstAttempterFailed) {
+      if (state.failedQuestionPlayer !== null) {
         return { ...state, phase: 'result', result: 'none' };
       }
       return {
         ...state,
-        phase: 'handoff',
-        firstAttempterFailed: true,
+        phase: 'player-select',
+        failedQuestionPlayer: state.activePlayer,
+        playerCooldownUntil: {
+          ...state.playerCooldownUntil,
+          [state.activePlayer]: action.payload.cooldownUntil,
+        },
       };
-
-    case 'CONTINUE_HANDOFF':
-      if (state.phase !== 'handoff') return state;
-      return {
-        ...state,
-        phase: 'question',
-        activePlayer: state.activePlayer === 1 ? 2 : 1,
-      };
+    }
 
     case 'NEW_ROUND':
       return newRoundState(state);

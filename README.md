@@ -49,10 +49,10 @@ npx expo start --tunnel
 app/
   index.tsx           Ana ekran
   setup.tsx           Öğretmen kurulum
+  player-select.tsx   Oyuncu seçim ekranı
   code-entry.tsx      4 haneli mekanik kilit
   reveal.tsx          Şifre doğru geçişi
   question.tsx        Final soru + timer
-  handoff.tsx         Hak geçişi
   result.tsx          Sonuç ekranı
 components/
   CombinationLock.tsx Mekanik kilit gövdesi

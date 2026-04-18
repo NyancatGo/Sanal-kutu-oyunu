@@ -9,7 +9,7 @@ import { QuestionCard } from '@/components/QuestionCard';
 import { ScoreStrip } from '@/components/ScoreStrip';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { Timer } from '@/components/Timer';
-import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
+import { Colors, Font, LOCK_MS, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 import { useTimer } from '@/hooks/useTimer';
 
@@ -20,7 +20,10 @@ export default function QuestionScreen() {
 
   const handleTimeout = useCallback(() => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-    dispatch({ type: 'ANSWER_WRONG_OR_TIMEOUT' });
+    dispatch({
+      type: 'ANSWER_WRONG_OR_TIMEOUT',
+      payload: { cooldownUntil: Date.now() + LOCK_MS },
+    });
   }, [dispatch]);
 
   const { remaining } = useTimer({
@@ -83,9 +86,9 @@ export default function QuestionScreen() {
 
   useEffect(() => {
     if (state.phase === 'setup') router.replace('/');
+    else if (state.phase === 'player-select') router.replace('/player-select');
     else if (state.phase === 'code') router.replace('/code-entry');
     else if (state.phase === 'reveal') router.replace('/reveal');
-    else if (state.phase === 'handoff') router.replace('/handoff');
     else if (state.phase === 'result') router.replace('/result');
   }, [state.phase]);
 
@@ -105,7 +108,10 @@ export default function QuestionScreen() {
   };
   const onWrong = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-    dispatch({ type: 'ANSWER_WRONG_OR_TIMEOUT' });
+    dispatch({
+      type: 'ANSWER_WRONG_OR_TIMEOUT',
+      payload: { cooldownUntil: Date.now() + LOCK_MS },
+    });
   };
   const { answer, teacherNote } = state.currentQuestion;
 
@@ -130,8 +136,9 @@ export default function QuestionScreen() {
     outputRange: [14, 0],
   });
 
-  const attemptLabel = state.firstAttempterFailed ? 'İkinci Deneme' : 'İlk Deneme';
-  const attemptColor = state.firstAttempterFailed ? Colors.coral : Colors.teal;
+  const isSecondAttempt = state.failedQuestionPlayer !== null;
+  const attemptLabel = isSecondAttempt ? 'İkinci Deneme' : 'İlk Deneme';
+  const attemptColor = isSecondAttempt ? Colors.coral : Colors.teal;
 
   return (
     <ScreenContainer scroll>
@@ -147,7 +154,7 @@ export default function QuestionScreen() {
       <View style={styles.attemptRow}>
         <View style={[styles.attemptPill, { borderColor: attemptColor }]}>
           <Ionicons
-            name={state.firstAttempterFailed ? 'refresh' : 'flash'}
+            name={isSecondAttempt ? 'refresh' : 'flash'}
             size={12}
             color={attemptColor}
           />

@@ -26,8 +26,10 @@ export default function Reveal() {
   useEffect(() => {
     if (state.phase !== 'reveal') {
       if (state.phase === 'setup') router.replace('/');
+      else if (state.phase === 'player-select') router.replace('/player-select');
       else if (state.phase === 'code') router.replace('/code-entry');
       else if (state.phase === 'question') router.replace('/question');
+      else if (state.phase === 'result') router.replace('/result');
       return;
     }
 

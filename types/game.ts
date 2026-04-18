@@ -2,10 +2,10 @@ import type { Category, Difficulty, Question } from './question';
 
 export type Phase =
   | 'setup'
+  | 'player-select'
   | 'code'
   | 'reveal'
   | 'question'
-  | 'handoff'
   | 'result';
 
 export type PlayerId = 1 | 2;
@@ -23,14 +23,16 @@ export type GameConfig = {
 
 export type Scores = { p1: number; p2: number };
 
+export type PlayerCooldownMap = Record<PlayerId, number>;
+
 export type GameState = {
   phase: Phase;
   config: GameConfig;
   activePlayer: PlayerId;
-  firstAttempterFailed: boolean;
+  failedQuestionPlayer: PlayerId | null;
   currentQuestion: Question | null;
   usedQuestionIds: string[];
-  lockUntil: number;
+  playerCooldownUntil: PlayerCooldownMap;
   lastCodeError: string | null;
   result: GameResult | null;
   teacherUnlocked: boolean;
@@ -42,13 +44,16 @@ export type GameAction =
   | { type: 'UNLOCK_TEACHER' }
   | { type: 'LOCK_TEACHER' }
   | { type: 'SETUP_GAME'; payload: GameConfig }
-  | { type: 'START_CODE_ENTRY' }
-  | { type: 'CODE_FAIL'; payload: { lockUntil: number; message: string } }
+  | { type: 'SELECT_PLAYER_FOR_CODE'; payload: { playerId: PlayerId; now: number } }
+  | { type: 'SELECT_PLAYER_FOR_QUESTION'; payload: { playerId: PlayerId; now: number } }
+  | {
+      type: 'CODE_FAIL';
+      payload: { playerId: PlayerId; cooldownUntil: number; message: string };
+    }
   | { type: 'CLEAR_CODE_ERROR' }
   | { type: 'CODE_SUCCESS'; payload: { question: Question } }
   | { type: 'START_QUESTION' }
   | { type: 'ANSWER_CORRECT' }
-  | { type: 'ANSWER_WRONG_OR_TIMEOUT' }
-  | { type: 'CONTINUE_HANDOFF' }
+  | { type: 'ANSWER_WRONG_OR_TIMEOUT'; payload: { cooldownUntil: number } }
   | { type: 'NEW_ROUND' }
   | { type: 'RESET_GAME' };

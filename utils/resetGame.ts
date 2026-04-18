@@ -1,4 +1,4 @@
-import type { GameConfig, GameState } from '@/types/game';
+import type { GameConfig, GameState, PlayerCooldownMap } from '@/types/game';
 
 export const DEFAULT_CONFIG: GameConfig = {
   player1: '',
@@ -9,14 +9,16 @@ export const DEFAULT_CONFIG: GameConfig = {
   timeLimit: 30,
 };
 
+export const EMPTY_COOLDOWN: PlayerCooldownMap = { 1: 0, 2: 0 };
+
 export const INITIAL_STATE: GameState = {
   phase: 'setup',
   config: DEFAULT_CONFIG,
   activePlayer: 1,
-  firstAttempterFailed: false,
+  failedQuestionPlayer: null,
   currentQuestion: null,
   usedQuestionIds: [],
-  lockUntil: 0,
+  playerCooldownUntil: { ...EMPTY_COOLDOWN },
   lastCodeError: null,
   result: null,
   teacherUnlocked: false,
@@ -28,7 +30,7 @@ export function newRoundState(prev: GameState): GameState {
   return {
     ...INITIAL_STATE,
     config: prev.config,
-    phase: 'code',
+    phase: 'player-select',
     usedQuestionIds: prev.usedQuestionIds,
     scores: prev.scores,
     roundNumber: prev.roundNumber + 1,
