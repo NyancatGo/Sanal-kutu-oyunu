@@ -41,6 +41,7 @@ export const Spacing = {
 };
 
 export const LOCK_MS = 5000;
+export const CODE_TIME_LIMIT = 20;
 
 export const Font = {
   title: 32,

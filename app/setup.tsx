@@ -41,6 +41,7 @@ export default function Setup() {
   const [timeLimit, setTimeLimit] = useState<number>(state.config.timeLimit || 30);
   const [error, setError] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
+  const codeInputRefs = useRef<(TextInput | null)[]>([]);
 
   // Digit box entrance animations
   const digitAnims = useRef([
@@ -121,6 +122,35 @@ export default function Setup() {
   };
 
   const codeDigits = secretCode.padEnd(4, ' ').split('').slice(0, 4);
+  const codeDigitCount = secretCode.replace(/\D/g, '').length;
+  const codeReady = /^\d{4}$/.test(secretCode);
+
+  const updateCodeDigit = (index: number, value: string) => {
+    const digitsOnly = value.replace(/\D/g, '');
+    const nextDigits = codeDigits.slice();
+
+    if (!digitsOnly) {
+      nextDigits[index] = ' ';
+      setSecretCode(nextDigits.join('').replace(/\s+$/g, ''));
+      return;
+    }
+
+    digitsOnly
+      .slice(0, 4 - index)
+      .split('')
+      .forEach((digit, offset) => {
+        nextDigits[index + offset] = digit;
+      });
+
+    setSecretCode(nextDigits.join('').replace(/\s+$/g, ''));
+
+    const nextIndex = index + digitsOnly.length;
+    if (nextIndex < 4) {
+      codeInputRefs.current[nextIndex]?.focus();
+    } else {
+      codeInputRefs.current[3]?.blur();
+    }
+  };
 
   return (
     <ScreenContainer scroll>
@@ -164,54 +194,64 @@ export default function Setup() {
 
       <Section title="Şifre" icon="keypad-outline" accent={Colors.accent}>
         <View style={styles.codeBlock}>
-          <View style={styles.digitRow}>
-            {codeDigits.map((d, i) => {
-              const filled = d.trim() !== '';
-              const scale = digitAnims[i]?.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.4, 1],
-              }) ?? 1;
-              return (
-                <Animated.View
-                  key={i}
-                  style={[
-                    styles.digitBox,
-                    filled && styles.digitBoxFilled,
-                    { transform: [{ scale }], opacity: digitAnims[i] ?? 1 },
-                  ]}
-                >
-                  <Text style={[styles.digitText, filled && styles.digitTextFilled]}>
-                    {filled ? (showCode ? d : '•') : '–'}
-                  </Text>
-                </Animated.View>
-              );
-            })}
-          </View>
-          <View style={styles.codeInputRow}>
-            <TextInput
-              style={[styles.input, styles.codeInput]}
-              value={secretCode}
-              onChangeText={(v) => setSecretCode(v.replace(/\D/g, '').slice(0, 4))}
-              placeholder="4 rakam gir"
-              placeholderTextColor={Colors.muted}
-              keyboardType="number-pad"
-              maxLength={4}
-            />
+          <View style={styles.codeEntryRow}>
+            <View style={styles.digitRow}>
+              {codeDigits.map((d, i) => {
+                const filled = d.trim() !== '';
+                const scale = digitAnims[i]?.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.4, 1],
+                }) ?? 1;
+                return (
+                  <Animated.View
+                    key={i}
+                    style={[
+                      styles.digitBox,
+                      filled && styles.digitBoxFilled,
+                      { transform: [{ scale }], opacity: digitAnims[i] ?? 1 },
+                    ]}
+                  >
+                    <TextInput
+                      ref={(ref) => {
+                        codeInputRefs.current[i] = ref;
+                      }}
+                      style={[styles.digitInput, filled && styles.digitInputFilled]}
+                      value={filled ? d : ''}
+                      onChangeText={(value) => updateCodeDigit(i, value)}
+                      onKeyPress={({ nativeEvent }) => {
+                        if (nativeEvent.key === 'Backspace' && !filled && i > 0) {
+                          codeInputRefs.current[i - 1]?.focus();
+                        }
+                      }}
+                      placeholder="–"
+                      placeholderTextColor={Colors.muted}
+                      keyboardType="number-pad"
+                      inputMode="numeric"
+                      secureTextEntry={filled && !showCode}
+                      selectTextOnFocus
+                    />
+                  </Animated.View>
+                );
+              })}
+            </View>
             <Pressable
-              onPress={() => setShowCode(!showCode)}
-              style={styles.eyeButton}
+              onPress={() => setShowCode((visible) => !visible)}
+              style={({ pressed }) => [
+                styles.eyeButton,
+                pressed && { opacity: 0.75 },
+              ]}
             >
               <Ionicons
                 name={showCode ? 'eye-off-outline' : 'eye-outline'}
-                size={20}
+                size={22}
                 color={Colors.muted}
               />
             </Pressable>
           </View>
           <Text style={styles.codeHint}>
-            {secretCode.length === 4
+            {codeReady
               ? '✓ Şifre hazır'
-              : `${4 - secretCode.length} rakam daha`}
+              : `${4 - codeDigitCount} rakam daha`}
           </Text>
         </View>
       </Section>
@@ -444,6 +484,13 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     alignItems: 'center',
   },
+  codeEntryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    width: '100%',
+  },
   digitRow: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -464,30 +511,22 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.ink,
     ...Shadow.sm,
   },
-  digitText: {
+  digitInput: {
+    width: '100%',
+    height: '100%',
     fontSize: Font.heading + 4,
     fontWeight: '900',
     color: Colors.muted,
     lineHeight: Font.heading + 8,
+    textAlign: 'center',
+    padding: 0,
   },
-  digitTextFilled: {
+  digitInputFilled: {
     color: Colors.accent,
   },
-  codeInputRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    width: '100%',
-  },
-  codeInput: {
-    flex: 1,
-    fontSize: Font.heading,
-    letterSpacing: 10,
-    fontWeight: '900',
-    textAlign: 'center',
-  },
   eyeButton: {
-    width: 48,
-    height: 48,
+    width: 52,
+    height: 62,
     borderRadius: Radius.md,
     borderWidth: 1,
     borderColor: Colors.border,

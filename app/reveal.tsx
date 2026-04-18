@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Modal, StyleSheet, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { ActionButton } from '@/components/ActionButton';
 import { PlayerBadge } from '@/components/PlayerBadge';
 import { ScoreStrip } from '@/components/ScoreStrip';
 import { ScreenContainer } from '@/components/ScreenContainer';
@@ -13,6 +14,7 @@ const REVEAL_MS = 2200;
 
 export default function Reveal() {
   const { state, dispatch } = useGame();
+  const [confirmVisible, setConfirmVisible] = useState(false);
   const shackleLift = useRef(new Animated.Value(0)).current;
   const bodyGlow = useRef(new Animated.Value(0)).current;
   const titleAnim = useRef(new Animated.Value(0)).current;
@@ -25,6 +27,7 @@ export default function Reveal() {
 
   useEffect(() => {
     if (state.phase !== 'reveal') {
+      setConfirmVisible(false);
       if (state.phase === 'setup') router.replace('/');
       else if (state.phase === 'player-select') router.replace('/player-select');
       else if (state.phase === 'code') router.replace('/code-entry');
@@ -33,6 +36,7 @@ export default function Reveal() {
       return;
     }
 
+    setConfirmVisible(false);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
       () => {},
     );
@@ -73,12 +77,17 @@ export default function Reveal() {
     ).start();
 
     const t = setTimeout(() => {
-      dispatch({ type: 'START_QUESTION' });
-      router.replace('/question');
+      setConfirmVisible(true);
     }, REVEAL_MS);
 
     return () => clearTimeout(t);
-  }, [bodyGlow, digitAnims, dispatch, shackleLift, state.phase, titleAnim]);
+  }, [bodyGlow, digitAnims, shackleLift, state.phase, titleAnim]);
+
+  const startQuestion = () => {
+    setConfirmVisible(false);
+    dispatch({ type: 'START_QUESTION' });
+    router.replace('/question');
+  };
 
   const activeName =
     state.activePlayer === 1 ? state.config.player1 : state.config.player2;
@@ -163,7 +172,7 @@ export default function Reveal() {
             <Text style={styles.pillText}>Şifre Doğru</Text>
           </View>
           <Text style={styles.title}>Kilit Açıldı</Text>
-          <Text style={styles.sub}>Final sorusu hazırlanıyor…</Text>
+          <Text style={styles.sub}>Final sorusu için onay bekleniyor.</Text>
         </Animated.View>
 
         <View style={styles.digitRow}>
@@ -200,6 +209,33 @@ export default function Reveal() {
           />
         </View>
       </View>
+
+      <Modal
+        visible={confirmVisible && state.phase === 'reveal'}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {}}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.confirmCard}>
+            <View style={styles.confirmIcon}>
+              <Ionicons name="help-circle" size={36} color={Colors.primaryDark} />
+            </View>
+            <Text style={styles.confirmTitle}>Soruya Geçilsin mi?</Text>
+            <Text style={styles.confirmText}>
+              {activeName || `Oyuncu ${state.activePlayer}`} hazırsa final sorusu
+              şimdi ekrana gelsin.
+            </Text>
+            <ActionButton
+              label="Soruyu Başlat"
+              variant="primary"
+              fullWidth
+              icon="arrow-forward-circle"
+              onPress={startQuestion}
+            />
+          </View>
+        </View>
+      </Modal>
     </ScreenContainer>
   );
 }
@@ -311,5 +347,46 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: Colors.overlay,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: Spacing.lg,
+  },
+  confirmCard: {
+    width: '100%',
+    maxWidth: 420,
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.lg,
+    padding: Spacing.lg,
+    alignItems: 'center',
+    gap: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    ...Shadow.lg,
+  },
+  confirmIcon: {
+    width: 66,
+    height: 66,
+    borderRadius: 22,
+    backgroundColor: Colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Shadow.sm,
+  },
+  confirmTitle: {
+    fontSize: Font.heading,
+    color: Colors.primaryDark,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
+  confirmText: {
+    color: Colors.muted,
+    fontSize: Font.body,
+    fontWeight: '700',
+    lineHeight: Font.body * 1.4,
+    textAlign: 'center',
   },
 });

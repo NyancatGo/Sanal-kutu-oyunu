@@ -1,12 +1,24 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Animated, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useRef } from 'react';
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
 import { Colors, Font, Radius, Shadow } from '@/constants/theme';
 
 const ITEM_H = 44;
-const VISIBLE_HALF = 2; // 2 cells above + current + 2 below = 5 visible
-const OFFSETS = [-3, -2, -1, 0, 1, 2, 3];
+const VISIBLE_HALF = 2; // 5 cells visible
+const REEL_H = (VISIBLE_HALF * 2 + 1) * ITEM_H;
+const REPEATS = 30;
+const TOTAL_ITEMS = 10 * REPEATS;
+const CENTER_BASE = Math.floor(REPEATS / 2) * 10; // 150 — start index for digit 0 at center
+const RECENTER_THRESHOLD = 80;
 
 type Status = 'idle' | 'locked' | 'error' | 'success';
 
@@ -22,86 +34,74 @@ function mod10(n: number) {
 }
 
 export function LockWheel({ value, disabled, status = 'idle', onChange }: Props) {
-  const drag = useRef(new Animated.Value(0)).current;
-  const lastStepRef = useRef(0);
-  const committingRef = useRef(false);
+  const scrollRef = useRef<ScrollView>(null);
+  const currentDigitRef = useRef(value);
+  const suppressEventRef = useRef(false);
+  const initialOffset = (CENTER_BASE + value) * ITEM_H;
 
-  // Reset the strip position whenever `value` prop changes externally
-  // (e.g. after commit snaps back, we want drag=0 with new value shown).
+  // Ensure position matches `value` after mount on all platforms (contentOffset
+  // prop alone is flaky on Android).
   useEffect(() => {
-    drag.stopAnimation();
-    drag.setValue(0);
-    committingRef.current = false;
-  }, [drag, value]);
+    suppressEventRef.current = true;
+    scrollRef.current?.scrollTo({
+      y: (CENTER_BASE + value) * ITEM_H,
+      animated: false,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const commit = useCallback(
-    (steps: number) => {
-      if (committingRef.current) return;
-      if (steps === 0) {
-        Animated.spring(drag, {
-          toValue: 0,
-          tension: 220,
-          friction: 22,
-          useNativeDriver: true,
-        }).start();
+  // Sync scroll position when the parent changes `value` externally (e.g. reset).
+  useEffect(() => {
+    if (currentDigitRef.current === value) return;
+    currentDigitRef.current = value;
+    suppressEventRef.current = true;
+    scrollRef.current?.scrollTo({
+      y: (CENTER_BASE + value) * ITEM_H,
+      animated: false,
+    });
+  }, [value]);
+
+  const handleMomentumEnd = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (suppressEventRef.current) {
+        suppressEventRef.current = false;
         return;
       }
-      committingRef.current = true;
-      const target = -steps * ITEM_H;
-      Animated.timing(drag, {
-        toValue: target,
-        duration: 140,
-        useNativeDriver: true,
-      }).start(({ finished }) => {
-        if (finished) {
-          // Snap back to zero position BEFORE propagating the new value,
-          // so the next render uses drag=0 with the new value and there's
-          // no single-frame "future-value" flash in the window.
-          drag.setValue(0);
-          onChange(mod10(value + steps));
-        } else {
-          committingRef.current = false;
-        }
-      });
-    },
-    [drag, onChange, value],
-  );
+      const y = e.nativeEvent.contentOffset.y;
+      const idx = Math.round(y / ITEM_H);
+      const digit = mod10(idx);
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => !disabled,
-        onMoveShouldSetPanResponder: (_, g) =>
-          !disabled && Math.abs(g.dy) > 4 && Math.abs(g.dy) > Math.abs(g.dx),
-        onPanResponderGrant: () => {
-          lastStepRef.current = 0;
-          drag.stopAnimation();
-          drag.setValue(0);
-        },
-        onPanResponderMove: (_, g) => {
-          if (committingRef.current) return;
-          drag.setValue(g.dy);
-          const steps = Math.round(-g.dy / ITEM_H);
-          if (steps !== lastStepRef.current) {
-            lastStepRef.current = steps;
-            Haptics.selectionAsync().catch(() => {});
-          }
-        },
-        onPanResponderRelease: (_, g) => {
-          commit(Math.round(-g.dy / ITEM_H));
-        },
-        onPanResponderTerminate: () => commit(0),
-      }),
-    [commit, disabled, drag],
+      if (digit !== currentDigitRef.current) {
+        currentDigitRef.current = digit;
+        Haptics.selectionAsync().catch(() => {});
+        onChange(digit);
+      }
+
+      // Re-center silently when drifting toward edges to avoid running
+      // out of items on long scroll sessions.
+      const centerIdx = CENTER_BASE + digit;
+      if (Math.abs(idx - centerIdx) > RECENTER_THRESHOLD) {
+        suppressEventRef.current = true;
+        scrollRef.current?.scrollTo({
+          y: centerIdx * ITEM_H,
+          animated: false,
+        });
+      }
+    },
+    [onChange],
   );
 
   const step = useCallback(
-    (direction: 1 | -1) => {
-      if (disabled || committingRef.current) return;
+    (dir: 1 | -1) => {
+      if (disabled) return;
       Haptics.selectionAsync().catch(() => {});
-      commit(direction);
+      const nextDigit = mod10(currentDigitRef.current + dir);
+      currentDigitRef.current = nextDigit;
+      const targetY = (CENTER_BASE + nextDigit) * ITEM_H;
+      scrollRef.current?.scrollTo({ y: targetY, animated: true });
+      onChange(nextDigit);
     },
-    [commit, disabled],
+    [disabled, onChange],
   );
 
   const isError = status === 'error';
@@ -130,8 +130,38 @@ export function LockWheel({ value, disabled, status = 'idle', onChange }: Props)
         />
       </Pressable>
 
-      <View style={styles.reelWrap} {...panResponder.panHandlers}>
-        <View style={styles.window} pointerEvents="none">
+      <View style={styles.reelWrap}>
+        <ScrollView
+          ref={scrollRef}
+          showsVerticalScrollIndicator={false}
+          snapToInterval={ITEM_H}
+          snapToAlignment="start"
+          decelerationRate="fast"
+          bounces={false}
+          overScrollMode="never"
+          scrollEnabled={!disabled}
+          contentOffset={{ x: 0, y: initialOffset }}
+          contentContainerStyle={styles.scrollContent}
+          onMomentumScrollEnd={handleMomentumEnd}
+          removeClippedSubviews
+          nestedScrollEnabled
+        >
+          {Array.from({ length: TOTAL_ITEMS }).map((_, i) => (
+            <View key={i} style={styles.cell}>
+              <Text
+                style={[
+                  styles.digit,
+                  isError && styles.digitError,
+                  isSuccess && styles.digitSuccess,
+                ]}
+              >
+                {mod10(i)}
+              </Text>
+            </View>
+          ))}
+        </ScrollView>
+
+        <View pointerEvents="none" style={styles.window}>
           <View
             style={[
               styles.windowInner,
@@ -139,33 +169,6 @@ export function LockWheel({ value, disabled, status = 'idle', onChange }: Props)
               isSuccess && styles.windowSuccess,
             ]}
           />
-        </View>
-
-        <View style={styles.strip} pointerEvents="none">
-          {OFFSETS.map((off) => {
-            const digit = mod10(value + off);
-            const translateY = drag.interpolate({
-              inputRange: [-1, 1],
-              outputRange: [-1 + off * ITEM_H, 1 + off * ITEM_H],
-              extrapolate: 'extend',
-            });
-            return (
-              <Animated.View
-                key={off}
-                style={[styles.cell, { transform: [{ translateY }] }]}
-              >
-                <Text
-                  style={[
-                    styles.digit,
-                    isError && styles.digitError,
-                    isSuccess && styles.digitSuccess,
-                  ]}
-                >
-                  {digit}
-                </Text>
-              </Animated.View>
-            );
-          })}
         </View>
 
         <View pointerEvents="none" style={styles.fadeTop} />
@@ -188,8 +191,6 @@ export function LockWheel({ value, disabled, status = 'idle', onChange }: Props)
     </View>
   );
 }
-
-const REEL_H = (VISIBLE_HALF * 2 + 1) * ITEM_H; // 5 cells visible
 
 const styles = StyleSheet.create({
   wheel: {
@@ -222,24 +223,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: REEL_H,
     overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  strip: {
-    position: 'absolute',
-    top: '50%',
-    left: 0,
-    right: 0,
-    height: ITEM_H,
-    marginTop: -ITEM_H / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
+  scrollContent: {
+    paddingTop: VISIBLE_HALF * ITEM_H,
+    paddingBottom: VISIBLE_HALF * ITEM_H,
   },
   cell: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
     height: ITEM_H,
     alignItems: 'center',
     justifyContent: 'center',
