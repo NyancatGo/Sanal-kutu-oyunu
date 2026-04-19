@@ -26,6 +26,36 @@ Expo Go ile QR kodu okut. Bağlantı sorunu olursa:
 npx expo start --tunnel
 ```
 
+## Build Alma
+
+Web build almak için:
+
+```bash
+npm run build:web
+```
+
+Çıktı `dist/` klasörüne yazılır.
+
+Android APK almak için önce Expo hesabına giriş yap:
+
+```bash
+npx eas login
+npm run build:android
+```
+
+Bu komut `eas.json` içindeki `preview` profilini kullanır ve dahili dağıtım için APK üretir. Mağaza/production build için:
+
+```bash
+npm run build:android:production
+npm run build:ios
+```
+
+Android ve iOS production build'i birlikte almak için:
+
+```bash
+npm run build:all
+```
+
 ## Öğretmen Kontrolleri
 
 - Ana ekrandaki kurulum girişi basılı tutma ile açılır.
@@ -72,8 +102,8 @@ constants/
 
 ```bash
 npm run lint
-npx tsc --noEmit
-npx expo export --platform web
+npm run typecheck
+npm run build:web
 ```
 
 ## Yol Haritası

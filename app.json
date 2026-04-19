@@ -20,7 +20,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.nyancatt.sifrekutusu"
+      "package": "com.nyancatt.sifrekutusu2"
     },
     "web": {
       "output": "static",
