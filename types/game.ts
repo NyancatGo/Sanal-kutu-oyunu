@@ -2,58 +2,91 @@ import type { Category, Difficulty, Question } from './question';
 
 export type Phase =
   | 'setup'
-  | 'player-select'
-  | 'code'
-  | 'reveal'
+  | 'starter-selection'
+  | 'ready'
   | 'question'
+  | 'digit-reveal'
+  | 'code-entry'
+  | 'code-handoff'
+  | 'final-question'
   | 'result';
 
-export type PlayerId = 1 | 2;
+export type GroupId = 1 | 2;
+export type PlayerId = GroupId;
 
-export type GameResult = 'p1' | 'p2' | 'none';
+export type GameResult = 'g1' | 'g2' | 'none';
 
 export type GameConfig = {
-  player1: string;
-  player2: string;
-  secretCode: string;
-  category: Category;
-  difficulty: Difficulty;
-  timeLimit: number;
+  group1: string;
+  group2: string;
+  digitCategory: Category;
+  digitDifficulty: Difficulty;
+  digitTimeLimit: number;
+  finalCategory: Category;
+  finalDifficulty: Difficulty;
+  finalTimeLimit: number;
 };
 
-export type Scores = { p1: number; p2: number };
+export type ReadyMode = 'normal' | 'final';
+export type SecretCodeMap = Record<GroupId, string>;
+export type RevealedDigitsMap = Record<GroupId, string[]>;
+export type DigitReveal = {
+  groupId: GroupId;
+  digit: string;
+  position: number;
+};
 
-export type PlayerCooldownMap = Record<PlayerId, number>;
+export type CodeHandoff = {
+  fromGroup: GroupId;
+  toGroup: GroupId;
+  message: string;
+  nextQuestion: Question | null;
+};
 
 export type GameState = {
   phase: Phase;
   config: GameConfig;
-  activePlayer: PlayerId;
-  failedQuestionPlayer: PlayerId | null;
+  activeGroup: GroupId;
+  secretCodes: SecretCodeMap;
+  revealedDigits: RevealedDigitsMap;
+  readyMode: ReadyMode | null;
   currentQuestion: Question | null;
+  finalQuestion: Question | null;
+  finalFailedGroup: GroupId | null;
+  lastDigitReveal: DigitReveal | null;
+  codeHandoff: CodeHandoff | null;
   usedQuestionIds: string[];
-  playerCooldownUntil: PlayerCooldownMap;
   lastCodeError: string | null;
   result: GameResult | null;
   teacherUnlocked: boolean;
-  scores: Scores;
-  roundNumber: number;
 };
 
 export type GameAction =
   | { type: 'UNLOCK_TEACHER' }
   | { type: 'LOCK_TEACHER' }
-  | { type: 'SETUP_GAME'; payload: GameConfig }
-  | { type: 'SELECT_PLAYER_FOR_CODE'; payload: { playerId: PlayerId; now: number } }
-  | { type: 'SELECT_PLAYER_FOR_QUESTION'; payload: { playerId: PlayerId; now: number } }
   | {
-      type: 'CODE_FAIL';
-      payload: { playerId: PlayerId; cooldownUntil: number; message: string };
+      type: 'SETUP_GAME';
+      payload: {
+        config: GameConfig;
+        secretCodes: SecretCodeMap;
+        firstQuestion: Question;
+      };
+    }
+  | { type: 'CONFIRM_FIRST_GROUP'; payload: { groupId: GroupId } }
+  | { type: 'START_READY_QUESTION' }
+  | { type: 'NORMAL_ANSWER_CORRECT' }
+  | {
+      type: 'NORMAL_ANSWER_WRONG_OR_TIMEOUT';
+      payload: { nextQuestion: Question | null };
     }
   | { type: 'CLEAR_CODE_ERROR' }
-  | { type: 'CODE_SUCCESS'; payload: { question: Question } }
-  | { type: 'START_QUESTION' }
-  | { type: 'ANSWER_CORRECT' }
-  | { type: 'ANSWER_WRONG_OR_TIMEOUT'; payload: { cooldownUntil: number } }
-  | { type: 'NEW_ROUND' }
+  | {
+      type: 'CONTINUE_AFTER_DIGIT_REVEAL';
+      payload: { nextQuestion: Question | null };
+    }
+  | { type: 'CODE_FAIL'; payload: { message: string; nextQuestion: Question | null } }
+  | { type: 'CONFIRM_CODE_HANDOFF' }
+  | { type: 'CODE_SUCCESS'; payload: { finalQuestion: Question } }
+  | { type: 'FINAL_ANSWER_CORRECT' }
+  | { type: 'FINAL_ANSWER_WRONG_OR_TIMEOUT' }
   | { type: 'RESET_GAME' };

@@ -16,24 +16,22 @@ export default function Result() {
   const nameFade = useRef(new Animated.Value(0)).current;
   const strip = useRef(new Animated.Value(0)).current;
   const questionFade = useRef(new Animated.Value(0)).current;
+  const glow = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (state.phase !== 'result' || !state.result) {
-      if (state.phase === 'player-select') router.replace('/player-select');
-      else if (state.phase === 'code') router.replace('/code-entry');
-      else if (state.phase === 'reveal') router.replace('/reveal');
-      else if (state.phase === 'question') router.replace('/question');
+      if (state.phase === 'starter-selection') router.replace('/starter-select');
+      else if (state.phase === 'ready' || state.phase === 'question' || state.phase === 'final-question') router.replace('/question');
+      else if (state.phase === 'digit-reveal') router.replace('/reveal');
+      else if (state.phase === 'code-entry') router.replace('/code-entry');
+      else if (state.phase === 'code-handoff') router.replace('/code-handoff');
       else router.replace('/');
       return;
     }
-    if (state.result === 'p1' || state.result === 'p2') {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
-        () => {},
-      );
-    } else if (state.result === 'none') {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(
-        () => {},
-      );
+    if (state.result === 'g1' || state.result === 'g2') {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    } else {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
     }
 
     Animated.sequence([
@@ -64,34 +62,54 @@ export default function Result() {
         useNativeDriver: true,
       }),
     ]).start();
-  }, [nameFade, questionFade, state.phase, state.result, strip, trophy]);
+
+    const glowLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(glow, {
+          toValue: 1,
+          duration: 1600,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(glow, {
+          toValue: 0,
+          duration: 1600,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    glowLoop.start();
+    return () => glowLoop.stop();
+  }, [nameFade, questionFade, state.phase, state.result, strip, trophy, glow]);
 
   if (state.phase !== 'result' || !state.result) {
     return (
       <ScreenContainer>
         <View style={styles.redirect}>
-          <Text style={{ color: Colors.muted }}>Yönlendiriliyor...</Text>
+          <Text style={{ color: Colors.muted }}>Yönlendiriliyor…</Text>
         </View>
       </ScreenContainer>
     );
   }
 
   const winnerName =
-    state.result === 'p1'
-      ? state.config.player1
-      : state.result === 'p2'
-      ? state.config.player2
+    state.result === 'g1'
+      ? state.config.group1
+      : state.result === 'g2'
+      ? state.config.group2
       : null;
 
   const accentColor =
-    state.result === 'p1'
+    state.result === 'g1'
       ? Colors.teal
-      : state.result === 'p2'
+      : state.result === 'g2'
       ? Colors.coral
       : Colors.muted;
 
   const hasWinner = !!winnerName;
   const iconName = hasWinner ? 'trophy' : 'hand-left-outline';
+  const finalQuestion = state.finalQuestion;
 
   const trophyScale = trophy.interpolate({
     inputRange: [0, 1],
@@ -103,32 +121,54 @@ export default function Result() {
   });
   const nameTranslate = nameFade.interpolate({
     inputRange: [0, 1],
-    outputRange: [14, 0],
+    outputRange: [12, 0],
   });
   const stripTranslate = strip.interpolate({
     inputRange: [0, 1],
-    outputRange: [16, 0],
+    outputRange: [12, 0],
   });
   const questionTranslate = questionFade.interpolate({
     inputRange: [0, 1],
-    outputRange: [12, 0],
+    outputRange: [10, 0],
+  });
+  const glowScale = glow.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.18],
+  });
+  const glowOpacity = glow.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.18, 0.4],
   });
 
   return (
     <ScreenContainer scroll>
       <View style={styles.center}>
-        <Animated.View
-          style={[
-            styles.trophy,
-            {
-              backgroundColor: accentColor,
-              transform: [{ scale: trophyScale }, { rotate: trophyRotate }],
-            },
-          ]}
-        >
-          <Ionicons name={iconName} size={64} color="#fff" />
-          {hasWinner && <View style={styles.trophyShine} />}
-        </Animated.View>
+        <View style={styles.trophyStage}>
+          {hasWinner && (
+            <Animated.View
+              style={[
+                styles.trophyGlow,
+                {
+                  backgroundColor: accentColor,
+                  opacity: glowOpacity,
+                  transform: [{ scale: glowScale }],
+                },
+              ]}
+            />
+          )}
+          <Animated.View
+            style={[
+              styles.trophy,
+              {
+                backgroundColor: accentColor,
+                transform: [{ scale: trophyScale }, { rotate: trophyRotate }],
+              },
+            ]}
+          >
+            <Ionicons name={iconName} size={56} color="#fff" />
+            {hasWinner && <View style={styles.trophyShine} />}
+          </Animated.View>
+        </View>
 
         <Animated.View
           style={[
@@ -142,20 +182,20 @@ export default function Result() {
           <View style={styles.resultPill}>
             <Ionicons
               name={hasWinner ? 'star' : 'alert-circle-outline'}
-              size={14}
+              size={12}
               color={accentColor}
             />
             <Text style={[styles.pillText, { color: accentColor }]}>
-              {hasWinner ? 'Tur Galibi' : 'Beraberlik'}
+              {hasWinner ? 'OYUNUN GALİBİ' : 'KAZANAN YOK'}
             </Text>
           </View>
           <Text style={[styles.title, { color: accentColor }]}>
-            {winnerName ? `${winnerName}!` : 'Kazanan Yok'}
+            {winnerName ? winnerName : 'Final Bilinemedi'}
           </Text>
           <Text style={styles.sub}>
             {hasWinner
-              ? 'Final sorusunu doğru bildi.'
-              : 'İki oyuncu da soruyu bilemedi.'}
+              ? 'Final sorusunu doğru bildi ve oyunu kazandı.'
+              : 'İki grup da final sorusunu bilemedi.'}
           </Text>
         </Animated.View>
 
@@ -167,18 +207,18 @@ export default function Result() {
           }}
         >
           <ScoreStrip
-            player1={state.config.player1}
-            player2={state.config.player2}
-            scoreP1={state.scores.p1}
-            scoreP2={state.scores.p2}
-            roundNumber={state.roundNumber}
-            activePlayer={
-              state.result === 'p1' ? 1 : state.result === 'p2' ? 2 : null
+            group1={state.config.group1}
+            group2={state.config.group2}
+            digitsG1={state.revealedDigits[1]}
+            digitsG2={state.revealedDigits[2]}
+            activeGroup={
+              state.result === 'g1' ? 1 : state.result === 'g2' ? 2 : null
             }
+            centerLabel="Sonuç"
           />
         </Animated.View>
 
-        {state.currentQuestion && (
+        {finalQuestion && (
           <Animated.View
             style={[
               styles.qBox,
@@ -188,50 +228,40 @@ export default function Result() {
               },
             ]}
           >
-            <View style={styles.qHeader}>
-              <Ionicons
-                name="help-buoy-outline"
-                size={18}
-                color={Colors.primaryDark}
-              />
-              <Text style={styles.qLabel}>Final Sorusu</Text>
+            <View style={styles.qSection}>
+              <View style={styles.qHeader}>
+                <View style={styles.qIconWrap}>
+                  <Ionicons name="trophy-outline" size={14} color={Colors.coral} />
+                </View>
+                <Text style={styles.qLabel}>FİNAL SORUSU</Text>
+              </View>
+              <Text style={styles.qText}>{finalQuestion.question}</Text>
             </View>
-            <Text style={styles.qText}>{state.currentQuestion.question}</Text>
-            <View style={styles.answerDivider} />
-            <View style={styles.qHeader}>
-              <Ionicons
-                name="checkmark-circle"
-                size={18}
-                color={Colors.success}
-              />
-              <Text style={styles.qAnswerLabel}>Doğru Cevap</Text>
+
+            <View style={styles.qDivider} />
+
+            <View style={styles.qSection}>
+              <View style={styles.qHeader}>
+                <View style={[styles.qIconWrap, { backgroundColor: Colors.successSoft }]}>
+                  <Ionicons name="checkmark" size={14} color={Colors.success} />
+                </View>
+                <Text style={[styles.qLabel, { color: Colors.success }]}>DOĞRU CEVAP</Text>
+              </View>
+              <Text style={styles.qAnswerText}>{finalQuestion.answer}</Text>
             </View>
-            <Text style={styles.qAnswerText}>
-              {state.currentQuestion.answer}
-            </Text>
           </Animated.View>
         )}
       </View>
 
       <Celebration active={hasWinner} />
 
-      <View style={{ height: Spacing.md }} />
+      <View style={{ height: Spacing.lg }} />
       <ActionButton
-        label="Sonraki Tur"
+        label="Ana Menüye Dön"
         variant="primary"
+        size="lg"
         fullWidth
-        icon="arrow-forward-circle"
-        onPress={() => {
-          dispatch({ type: 'NEW_ROUND' });
-          router.replace('/player-select');
-        }}
-      />
-      <View style={{ height: Spacing.sm }} />
-      <ActionButton
-        label="Ana Menü"
-        variant="outline"
-        fullWidth
-        icon="home-outline"
+        icon="home"
         onPress={() => {
           dispatch({ type: 'RESET_GAME' });
           router.replace('/');
@@ -249,18 +279,30 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     paddingTop: Spacing.md,
   },
+  trophyStage: {
+    width: 156,
+    height: 156,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  trophyGlow: {
+    position: 'absolute',
+    width: 156,
+    height: 156,
+    borderRadius: 78,
+  },
   trophy: {
-    width: 136,
-    height: 136,
-    borderRadius: 44,
+    width: 124,
+    height: 124,
+    borderRadius: 38,
     alignItems: 'center',
     justifyContent: 'center',
     ...Shadow.lg,
   },
   trophyShine: {
     position: 'absolute',
-    top: 18,
-    right: 28,
+    top: 16,
+    right: 26,
     width: 22,
     height: 8,
     borderRadius: 4,
@@ -270,7 +312,7 @@ const styles = StyleSheet.create({
   },
   titleBlock: {
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
   resultPill: {
     flexDirection: 'row',
@@ -282,69 +324,72 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     borderWidth: 1.5,
     borderColor: Colors.border,
+    ...Shadow.xs,
   },
   pillText: {
-    fontSize: Font.small,
+    fontSize: Font.small - 1,
     fontWeight: '900',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
   },
   title: {
     fontSize: Font.title + 4,
     fontWeight: '900',
     textAlign: 'center',
-    letterSpacing: -0.5,
+    letterSpacing: -0.6,
+    paddingHorizontal: Spacing.md,
   },
   sub: {
     color: Colors.muted,
     textAlign: 'center',
-    fontWeight: '700',
-    lineHeight: Font.body * 1.35,
-    fontSize: Font.body,
+    fontWeight: '600',
+    lineHeight: Font.body * 1.4,
+    fontSize: Font.body - 1,
+    paddingHorizontal: Spacing.md,
   },
   qBox: {
     backgroundColor: Colors.surface,
-    borderRadius: Radius.md,
+    borderRadius: Radius.lg,
     padding: Spacing.lg,
     borderWidth: 1,
     borderColor: Colors.border,
     width: '100%',
-    gap: Spacing.sm,
-    ...Shadow.md,
+    gap: Spacing.md,
+    ...Shadow.sm,
   },
+  qSection: { gap: Spacing.sm },
   qHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
+  },
+  qIconWrap: {
+    width: 24,
+    height: 24,
+    borderRadius: 8,
+    backgroundColor: '#FFF1ED',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   qLabel: {
-    fontSize: Font.small,
-    color: Colors.muted,
-    textTransform: 'uppercase',
+    fontSize: Font.small - 1,
+    color: Colors.coral,
     fontWeight: '900',
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
   },
   qText: {
-    fontSize: Font.body + 1,
-    color: Colors.text,
-    fontWeight: '800',
-    lineHeight: 24,
+    fontSize: Font.body,
+    color: Colors.ink,
+    fontWeight: '700',
+    lineHeight: Font.body * 1.5,
   },
-  answerDivider: {
+  qDivider: {
     height: 1,
-    backgroundColor: Colors.border,
-    marginVertical: 2,
-  },
-  qAnswerLabel: {
-    fontSize: Font.small,
-    color: Colors.success,
-    textTransform: 'uppercase',
-    fontWeight: '900',
-    letterSpacing: 0.5,
+    backgroundColor: Colors.divider,
   },
   qAnswerText: {
     fontSize: Font.heading - 2,
     color: Colors.success,
     fontWeight: '900',
+    letterSpacing: -0.2,
   },
 });

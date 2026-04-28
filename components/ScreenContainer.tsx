@@ -8,20 +8,32 @@ type Props = {
   scroll?: boolean;
   style?: ViewStyle;
   contentStyle?: ViewStyle;
+  decor?: boolean;
 };
 
-export function ScreenContainer({ children, scroll, style, contentStyle }: Props) {
+export function ScreenContainer({
+  children,
+  scroll,
+  style,
+  contentStyle,
+  decor = true,
+}: Props) {
   const Body = scroll ? ScrollView : View;
   return (
     <SafeAreaView style={[styles.safe, style]} edges={['top', 'bottom']}>
-      <View pointerEvents="none" style={styles.bandOne} />
-      <View pointerEvents="none" style={styles.bandTwo} />
-      <View pointerEvents="none" style={styles.lineOne} />
+      {decor && (
+        <>
+          <View pointerEvents="none" style={styles.glowTop} />
+          <View pointerEvents="none" style={styles.glowBottom} />
+          <View pointerEvents="none" style={styles.gridDot} />
+        </>
+      )}
       <Body
         style={!scroll ? styles.body : undefined}
         contentContainerStyle={
           scroll ? [styles.scrollContent, contentStyle] : undefined
         }
+        showsVerticalScrollIndicator={false}
       >
         <View style={[styles.inner, !scroll && contentStyle]}>{children}</View>
       </Body>
@@ -36,41 +48,40 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 560,
     alignSelf: 'center',
-    padding: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.lg,
     flex: 1,
   },
   scrollContent: { flexGrow: 1, paddingBottom: Spacing.xl },
-  bandOne: {
+  glowTop: {
     position: 'absolute',
-    top: -80,
+    top: -160,
     right: -120,
-    width: 260,
-    height: 180,
-    borderRadius: 70,
+    width: 360,
+    height: 360,
+    borderRadius: 180,
     backgroundColor: Colors.softBlue,
-    transform: [{ rotate: '-18deg' }],
-    opacity: 0.75,
+    opacity: 0.6,
   },
-  bandTwo: {
+  glowBottom: {
     position: 'absolute',
-    bottom: -90,
-    left: -110,
-    width: 260,
-    height: 180,
-    borderRadius: 70,
+    bottom: -200,
+    left: -140,
+    width: 360,
+    height: 360,
+    borderRadius: 180,
     backgroundColor: Colors.cream,
-    transform: [{ rotate: '16deg' }],
-    opacity: 0.8,
+    opacity: 0.55,
   },
-  lineOne: {
+  gridDot: {
     position: 'absolute',
-    top: 92,
-    left: -40,
-    width: 170,
-    height: 8,
-    borderRadius: 4,
+    top: 96,
+    left: 30,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: Colors.accent,
-    opacity: 0.28,
-    transform: [{ rotate: '-12deg' }],
+    opacity: 0.5,
   },
 });

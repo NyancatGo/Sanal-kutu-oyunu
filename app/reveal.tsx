@@ -1,241 +1,235 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Modal, StyleSheet, Text, View } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { ActionButton } from '@/components/ActionButton';
-import { PlayerBadge } from '@/components/PlayerBadge';
 import { ScoreStrip } from '@/components/ScoreStrip';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
-
-const REVEAL_MS = 2200;
+import { getRandomQuestion } from '@/utils/getRandomQuestion';
 
 export default function Reveal() {
   const { state, dispatch } = useGame();
-  const [confirmVisible, setConfirmVisible] = useState(false);
-  const shackleLift = useRef(new Animated.Value(0)).current;
-  const bodyGlow = useRef(new Animated.Value(0)).current;
-  const titleAnim = useRef(new Animated.Value(0)).current;
-  const digitAnims = useRef([
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]).current;
+  const cardAnim = useRef(new Animated.Value(0)).current;
+  const digitAnim = useRef(new Animated.Value(0)).current;
+  const shineAnim = useRef(new Animated.Value(0)).current;
+  const ringAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (state.phase !== 'reveal') {
-      setConfirmVisible(false);
+    if (state.phase !== 'digit-reveal') {
       if (state.phase === 'setup') router.replace('/');
-      else if (state.phase === 'player-select') router.replace('/player-select');
-      else if (state.phase === 'code') router.replace('/code-entry');
-      else if (state.phase === 'question') router.replace('/question');
+      else if (state.phase === 'starter-selection') router.replace('/starter-select');
+      else if (state.phase === 'ready' || state.phase === 'question' || state.phase === 'final-question') router.replace('/question');
+      else if (state.phase === 'code-entry') router.replace('/code-entry');
+      else if (state.phase === 'code-handoff') router.replace('/code-handoff');
       else if (state.phase === 'result') router.replace('/result');
       return;
     }
 
-    setConfirmVisible(false);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
-      () => {},
-    );
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    cardAnim.setValue(0);
+    digitAnim.setValue(0);
+    shineAnim.setValue(0);
+    ringAnim.setValue(0);
 
-    Animated.sequence([
-      Animated.timing(bodyGlow, {
-        toValue: 1,
-        duration: 260,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: false,
-      }),
-      Animated.timing(shackleLift, {
-        toValue: 1,
-        duration: 480,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    Animated.timing(titleAnim, {
-      toValue: 1,
-      delay: 280,
-      duration: 380,
-      easing: Easing.out(Easing.back(1.2)),
-      useNativeDriver: true,
-    }).start();
-
-    Animated.stagger(
-      90,
-      digitAnims.map((a) =>
-        Animated.spring(a, {
+    const shineLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(shineAnim, {
           toValue: 1,
-          tension: 180,
-          friction: 12,
+          duration: 1100,
+          easing: Easing.inOut(Easing.quad),
           useNativeDriver: true,
         }),
-      ),
-    ).start();
+        Animated.timing(shineAnim, {
+          toValue: 0,
+          duration: 1100,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    const ringLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(ringAnim, {
+          toValue: 1,
+          duration: 1600,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(ringAnim, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
 
-    const t = setTimeout(() => {
-      setConfirmVisible(true);
-    }, REVEAL_MS);
+    Animated.parallel([
+      Animated.spring(cardAnim, {
+        toValue: 1,
+        tension: 150,
+        friction: 9,
+        useNativeDriver: true,
+      }),
+      Animated.spring(digitAnim, {
+        toValue: 1,
+        tension: 180,
+        friction: 8,
+        useNativeDriver: true,
+      }),
+      shineLoop,
+      ringLoop,
+    ]).start();
+    return () => {
+      shineLoop.stop();
+      ringLoop.stop();
+    };
+  }, [cardAnim, digitAnim, shineAnim, ringAnim, state.phase]);
 
-    return () => clearTimeout(t);
-  }, [bodyGlow, digitAnims, shackleLift, state.phase, titleAnim]);
+  if (state.phase !== 'digit-reveal' || !state.lastDigitReveal) {
+    return (
+      <ScreenContainer>
+        <View style={styles.center}>
+          <Text style={{ color: Colors.muted }}>Yönlendiriliyor…</Text>
+        </View>
+      </ScreenContainer>
+    );
+  }
 
-  const startQuestion = () => {
-    setConfirmVisible(false);
-    dispatch({ type: 'START_QUESTION' });
-    router.replace('/question');
+  const { groupId, digit, position } = state.lastDigitReveal;
+  const groupName = groupId === 1 ? state.config.group1 : state.config.group2;
+  const accent = groupId === 1 ? Colors.teal : Colors.coral;
+  const revealedCount = state.revealedDigits[groupId].length;
+  const completed = revealedCount >= 4;
+  const cardScale = cardAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.92, 1],
+  });
+  const digitScale = digitAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.2, 1],
+  });
+  const shineTranslate = shineAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-50, 50],
+  });
+  const ringScale = ringAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.4],
+  });
+  const ringOpacity = ringAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.4, 0],
+  });
+
+  const continueFlow = () => {
+    const nextQuestion =
+      completed
+        ? null
+        : getRandomQuestion(
+            state.config.digitCategory,
+            state.config.digitDifficulty,
+            state.usedQuestionIds,
+          );
+    dispatch({
+      type: 'CONTINUE_AFTER_DIGIT_REVEAL',
+      payload: { nextQuestion },
+    });
+    router.replace(completed ? '/code-entry' : '/question');
   };
-
-  const activeName =
-    state.activePlayer === 1 ? state.config.player1 : state.config.player2;
-
-  const shackleTranslate = shackleLift.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -38],
-  });
-  const shackleRotate = shackleLift.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '-14deg'],
-  });
-
-  const glowBorder = bodyGlow.interpolate({
-    inputRange: [0, 1],
-    outputRange: [Colors.border, Colors.success],
-  });
-  const glowBg = bodyGlow.interpolate({
-    inputRange: [0, 1],
-    outputRange: [Colors.surface, Colors.successSoft],
-  });
-
-  const titleScale = titleAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.6, 1],
-  });
-  const titleTranslate = titleAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [18, 0],
-  });
-
-  const digits = state.config.secretCode.padEnd(4, '•').split('').slice(0, 4);
 
   return (
     <ScreenContainer>
-      <View style={styles.center}>
-        <ScoreStrip
-          player1={state.config.player1}
-          player2={state.config.player2}
-          scoreP1={state.scores.p1}
-          scoreP2={state.scores.p2}
-          roundNumber={state.roundNumber}
-          activePlayer={state.activePlayer}
-        />
-        <View style={styles.lockScene}>
-          <Animated.View
-            style={[
-              styles.shackle,
-              {
-                borderColor: Colors.success,
-                transform: [
-                  { translateY: shackleTranslate },
-                  { rotate: shackleRotate },
-                ],
-              },
-            ]}
-          />
-          <Animated.View
-            style={[
-              styles.lockBody,
-              {
-                borderColor: glowBorder,
-                backgroundColor: glowBg,
-              },
-            ]}
-          >
-            <Ionicons name="lock-open" size={56} color={Colors.success} />
-          </Animated.View>
-        </View>
+      <ScoreStrip
+        group1={state.config.group1}
+        group2={state.config.group2}
+        digitsG1={state.revealedDigits[1]}
+        digitsG2={state.revealedDigits[2]}
+        activeGroup={groupId}
+        centerLabel="Hane"
+      />
 
+      <View style={styles.center}>
         <Animated.View
           style={[
-            styles.titleBlock,
+            styles.card,
             {
-              opacity: titleAnim,
-              transform: [{ scale: titleScale }, { translateY: titleTranslate }],
+              opacity: cardAnim,
+              transform: [{ scale: cardScale }],
+              borderColor: accent,
             },
           ]}
         >
-          <View style={styles.successPill}>
-            <Ionicons name="checkmark-circle" size={16} color={Colors.success} />
-            <Text style={styles.pillText}>Şifre Doğru</Text>
+          <View style={styles.kickerRow}>
+            <View style={[styles.kickerDot, { backgroundColor: accent }]} />
+            <Text style={[styles.kicker, { color: accent }]}>
+              {position + 1}. HANE AÇILDI
+            </Text>
           </View>
-          <Text style={styles.title}>Kilit Açıldı</Text>
-          <Text style={styles.sub}>Final sorusu için onay bekleniyor.</Text>
-        </Animated.View>
+          <Text style={styles.title} numberOfLines={1}>
+            {groupName || `Grup ${groupId}`}
+          </Text>
 
-        <View style={styles.digitRow}>
-          {digits.map((d, i) => {
-            const a = digitAnims[i];
-            const scale = a.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0.2, 1],
-            });
-            const translateY = a.interpolate({
-              inputRange: [0, 1],
-              outputRange: [24, 0],
-            });
-            return (
+          <View style={styles.digitStage}>
+            <Animated.View
+              style={[
+                styles.ring,
+                {
+                  borderColor: accent,
+                  transform: [{ scale: ringScale }],
+                  opacity: ringOpacity,
+                },
+              ]}
+            />
+            <Animated.View
+              style={[styles.digitBox, { transform: [{ scale: digitScale }] }]}
+            >
               <Animated.View
+                style={[
+                  styles.shine,
+                  {
+                    transform: [{ translateX: shineTranslate }, { rotate: '-22deg' }],
+                  },
+                ]}
+              />
+              <Text style={styles.digit}>{digit}</Text>
+              <View style={styles.digitFooter}>
+                <Text style={styles.digitFooterText}>POZİSYON {position + 1}</Text>
+              </View>
+            </Animated.View>
+          </View>
+
+          <View style={styles.progressRow}>
+            {[0, 1, 2, 3].map((i) => (
+              <View
                 key={i}
                 style={[
-                  styles.digitBox,
-                  { opacity: a, transform: [{ scale }, { translateY }] },
+                  styles.progressDot,
+                  i < revealedCount && {
+                    backgroundColor: accent,
+                  },
                 ]}
-              >
-                <Text style={styles.digitText}>{d}</Text>
-              </Animated.View>
-            );
-          })}
-        </View>
+              />
+            ))}
+          </View>
 
-        <View style={styles.playerPanel}>
-          <Text style={styles.panelLabel}>Sıradaki oyuncu</Text>
-          <PlayerBadge
-            name={activeName}
-            playerNumber={state.activePlayer}
-            active
-          />
-        </View>
+          <Text style={styles.sub}>
+            {completed
+              ? 'Dört hane tamamlandı! Şimdi kağıttaki şifreyi kilide girebilirsiniz.'
+              : 'Bu haneyi kağıda yazın. Sıra diğer gruba geçiyor.'}
+          </Text>
+        </Animated.View>
       </View>
 
-      <Modal
-        visible={confirmVisible && state.phase === 'reveal'}
-        transparent
-        animationType="fade"
-        onRequestClose={() => {}}
-      >
-        <View style={styles.modalBackdrop}>
-          <View style={styles.confirmCard}>
-            <View style={styles.confirmIcon}>
-              <Ionicons name="help-circle" size={36} color={Colors.primaryDark} />
-            </View>
-            <Text style={styles.confirmTitle}>Soruya Geçilsin mi?</Text>
-            <Text style={styles.confirmText}>
-              {activeName || `Oyuncu ${state.activePlayer}`} hazırsa final sorusu
-              şimdi ekrana gelsin.
-            </Text>
-            <ActionButton
-              label="Soruyu Başlat"
-              variant="primary"
-              fullWidth
-              icon="arrow-forward-circle"
-              onPress={startQuestion}
-            />
-          </View>
-        </View>
-      </Modal>
+      <ActionButton
+        label={completed ? 'Kilidi Açmaya Geç' : 'Sıradaki Soruya Geç'}
+        variant="primary"
+        size="lg"
+        fullWidth
+        icon={completed ? 'lock-open' : 'arrow-forward-circle'}
+        onPress={continueFlow}
+      />
     </ScreenContainer>
   );
 }
@@ -245,148 +239,111 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: Spacing.lg,
+    paddingVertical: Spacing.lg,
+  },
+  card: {
+    width: '100%',
+    alignItems: 'center',
     gap: Spacing.md,
-  },
-  lockScene: {
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    width: 180,
-    height: 180,
-  },
-  shackle: {
-    position: 'absolute',
-    top: 10,
-    width: 118,
-    height: 110,
-    borderTopWidth: 16,
-    borderLeftWidth: 16,
-    borderRightWidth: 16,
-    borderTopLeftRadius: 62,
-    borderTopRightRadius: 62,
-    backgroundColor: 'transparent',
-  },
-  lockBody: {
-    width: 140,
-    height: 116,
-    borderRadius: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 3,
+    padding: Spacing.lg,
+    paddingVertical: Spacing.xl,
+    borderRadius: Radius.xl,
+    backgroundColor: Colors.surface,
+    borderWidth: 1.5,
     ...Shadow.lg,
   },
-  titleBlock: {
-    alignItems: 'center',
-    gap: 6,
-    marginTop: Spacing.md,
-  },
-  successPill: {
+  kickerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 6,
-    borderRadius: Radius.pill,
-    backgroundColor: Colors.successSoft,
-    borderWidth: 1,
-    borderColor: Colors.success,
   },
-  pillText: {
-    color: Colors.success,
+  kickerDot: { width: 8, height: 8, borderRadius: 4 },
+  kicker: {
+    fontSize: Font.small - 1,
     fontWeight: '900',
-    fontSize: Font.small,
-    textTransform: 'uppercase',
+    letterSpacing: 0.8,
   },
   title: {
-    fontSize: Font.title + 6,
+    color: Colors.ink,
+    fontSize: Font.heading,
     fontWeight: '900',
-    color: Colors.success,
     textAlign: 'center',
+    letterSpacing: -0.4,
+    maxWidth: '100%',
   },
-  sub: {
-    color: Colors.muted,
-    fontSize: Font.body,
-    fontWeight: '700',
-    textAlign: 'center',
+  digitStage: {
+    width: 160,
+    height: 170,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: Spacing.sm,
   },
-  digitRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    marginTop: Spacing.sm,
+  ring: {
+    position: 'absolute',
+    width: 130,
+    height: 145,
+    borderRadius: 28,
+    borderWidth: 3,
   },
   digitBox: {
-    width: 46,
-    height: 54,
-    borderRadius: Radius.md,
+    width: 130,
+    height: 145,
+    borderRadius: 26,
     backgroundColor: Colors.ink,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: Colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
-    ...Shadow.sm,
-  },
-  digitText: {
-    color: Colors.accent,
-    fontWeight: '900',
-    fontSize: Font.heading + 2,
-    lineHeight: Font.heading + 6,
-  },
-  playerPanel: {
-    marginTop: Spacing.md,
-    padding: Spacing.md,
-    borderRadius: Radius.md,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
-    gap: Spacing.sm,
-    ...Shadow.sm,
-  },
-  panelLabel: {
-    color: Colors.muted,
-    fontSize: Font.small,
-    fontWeight: '900',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: Colors.overlay,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: Spacing.lg,
-  },
-  confirmCard: {
-    width: '100%',
-    maxWidth: 420,
-    backgroundColor: Colors.surface,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
-    alignItems: 'center',
-    gap: Spacing.md,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    overflow: 'hidden',
     ...Shadow.lg,
   },
-  confirmIcon: {
-    width: 66,
-    height: 66,
-    borderRadius: 22,
-    backgroundColor: Colors.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...Shadow.sm,
+  shine: {
+    position: 'absolute',
+    width: 36,
+    height: 220,
+    backgroundColor: '#fff',
+    opacity: 0.18,
   },
-  confirmTitle: {
-    fontSize: Font.heading,
-    color: Colors.primaryDark,
+  digit: {
+    color: Colors.accent,
+    fontSize: Font.huge + 16,
     fontWeight: '900',
-    textAlign: 'center',
+    lineHeight: Font.huge + 18,
+    letterSpacing: -2,
   },
-  confirmText: {
+  digitFooter: {
+    position: 'absolute',
+    bottom: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: Radius.pill,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(245,189,61,0.4)',
+  },
+  digitFooterText: {
+    color: Colors.accent,
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  sub: {
     color: Colors.muted,
-    fontSize: Font.body,
-    fontWeight: '700',
-    lineHeight: Font.body * 1.4,
+    fontSize: Font.small + 1,
+    fontWeight: '600',
+    lineHeight: (Font.small + 1) * 1.5,
     textAlign: 'center',
+    paddingHorizontal: Spacing.sm,
+  },
+  progressRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  progressDot: {
+    width: 36,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.divider,
   },
 });

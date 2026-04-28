@@ -13,15 +13,17 @@ type Props = {
   onComplete: () => void;
   style?: ViewStyle;
   icon?: IconName;
+  variant?: 'teacher' | 'subtle';
 };
 
 export function HoldButton({
   label,
-  holdLabel = 'Basılı Tut…',
-  durationMs = 1200,
+  holdLabel = 'Basılı tut…',
+  durationMs = 1100,
   onComplete,
   style,
   icon = 'lock-closed-outline',
+  variant = 'teacher',
 }: Props) {
   const progress = useRef(new Animated.Value(0)).current;
   const [holding, setHolding] = useState(false);
@@ -61,20 +63,41 @@ export function HoldButton({
     outputRange: ['0%', '100%'],
   });
 
+  const isSubtle = variant === 'subtle';
+  const accentText = isSubtle ? Colors.muted : Colors.primaryDark;
+  const borderColor = isSubtle ? Colors.border : Colors.primary;
+
   return (
     <Pressable
       onPressIn={start}
       onPressOut={cancel}
-      style={[styles.wrap, style]}
+      style={[
+        styles.wrap,
+        {
+          borderColor,
+          backgroundColor: isSubtle ? Colors.surfaceMuted : Colors.surface,
+        },
+        style,
+      ]}
     >
-      <Animated.View style={[styles.fill, { width: widthInterp }]} />
+      <Animated.View
+        style={[
+          styles.fill,
+          {
+            width: widthInterp,
+            backgroundColor: isSubtle ? Colors.softBlue : Colors.accentSoft,
+          },
+        ]}
+      />
       <View style={styles.content}>
         <Ionicons
           name={holding ? 'timer-outline' : icon}
-          size={19}
-          color={holding ? Colors.primaryDark : Colors.primary}
+          size={18}
+          color={accentText}
         />
-        <Text style={styles.label}>{holding ? holdLabel : label}</Text>
+        <Text style={[styles.label, { color: accentText }]} numberOfLines={1}>
+          {holding ? holdLabel : label}
+        </Text>
       </View>
     </Pressable>
   );
@@ -82,23 +105,20 @@ export function HoldButton({
 
 const styles = StyleSheet.create({
   wrap: {
-    minHeight: 52,
+    minHeight: 50,
     borderRadius: Radius.md,
-    borderWidth: 2,
-    borderColor: Colors.teal,
-    backgroundColor: Colors.surface,
+    borderWidth: 1.5,
     overflow: 'hidden',
     justifyContent: 'center',
     paddingHorizontal: Spacing.md,
-    ...Shadow.sm,
+    ...Shadow.xs,
   },
   fill: {
     position: 'absolute',
     top: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: Colors.accent,
-    opacity: 0.38,
+    opacity: 0.6,
   },
   content: {
     alignItems: 'center',
@@ -109,8 +129,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: Font.body,
     fontWeight: '800',
-    color: Colors.primary,
-    letterSpacing: 0,
+    letterSpacing: 0.2,
     textAlign: 'center',
   },
 });

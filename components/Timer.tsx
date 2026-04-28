@@ -6,18 +6,19 @@ import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 type Props = {
   remaining: number;
   total: number;
+  variant?: 'normal' | 'compact';
 };
 
-export function Timer({ remaining, total }: Props) {
+export function Timer({ remaining, total, variant = 'normal' }: Props) {
   const ratio = Math.max(0, Math.min(1, total > 0 ? remaining / total : 0));
   const critical = remaining <= 5 && remaining > 0;
   const warning = remaining <= 10 && remaining > 5;
-  const color = critical ? Colors.danger : warning ? Colors.highlight : Colors.primary;
+  const color = critical ? Colors.danger : warning ? Colors.warning : Colors.primary;
+  const softBg = critical ? Colors.dangerSoft : warning ? Colors.warningSoft : Colors.softBlue;
 
   const pulse = useRef(new Animated.Value(0)).current;
   const tick = useRef(new Animated.Value(1)).current;
 
-  // Continuous pulse loop while in critical window (<=5s).
   useEffect(() => {
     if (!critical) {
       pulse.stopAnimation(() => pulse.setValue(0));
@@ -43,9 +44,8 @@ export function Timer({ remaining, total }: Props) {
     return () => loop.stop();
   }, [critical, pulse]);
 
-  // Tiny tick bounce when the seconds number changes.
   useEffect(() => {
-    tick.setValue(0.85);
+    tick.setValue(0.86);
     Animated.spring(tick, {
       toValue: 1,
       tension: 220,
@@ -56,16 +56,38 @@ export function Timer({ remaining, total }: Props) {
 
   const ringScale = pulse.interpolate({
     inputRange: [0, 1],
-    outputRange: [1, 1.08],
+    outputRange: [1, 1.06],
   });
   const glowScale = pulse.interpolate({
     inputRange: [0, 1],
-    outputRange: [1, 1.18],
+    outputRange: [1, 1.2],
   });
   const glowOpacity = pulse.interpolate({
     inputRange: [0, 1],
     outputRange: [0.18, 0.55],
   });
+
+  if (variant === 'compact') {
+    return (
+      <View style={styles.compactWrap}>
+        <View style={[styles.compactIcon, { backgroundColor: softBg }]}>
+          <Ionicons name="timer-outline" size={18} color={color} />
+        </View>
+        <Animated.Text style={[styles.compactNum, { color, transform: [{ scale: tick }] }]}>
+          {remaining}
+        </Animated.Text>
+        <Text style={styles.compactUnit}>sn</Text>
+        <View style={styles.compactBar}>
+          <View
+            style={[
+              styles.compactBarFill,
+              { width: `${ratio * 100}%`, backgroundColor: color },
+            ]}
+          />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.wrap}>
@@ -91,7 +113,9 @@ export function Timer({ remaining, total }: Props) {
             },
           ]}
         >
-          <Ionicons name="timer-outline" size={22} color={color} />
+          <View style={[styles.iconBubble, { backgroundColor: softBg }]}>
+            <Ionicons name="timer-outline" size={18} color={color} />
+          </View>
           <Animated.Text
             style={[styles.time, { color, transform: [{ scale: tick }] }]}
           >
@@ -115,35 +139,94 @@ export function Timer({ remaining, total }: Props) {
 const styles = StyleSheet.create({
   wrap: { alignItems: 'center', gap: Spacing.sm, width: '100%' },
   circleStage: {
-    width: 160,
-    height: 160,
+    width: 156,
+    height: 156,
     alignItems: 'center',
     justifyContent: 'center',
   },
   glow: {
     position: 'absolute',
-    width: 160,
-    height: 160,
-    borderRadius: 80,
+    width: 156,
+    height: 156,
+    borderRadius: 78,
   },
   circle: {
-    width: 142,
-    height: 142,
-    borderRadius: 71,
-    borderWidth: 7,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 6,
     backgroundColor: Colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 2,
     ...Shadow.md,
   },
-  time: { fontSize: Font.huge - 2, fontWeight: '900', lineHeight: Font.huge + 2 },
-  unit: { fontSize: Font.small, color: Colors.muted, marginTop: -4, fontWeight: '800' },
+  iconBubble: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 2,
+  },
+  time: {
+    fontSize: Font.huge - 6,
+    fontWeight: '900',
+    lineHeight: Font.huge - 4,
+    letterSpacing: -1,
+  },
+  unit: {
+    fontSize: Font.small - 1,
+    color: Colors.muted,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
   barTrack: {
-    width: '100%',
-    height: 10,
-    backgroundColor: Colors.border,
+    width: '90%',
+    height: 8,
+    backgroundColor: Colors.divider,
     borderRadius: Radius.pill,
     overflow: 'hidden',
   },
   barFill: { height: '100%', borderRadius: Radius.pill },
+  compactWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radius.lg,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    ...Shadow.xs,
+  },
+  compactIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  compactNum: {
+    fontSize: Font.heading,
+    fontWeight: '900',
+    minWidth: 32,
+    textAlign: 'center',
+  },
+  compactUnit: {
+    fontSize: Font.small - 1,
+    color: Colors.muted,
+    fontWeight: '800',
+  },
+  compactBar: {
+    flex: 1,
+    height: 6,
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.divider,
+    overflow: 'hidden',
+    marginLeft: Spacing.sm,
+  },
+  compactBarFill: { height: '100%', borderRadius: Radius.pill },
 });

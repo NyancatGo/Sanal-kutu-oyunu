@@ -1,41 +1,33 @@
-import type { GameConfig, GameState, PlayerCooldownMap } from '@/types/game';
+import type { GameConfig, GameState, RevealedDigitsMap, SecretCodeMap } from '@/types/game';
 
 export const DEFAULT_CONFIG: GameConfig = {
-  player1: '',
-  player2: '',
-  secretCode: '',
-  category: 'genel-kultur',
-  difficulty: 'easy',
-  timeLimit: 30,
+  group1: '',
+  group2: '',
+  digitCategory: 'genel-kultur',
+  digitDifficulty: 'easy',
+  digitTimeLimit: 30,
+  finalCategory: 'genel-kultur',
+  finalDifficulty: 'easy',
+  finalTimeLimit: 30,
 };
 
-export const EMPTY_COOLDOWN: PlayerCooldownMap = { 1: 0, 2: 0 };
+export const EMPTY_SECRET_CODES: SecretCodeMap = { 1: '', 2: '' };
+export const EMPTY_REVEALED_DIGITS: RevealedDigitsMap = { 1: [], 2: [] };
 
 export const INITIAL_STATE: GameState = {
   phase: 'setup',
   config: DEFAULT_CONFIG,
-  activePlayer: 1,
-  failedQuestionPlayer: null,
+  activeGroup: 1,
+  secretCodes: { ...EMPTY_SECRET_CODES },
+  revealedDigits: { 1: [...EMPTY_REVEALED_DIGITS[1]], 2: [...EMPTY_REVEALED_DIGITS[2]] },
+  readyMode: null,
   currentQuestion: null,
+  finalQuestion: null,
+  finalFailedGroup: null,
+  lastDigitReveal: null,
+  codeHandoff: null,
   usedQuestionIds: [],
-  playerCooldownUntil: { ...EMPTY_COOLDOWN },
   lastCodeError: null,
   result: null,
   teacherUnlocked: false,
-  scores: { p1: 0, p2: 0 },
-  roundNumber: 1,
 };
-
-export function newRoundState(prev: GameState): GameState {
-  return {
-    ...INITIAL_STATE,
-    config: prev.config,
-    phase: 'player-select',
-    usedQuestionIds: prev.usedQuestionIds,
-    scores: prev.scores,
-    roundNumber: prev.roundNumber + 1,
-    // The player who lost the previous round starts the next one.
-    activePlayer:
-      prev.result === 'p1' ? 2 : prev.result === 'p2' ? 1 : prev.activePlayer,
-  };
-}

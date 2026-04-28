@@ -1,17 +1,18 @@
 # Şifre Kutusu
 
-Fiziksel ipucu kartlarıyla mobil uygulamayı birleştiren, sınıf içi oynanmak üzere tasarlanmış hibrit bir eğitsel challenge oyunu. İki oyuncu kartlardan 4 haneli şifreyi çözer, telefondaki mekanik kilidi ayarlar, doğru şifre final sorusunu açar.
+Fiziksel not alma/ipuçlarıyla mobil uygulamayı birleştiren, sınıf içi oynanmak üzere tasarlanmış hibrit bir eğitsel challenge oyunu. İki grup sırayla şifre bulma sorularını cevaplar; her doğru cevap, grubun gizli şifresindeki sıradaki haneyi kazandırır. 4 haneyi tamamlayan grup kilidi açıp final sorusuna geçer.
 
-> MVP durumu: tek cihazda, internetsiz, iki oyunculu, öğretmen kontrollü.
+> MVP durumu: tek cihazda, internetsiz, iki gruplu, öğretmen kontrollü.
 
 ## Oynanış
 
-1. Öğretmen oyuncu adlarını, 4 haneli doğru şifreyi, kategori, zorluk ve süreyi seçer.
-2. Oyuncular fiziksel kartlardan şifreyi çözer.
-3. Çözen oyuncu telefondaki 4 haneli valiz tipi kilidi parmağıyla ayarlar.
-4. Doğru şifre final sorusunu açar ve süre başlar.
-5. Oyuncu sözlü cevap verir; öğretmen sonucu işaretler.
-6. İlk oyuncu bilemezse aynı soru ikinci oyuncuya geçer.
+1. Öğretmen grup adlarını; şifre bulma soruları ve final sorusu için ayrı kategori, zorluk ve süreleri seçer.
+2. Sistem her grup için arka planda birbirinden farklı gizli 4 haneli şifre üretir.
+3. Her hane sorusu başlamadan önce aktif grup için hazır ekranı açılır.
+4. Gruplar sırayla seçilen şifre bulma havuzundan gelen soruları cevaplar.
+5. Doğru cevapta hane kazanılır; yanlış cevapta hane verilmez ve sıra diğer gruba geçer.
+6. Dört haneyi tamamlayan grup telefondaki mekanik kilide kendi kağıdındaki şifreyi girer.
+7. Doğru şifre final hazır ekranını ve ardından final sorusunu açar. Finali bilen grup oyunu kazanır; bilemezse aynı final diğer gruba geçer.
 
 ## Kurulum
 
@@ -59,17 +60,18 @@ npm run build:all
 ## Öğretmen Kontrolleri
 
 - Ana ekrandaki kurulum girişi basılı tutma ile açılır.
-- Şifre ekranından kuruluma dönüş yine basılı tutma ister.
+- Kilit ekranından kuruluma dönüş yine basılı tutma ister.
 - Setup ekranına doğrudan URL/deep-link ile girilirse ana ekrana dönülür.
-- Final soru ekranındaki cevap anahtarı basılı tutma ile açılır.
-- Yanlış şifrede mekanik kilit 3 saniye kilitlenir.
+- Hane ve final soru ekranındaki cevap anahtarı basılı tutma ile açılır.
+- Soru süresi hazır ekranındaki başlatma onayından sonra başlar.
+- Gizli şifreler sistem tarafından üretilir; tam şifre uygulamada topluca gösterilmez.
 
 ## Teknoloji
 
 - Expo SDK 54 + React Native + TypeScript strict
 - Expo Router
 - Context + `useReducer`
-- Local JSON soru havuzu
+- Local JSON şifre bulma ve final soru havuzu
 - `expo-haptics`, React Native `Animated`, `PanResponder`
 - Backend, hesap sistemi ve internet gereksinimi yok
 
@@ -79,10 +81,10 @@ npm run build:all
 app/
   index.tsx           Ana ekran
   setup.tsx           Öğretmen kurulum
-  player-select.tsx   Oyuncu seçim ekranı
+  player-select.tsx   Eski rota için yönlendirme ekranı
+  question.tsx        Hazır ekranı + hane/final soru + timer
+  reveal.tsx          Hane kazanıldı ekranı
   code-entry.tsx      4 haneli mekanik kilit
-  reveal.tsx          Şifre doğru geçişi
-  question.tsx        Final soru + timer
   result.tsx          Sonuç ekranı
 components/
   CombinationLock.tsx Mekanik kilit gövdesi
@@ -111,5 +113,5 @@ npm run build:web
 - Birim testler
 - Özel ikon ve splash görselleri
 - Yaş seviyesi filtresi
-- Birden fazla tur için skor takibi
+- Çoklu oyun/oturum skor takibi
 - Öğretmen soru editörü

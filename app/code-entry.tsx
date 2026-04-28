@@ -1,21 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { router } from 'expo-router';
 import { CombinationLock, type CombinationLockStatus } from '@/components/CombinationLock';
-import { HoldButton } from '@/components/HoldButton';
 import { ScoreStrip } from '@/components/ScoreStrip';
 import { ScreenContainer } from '@/components/ScreenContainer';
-import {
-  CODE_TIME_LIMIT,
-  Colors,
-  Font,
-  LOCK_MS,
-  Radius,
-  Shadow,
-  Spacing,
-} from '@/constants/theme';
+import { Timer } from '@/components/Timer';
+import { CODE_TIME_LIMIT, Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 import { useTimer } from '@/hooks/useTimer';
 import { getRandomQuestion } from '@/utils/getRandomQuestion';
@@ -27,48 +19,81 @@ export default function CodeEntry() {
   const { state, dispatch } = useGame();
   const [digits, setDigits] = useState(EMPTY_CODE);
   const [lockStatus, setLockStatus] = useState<CombinationLockStatus>('idle');
-  const successTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const actionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const attemptFinalized = useRef(false);
 
   useEffect(
     () => () => {
-      if (successTimer.current) clearTimeout(successTimer.current);
+      if (actionTimer.current) clearTimeout(actionTimer.current);
     },
     [],
   );
 
   useEffect(() => {
-    if (state.phase !== 'code') return;
+    if (state.phase !== 'code-entry') return;
+    if (actionTimer.current) clearTimeout(actionTimer.current);
+    attemptFinalized.current = false;
     setDigits(EMPTY_CODE);
     setLockStatus('idle');
-  }, [state.phase, state.activePlayer]);
+  }, [state.phase, state.activeGroup]);
 
   useEffect(() => {
     if (state.phase === 'setup') router.replace('/');
-    else if (state.phase === 'player-select') router.replace('/player-select');
-    else if (state.phase === 'reveal') router.replace('/reveal');
-    else if (state.phase === 'question') router.replace('/question');
+    else if (state.phase === 'starter-selection') router.replace('/starter-select');
+    else if (state.phase === 'ready' || state.phase === 'question' || state.phase === 'final-question') router.replace('/question');
+    else if (state.phase === 'digit-reveal') router.replace('/reveal');
+    else if (state.phase === 'code-handoff') router.replace('/code-handoff');
     else if (state.phase === 'result') router.replace('/result');
   }, [state.phase]);
 
-  const handleTimeout = useCallback(() => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(
-      () => {},
+  const activeName =
+    state.activeGroup === 1 ? state.config.group1 : state.config.group2;
+  const activeAccent = state.activeGroup === 1 ? Colors.teal : Colors.coral;
+  const earnedDigits = state.revealedDigits[state.activeGroup];
+  const canAttempt = earnedDigits.length >= 4;
+
+  const getNextQuestionForOtherGroup = useCallback(() => {
+    return getRandomQuestion(
+      state.config.digitCategory,
+      state.config.digitDifficulty,
+      state.usedQuestionIds,
     );
-    dispatch({
-      type: 'CODE_FAIL',
-      payload: {
-        playerId: state.activePlayer,
-        cooldownUntil: Date.now() + LOCK_MS,
-        message: 'Süre doldu.',
-      },
-    });
-  }, [dispatch, state.activePlayer]);
+  }, [state.config.digitCategory, state.config.digitDifficulty, state.usedQuestionIds]);
+
+  const sendBackToQuestion = useCallback(
+    (message: string) => {
+      if (attemptFinalized.current || state.phase !== 'code-entry') return;
+      attemptFinalized.current = true;
+      setLockStatus('error');
+      if (actionTimer.current) clearTimeout(actionTimer.current);
+      actionTimer.current = setTimeout(() => {
+        dispatch({
+          type: 'CODE_FAIL',
+          payload: {
+            message,
+            nextQuestion: getNextQuestionForOtherGroup(),
+          },
+        });
+      }, 520);
+    },
+    [dispatch, getNextQuestionForOtherGroup, state.phase],
+  );
+
+  const handleCodeTimeout = useCallback(() => {
+    if (!canAttempt) return;
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+    sendBackToQuestion('Süre doldu. Sıra diğer gruba geçti.');
+  }, [canAttempt, sendBackToQuestion]);
 
   const { remaining } = useTimer({
     seconds: CODE_TIME_LIMIT,
-    running: state.phase === 'code' && lockStatus !== 'success',
-    onExpire: handleTimeout,
-    resetKey: `${state.phase}-${state.activePlayer}-${state.roundNumber}`,
+    running:
+      state.phase === 'code-entry' &&
+      canAttempt &&
+      lockStatus === 'idle' &&
+      !attemptFinalized.current,
+    onExpire: handleCodeTimeout,
+    resetKey: `${state.phase}-${state.activeGroup}-${earnedDigits.join('')}`,
   });
 
   const handleDigitsChange = (nextDigits: number[]) => {
@@ -84,221 +109,181 @@ export default function CodeEntry() {
   };
 
   const handleSubmit = () => {
-    const activeCooldown = state.playerCooldownUntil[state.activePlayer] ?? 0;
+    if (!canAttempt || attemptFinalized.current) return;
+    attemptFinalized.current = true;
     const result = validateCode(
       digits.join(''),
-      state.config.secretCode,
+      state.secretCodes[state.activeGroup],
       Date.now(),
-      activeCooldown,
+      0,
     );
+
     if (!result.ok) {
       setLockStatus('error');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
-      const cooldownUntil =
-        result.reason === 'mismatch' ? Date.now() + LOCK_MS : activeCooldown;
-      dispatch({
-        type: 'CODE_FAIL',
-        payload: {
-          playerId: state.activePlayer,
-          cooldownUntil,
-          message: result.message,
-        },
-      });
-      setDigits(EMPTY_CODE);
+      if (actionTimer.current) clearTimeout(actionTimer.current);
+      actionTimer.current = setTimeout(() => {
+        dispatch({
+          type: 'CODE_FAIL',
+          payload: {
+            message: 'Şifre yanlış. Sıra diğer gruba geçti.',
+            nextQuestion: getNextQuestionForOtherGroup(),
+          },
+        });
+      }, 520);
       return;
     }
 
     setLockStatus('success');
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    const question = getRandomQuestion(
-      state.config.category,
-      state.config.difficulty,
+    const finalQuestion = getRandomQuestion(
+      state.config.finalCategory,
+      state.config.finalDifficulty,
       state.usedQuestionIds,
     );
-    successTimer.current = setTimeout(() => {
-      dispatch({ type: 'CODE_SUCCESS', payload: { question } });
-    }, 320);
+    if (actionTimer.current) clearTimeout(actionTimer.current);
+    actionTimer.current = setTimeout(() => {
+      dispatch({ type: 'CODE_SUCCESS', payload: { finalQuestion } });
+      router.replace('/question');
+    }, 420);
   };
 
-  const activeName =
-    state.activePlayer === 1 ? state.config.player1 : state.config.player2;
-
-  const ratio = Math.max(0, Math.min(1, remaining / CODE_TIME_LIMIT));
-  const critical = remaining <= 5 && remaining > 0;
-  const warning = remaining <= 10 && remaining > 5;
-  const timerColor = critical
-    ? Colors.danger
-    : warning
-    ? Colors.highlight
-    : Colors.primary;
+  if (state.phase !== 'code-entry') {
+    return (
+      <ScreenContainer>
+        <View style={styles.loading}>
+          <Text style={{ color: Colors.muted }}>Yönlendiriliyor…</Text>
+        </View>
+      </ScreenContainer>
+    );
+  }
 
   return (
     <ScreenContainer scroll>
       <ScoreStrip
-        player1={state.config.player1}
-        player2={state.config.player2}
-        scoreP1={state.scores.p1}
-        scoreP2={state.scores.p2}
-        roundNumber={state.roundNumber}
-        activePlayer={state.activePlayer}
+        group1={state.config.group1}
+        group2={state.config.group2}
+        digitsG1={state.revealedDigits[1]}
+        digitsG2={state.revealedDigits[2]}
+        activeGroup={state.activeGroup}
+        centerLabel="Kilit"
       />
 
-      <View style={[styles.timerCard, { borderColor: timerColor }]}>
-        <View style={styles.timerRow}>
-          <View style={[styles.timerIcon, { backgroundColor: timerColor }]}>
-            <Ionicons name="timer-outline" size={18} color="#fff" />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.timerLabel}>Kalan Süre</Text>
-            <Text style={[styles.timerValue, { color: timerColor }]}>
-              {remaining}
-              <Text style={styles.timerUnit}> sn</Text>
-            </Text>
-          </View>
-          <Text style={styles.timerHint}>Şifre için {CODE_TIME_LIMIT} sn</Text>
-        </View>
-        <View style={styles.timerTrack}>
-          <View
-            style={[
-              styles.timerFill,
-              { width: `${ratio * 100}%`, backgroundColor: timerColor },
-            ]}
-          />
-        </View>
-      </View>
-
-      <View style={styles.centerBlock}>
-        <View style={styles.kicker}>
-          <Text style={styles.kickerText}>
-            {activeName || `Oyuncu ${state.activePlayer}`} · Şifre Kutusu
+      <View style={styles.intro}>
+        <View style={[styles.activeChip, { backgroundColor: activeAccent }]}>
+          <Ionicons name="people" size={12} color="#fff" />
+          <Text style={styles.activeChipText} numberOfLines={1}>
+            {activeName || `Grup ${state.activeGroup}`}
           </Text>
         </View>
-        <Text style={styles.title}>Kilidi Çöz</Text>
-        <Text style={styles.sub}>Kartlardan gelen 4 haneli kodu kilitte ayarla.</Text>
-
-        <CombinationLock
-          digits={digits}
-          onChange={handleDigitsChange}
-          onReset={handleReset}
-          onSubmit={handleSubmit}
-          disabled={lockStatus === 'success'}
-          status={lockStatus}
-          lockRemaining={0}
-        />
-
-        <View style={styles.statusRow}>
-          {state.lastCodeError ? (
-            <Text style={styles.errorText}>{state.lastCodeError}</Text>
-          ) : (
-            <Text style={styles.hintText}>Mekanik kilit hazır</Text>
-          )}
-        </View>
+        <Text style={styles.title}>Kilidi Aç</Text>
+        <Text style={styles.sub}>
+          Kağıda yazdığınız 4 haneli şifreyi 20 saniye içinde girin.
+        </Text>
       </View>
 
-      <View style={{ height: Spacing.md }} />
-      <HoldButton
-        label="Öğretmen · Kuruluma Dön"
-        holdLabel="Açılıyor..."
-        icon="school-outline"
-        onComplete={() => {
-          dispatch({ type: 'UNLOCK_TEACHER' });
-          router.replace('/setup');
-        }}
+      <View style={styles.timerWrap}>
+        <Timer remaining={remaining} total={CODE_TIME_LIMIT} variant="compact" />
+      </View>
+
+      <CombinationLock
+        digits={digits}
+        onChange={handleDigitsChange}
+        onReset={handleReset}
+        onSubmit={handleSubmit}
+        disabled={lockStatus === 'success' || !canAttempt}
+        status={lockStatus}
+        lockRemaining={0}
       />
+
+      <View style={styles.statusRow}>
+        {state.lastCodeError ? (
+          <View style={styles.errorBox}>
+            <Ionicons name="alert-circle" size={16} color={Colors.danger} />
+            <Text style={styles.errorText}>{state.lastCodeError}</Text>
+          </View>
+        ) : (
+          <Text style={styles.hintText}>
+            {canAttempt
+              ? 'Tekerlerle haneyi seçin, ardından kilidi açın.'
+              : 'Bu grup henüz dört haneyi tamamlamadı.'}
+          </Text>
+        )}
+      </View>
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  centerBlock: { alignItems: 'center', gap: Spacing.xs, marginVertical: Spacing.md },
-  kicker: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 6,
-    backgroundColor: Colors.cream,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: Colors.accent,
-    ...Shadow.sm,
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  intro: {
+    alignItems: 'center',
+    gap: 6,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.md,
   },
-  kickerText: {
-    color: Colors.primaryDark,
+  activeChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: Radius.pill,
+    maxWidth: '85%',
+    marginBottom: 4,
+    ...Shadow.xs,
+  },
+  activeChipText: {
+    color: '#fff',
     fontSize: Font.small,
     fontWeight: '900',
-    textTransform: 'uppercase',
+    flexShrink: 1,
   },
   title: {
-    fontSize: Font.title + 2,
+    fontSize: Font.title,
     fontWeight: '900',
-    color: Colors.primaryDark,
+    color: Colors.ink,
     textAlign: 'center',
+    letterSpacing: -0.4,
   },
   sub: {
     color: Colors.muted,
-    marginBottom: Spacing.sm,
+    fontSize: Font.small + 1,
+    fontWeight: '600',
     textAlign: 'center',
-    lineHeight: Font.body * 1.35,
+    lineHeight: (Font.small + 1) * 1.5,
+    paddingHorizontal: Spacing.md,
+  },
+  timerWrap: {
+    width: '100%',
+    marginBottom: Spacing.sm,
   },
   statusRow: {
-    minHeight: 30,
-    marginTop: 2,
+    minHeight: 36,
+    marginTop: Spacing.sm,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  errorText: { color: Colors.danger, fontWeight: '700' },
-  hintText: { color: Colors.muted, fontSize: Font.small },
-  timerCard: {
-    marginTop: Spacing.md,
-    padding: Spacing.md,
-    borderRadius: Radius.lg,
-    borderWidth: 2,
-    backgroundColor: Colors.surface,
-    gap: Spacing.sm,
-    ...Shadow.sm,
-  },
-  timerRow: {
+  errorBox: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.dangerSoft,
+    borderWidth: 1,
+    borderColor: Colors.danger,
   },
-  timerIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: Radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  timerLabel: {
-    color: Colors.muted,
-    fontSize: Font.small - 1,
-    fontWeight: '900',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  timerValue: {
-    fontSize: Font.heading,
-    fontWeight: '900',
-    lineHeight: Font.heading + 2,
-  },
-  timerUnit: {
-    fontSize: Font.small,
+  errorText: {
+    color: Colors.danger,
     fontWeight: '800',
+    fontSize: Font.small,
+  },
+  hintText: {
     color: Colors.muted,
-  },
-  timerHint: {
-    color: Colors.muted,
-    fontSize: Font.small - 1,
-    fontWeight: '700',
-    textAlign: 'right',
-    maxWidth: 90,
-  },
-  timerTrack: {
-    height: 8,
-    borderRadius: Radius.pill,
-    backgroundColor: Colors.border,
-    overflow: 'hidden',
-  },
-  timerFill: {
-    height: '100%',
-    borderRadius: Radius.pill,
+    fontSize: Font.small,
+    textAlign: 'center',
+    fontWeight: '600',
   },
 });

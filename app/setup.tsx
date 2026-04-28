@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { ActionButton } from '@/components/ActionButton';
@@ -12,6 +12,8 @@ import {
   type Category,
   type Difficulty,
 } from '@/types/question';
+import { generateDistinctSecretCodes } from '@/utils/generateSecretCode';
+import { getRandomQuestion } from '@/utils/getRandomQuestion';
 
 const CATEGORIES: Category[] = ['genel-kultur', 'matematik', 'fen', 'tarih', 'zeka'];
 const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard'];
@@ -27,59 +29,21 @@ const CATEGORY_ICONS: Record<Category, React.ComponentProps<typeof Ionicons>['na
 
 const DIFFICULTY_COLORS: Record<Difficulty, string> = {
   easy: Colors.success,
-  medium: Colors.highlight,
+  medium: Colors.warning,
   hard: Colors.danger,
 };
 
 export default function Setup() {
   const { state, dispatch } = useGame();
-  const [player1, setPlayer1] = useState(state.config.player1);
-  const [player2, setPlayer2] = useState(state.config.player2);
-  const [secretCode, setSecretCode] = useState(state.config.secretCode);
-  const [category, setCategory] = useState<Category>(state.config.category);
-  const [difficulty, setDifficulty] = useState<Difficulty>(state.config.difficulty);
-  const [timeLimit, setTimeLimit] = useState<number>(state.config.timeLimit || 30);
+  const [group1, setGroup1] = useState(state.config.group1);
+  const [group2, setGroup2] = useState(state.config.group2);
+  const [digitCategory, setDigitCategory] = useState<Category>(state.config.digitCategory);
+  const [digitDifficulty, setDigitDifficulty] = useState<Difficulty>(state.config.digitDifficulty);
+  const [digitTimeLimit, setDigitTimeLimit] = useState<number>(state.config.digitTimeLimit || 30);
+  const [finalCategory, setFinalCategory] = useState<Category>(state.config.finalCategory);
+  const [finalDifficulty, setFinalDifficulty] = useState<Difficulty>(state.config.finalDifficulty);
+  const [finalTimeLimit, setFinalTimeLimit] = useState<number>(state.config.finalTimeLimit || 30);
   const [error, setError] = useState<string | null>(null);
-  const [showCode, setShowCode] = useState(false);
-  const codeInputRefs = useRef<(TextInput | null)[]>([]);
-
-  // Digit box entrance animations
-  const digitAnims = useRef([
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]).current;
-
-  useEffect(() => {
-    Animated.stagger(
-      60,
-      digitAnims.map((a) =>
-        Animated.spring(a, {
-          toValue: 1,
-          tension: 160,
-          friction: 10,
-          useNativeDriver: true,
-        }),
-      ),
-    ).start();
-  }, [digitAnims]);
-
-  // Animate digit boxes when code changes
-  useEffect(() => {
-    const codeDigits = secretCode.split('');
-    codeDigits.forEach((_, i) => {
-      if (digitAnims[i]) {
-        digitAnims[i].setValue(0.85);
-        Animated.spring(digitAnims[i], {
-          toValue: 1,
-          tension: 200,
-          friction: 8,
-          useNativeDriver: true,
-        }).start();
-      }
-    });
-  }, [secretCode, digitAnims]);
 
   useEffect(() => {
     if (state.phase === 'setup' && !state.teacherUnlocked) {
@@ -88,290 +52,292 @@ export default function Setup() {
   }, [state.phase, state.teacherUnlocked]);
 
   const canStart = useMemo(() => {
-    if (!player1.trim() || !player2.trim()) return false;
-    if (!/^\d{4}$/.test(secretCode)) return false;
-    return true;
-  }, [player1, player2, secretCode]);
+    return !!group1.trim() && !!group2.trim();
+  }, [group1, group2]);
 
   if (state.phase === 'setup' && !state.teacherUnlocked) {
     return null;
   }
 
   const onStart = () => {
-    if (!player1.trim() || !player2.trim()) {
-      setError('Oyuncu adları boş olamaz.');
+    if (!group1.trim() || !group2.trim()) {
+      setError('Grup adları boş olamaz.');
       return;
     }
-    if (!/^\d{4}$/.test(secretCode)) {
-      setError('Şifre tam 4 rakam olmalı.');
-      return;
-    }
+
+    const config = {
+      group1: group1.trim(),
+      group2: group2.trim(),
+      digitCategory,
+      digitDifficulty,
+      digitTimeLimit,
+      finalCategory,
+      finalDifficulty,
+      finalTimeLimit,
+    };
+
     setError(null);
     dispatch({
       type: 'SETUP_GAME',
       payload: {
-        player1: player1.trim(),
-        player2: player2.trim(),
-        secretCode,
-        category,
-        difficulty,
-        timeLimit,
+        config,
+        secretCodes: generateDistinctSecretCodes(),
+        firstQuestion: getRandomQuestion(digitCategory, digitDifficulty),
       },
     });
-    router.replace('/player-select');
-  };
-
-  const codeDigits = secretCode.padEnd(4, ' ').split('').slice(0, 4);
-  const codeDigitCount = secretCode.replace(/\D/g, '').length;
-  const codeReady = /^\d{4}$/.test(secretCode);
-
-  const updateCodeDigit = (index: number, value: string) => {
-    const digitsOnly = value.replace(/\D/g, '');
-    const nextDigits = codeDigits.slice();
-
-    if (!digitsOnly) {
-      nextDigits[index] = ' ';
-      setSecretCode(nextDigits.join('').replace(/\s+$/g, ''));
-      return;
-    }
-
-    digitsOnly
-      .slice(0, 4 - index)
-      .split('')
-      .forEach((digit, offset) => {
-        nextDigits[index + offset] = digit;
-      });
-
-    setSecretCode(nextDigits.join('').replace(/\s+$/g, ''));
-
-    const nextIndex = index + digitsOnly.length;
-    if (nextIndex < 4) {
-      codeInputRefs.current[nextIndex]?.focus();
-    } else {
-      codeInputRefs.current[3]?.blur();
-    }
+    router.replace('/starter-select');
   };
 
   return (
     <ScreenContainer scroll>
-      <View style={styles.header}>
-        <View style={styles.teacherMark}>
-          <Ionicons name="school-outline" size={22} color={Colors.primaryDark} />
-        </View>
-        <View style={{ flex: 1 }}>
+      <View style={styles.topBar}>
+        <Pressable
+          onPress={() => {
+            dispatch({ type: 'LOCK_TEACHER' });
+            router.replace('/');
+          }}
+          hitSlop={10}
+          style={({ pressed }) => [styles.backBtn, pressed && { opacity: 0.7 }]}
+        >
+          <Ionicons name="chevron-back" size={20} color={Colors.primaryDark} />
+        </Pressable>
+        <View style={styles.topBarTitle}>
+          <Text style={styles.eyebrow}>Öğretmen Paneli</Text>
           <Text style={styles.title}>Oyun Kurulumu</Text>
-          <Text style={styles.sub}>Öğretmen paneli</Text>
+        </View>
+        <View style={styles.teacherMark}>
+          <Ionicons name="school" size={18} color={Colors.primaryDark} />
         </View>
       </View>
 
-      <View style={styles.ruleStrip}>
-        <Ionicons name="lock-closed-outline" size={18} color={Colors.primaryDark} />
-        <Text style={styles.ruleText}>Bu sürüm 4 haneli mekanik kilit ile oynanır.</Text>
-      </View>
-
-      <Section title="Oyuncular" icon="people-outline" accent={Colors.teal}>
-        <Field label="Oyuncu 1" hint="Birinci oyuncunun adı">
-          <TextInput
-            style={styles.input}
-            value={player1}
-            onChangeText={setPlayer1}
-            placeholder="İsim"
-            placeholderTextColor={Colors.muted}
-            maxLength={20}
+      <Section title="Gruplar" icon="people" tone={Colors.teal} description="Yarışacak iki grubun adlarını girin.">
+        <View style={styles.groupRow}>
+          <GroupInput
+            tone={Colors.teal}
+            badge="1"
+            value={group1}
+            onChange={setGroup1}
+            placeholder="Birinci grup"
           />
-        </Field>
-        <Field label="Oyuncu 2" hint="İkinci oyuncunun adı">
-          <TextInput
-            style={styles.input}
-            value={player2}
-            onChangeText={setPlayer2}
-            placeholder="İsim"
-            placeholderTextColor={Colors.muted}
-            maxLength={20}
+          <GroupInput
+            tone={Colors.coral}
+            badge="2"
+            value={group2}
+            onChange={setGroup2}
+            placeholder="İkinci grup"
           />
-        </Field>
-      </Section>
-
-      <Section title="Şifre" icon="keypad-outline" accent={Colors.accent}>
-        <View style={styles.codeBlock}>
-          <View style={styles.codeEntryRow}>
-            <View style={styles.digitRow}>
-              {codeDigits.map((d, i) => {
-                const filled = d.trim() !== '';
-                const scale = digitAnims[i]?.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0.4, 1],
-                }) ?? 1;
-                return (
-                  <Animated.View
-                    key={i}
-                    style={[
-                      styles.digitBox,
-                      filled && styles.digitBoxFilled,
-                      { transform: [{ scale }], opacity: digitAnims[i] ?? 1 },
-                    ]}
-                  >
-                    <TextInput
-                      ref={(ref) => {
-                        codeInputRefs.current[i] = ref;
-                      }}
-                      style={[styles.digitInput, filled && styles.digitInputFilled]}
-                      value={filled ? d : ''}
-                      onChangeText={(value) => updateCodeDigit(i, value)}
-                      onKeyPress={({ nativeEvent }) => {
-                        if (nativeEvent.key === 'Backspace' && !filled && i > 0) {
-                          codeInputRefs.current[i - 1]?.focus();
-                        }
-                      }}
-                      placeholder="–"
-                      placeholderTextColor={Colors.muted}
-                      keyboardType="number-pad"
-                      inputMode="numeric"
-                      secureTextEntry={filled && !showCode}
-                      selectTextOnFocus
-                    />
-                  </Animated.View>
-                );
-              })}
-            </View>
-            <Pressable
-              onPress={() => setShowCode((visible) => !visible)}
-              style={({ pressed }) => [
-                styles.eyeButton,
-                pressed && { opacity: 0.75 },
-              ]}
-            >
-              <Ionicons
-                name={showCode ? 'eye-off-outline' : 'eye-outline'}
-                size={22}
-                color={Colors.muted}
-              />
-            </Pressable>
-          </View>
-          <Text style={styles.codeHint}>
-            {codeReady
-              ? '✓ Şifre hazır'
-              : `${4 - codeDigitCount} rakam daha`}
-          </Text>
         </View>
       </Section>
 
-      <Section title="Kategori" icon="library-outline" accent={Colors.primary}>
-        <View style={styles.chipRow}>
-          {CATEGORIES.map((c) => (
-            <Chip
-              key={c}
-              label={CategoryLabels[c]}
-              icon={CATEGORY_ICONS[c]}
-              selected={category === c}
-              onPress={() => setCategory(c)}
-            />
-          ))}
+      <QuestionSettings
+        title="Şifre Soruları"
+        icon="key"
+        description="Doğru cevap, gizli kod hanesini kazandırır."
+        tone={Colors.primary}
+        category={digitCategory}
+        difficulty={digitDifficulty}
+        timeLimit={digitTimeLimit}
+        onCategory={setDigitCategory}
+        onDifficulty={setDigitDifficulty}
+        onTimeLimit={setDigitTimeLimit}
+      />
+
+      <QuestionSettings
+        title="Final Sorusu"
+        icon="trophy"
+        description="Kilidi açan grup finale girer. Bilen kazanır."
+        tone={Colors.coral}
+        category={finalCategory}
+        difficulty={finalDifficulty}
+        timeLimit={finalTimeLimit}
+        onCategory={setFinalCategory}
+        onDifficulty={setFinalDifficulty}
+        onTimeLimit={setFinalTimeLimit}
+      />
+
+      {error && (
+        <View style={styles.errorBox}>
+          <Ionicons name="alert-circle" size={16} color={Colors.danger} />
+          <Text style={styles.errorText}>{error}</Text>
         </View>
-      </Section>
+      )}
 
-      <Section title="Zorluk" icon="sparkles-outline" accent={Colors.highlight}>
-        <View style={styles.segmentRow}>
-          {DIFFICULTIES.map((d) => {
-            const sel = difficulty === d;
-            const color = DIFFICULTY_COLORS[d];
-            return (
-              <Pressable
-                key={d}
-                onPress={() => setDifficulty(d)}
-                style={[
-                  styles.segment,
-                  sel && { backgroundColor: color, borderColor: color },
-                ]}
-              >
-                <View style={[styles.segmentDot, { backgroundColor: sel ? '#fff' : color }]} />
-                <Text style={[styles.segmentText, sel && { color: '#fff' }]}>
-                  {DifficultyLabels[d]}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </Section>
-
-      <Section title="Süre" icon="timer-outline" accent={Colors.coral}>
-        <View style={styles.timeRow}>
-          {TIME_OPTIONS.map((t) => {
-            const sel = timeLimit === t;
-            return (
-              <Pressable
-                key={t}
-                onPress={() => setTimeLimit(t)}
-                style={[styles.timeCard, sel && styles.timeCardSelected]}
-              >
-                <Text style={[styles.timeNumber, sel && styles.timeNumberSelected]}>
-                  {t}
-                </Text>
-                <Text style={[styles.timeUnit, sel && styles.timeUnitSelected]}>sn</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </Section>
-
-      {error && <Text style={styles.error}>{error}</Text>}
-
-      <View style={{ height: Spacing.md }} />
+      <View style={{ height: Spacing.sm }} />
       <ActionButton
         label="Oyunu Başlat"
         variant="primary"
+        size="lg"
         fullWidth
         disabled={!canStart}
         onPress={onStart}
         icon="play"
       />
-      <View style={{ height: Spacing.sm }} />
-      <ActionButton
-        label="İptal"
-        variant="outline"
-        fullWidth
-        icon="close"
-        onPress={() => {
-          dispatch({ type: 'LOCK_TEACHER' });
-          router.replace('/');
-        }}
-      />
     </ScreenContainer>
+  );
+}
+
+function GroupInput({
+  tone,
+  badge,
+  value,
+  onChange,
+  placeholder,
+}: {
+  tone: string;
+  badge: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <View style={styles.groupInputCard}>
+      <View style={[styles.groupBadge, { backgroundColor: tone }]}>
+        <Text style={styles.groupBadgeText}>{badge}</Text>
+      </View>
+      <TextInput
+        style={styles.groupInput}
+        value={value}
+        onChangeText={onChange}
+        placeholder={placeholder}
+        placeholderTextColor={Colors.mutedSoft}
+        maxLength={20}
+      />
+    </View>
+  );
+}
+
+function QuestionSettings({
+  title,
+  icon,
+  description,
+  tone,
+  category,
+  difficulty,
+  timeLimit,
+  onCategory,
+  onDifficulty,
+  onTimeLimit,
+}: {
+  title: string;
+  icon: React.ComponentProps<typeof Ionicons>['name'];
+  description: string;
+  tone: string;
+  category: Category;
+  difficulty: Difficulty;
+  timeLimit: number;
+  onCategory: (category: Category) => void;
+  onDifficulty: (difficulty: Difficulty) => void;
+  onTimeLimit: (timeLimit: number) => void;
+}) {
+  return (
+    <Section title={title} icon={icon} tone={tone} description={description}>
+      <SubLabel>Kategori</SubLabel>
+      <View style={styles.chipRow}>
+        {CATEGORIES.map((c) => (
+          <Chip
+            key={c}
+            label={CategoryLabels[c]}
+            icon={CATEGORY_ICONS[c]}
+            selected={category === c}
+            onPress={() => onCategory(c)}
+            tone={tone}
+          />
+        ))}
+      </View>
+
+      <SubLabel>Zorluk</SubLabel>
+      <View style={styles.segmentRow}>
+        {DIFFICULTIES.map((d) => {
+          const selected = difficulty === d;
+          const color = DIFFICULTY_COLORS[d];
+          return (
+            <Pressable
+              key={d}
+              onPress={() => onDifficulty(d)}
+              style={[
+                styles.segment,
+                selected && { backgroundColor: color, borderColor: color },
+              ]}
+            >
+              <View
+                style={[
+                  styles.segmentDot,
+                  { backgroundColor: selected ? '#fff' : color },
+                ]}
+              />
+              <Text style={[styles.segmentText, selected && { color: '#fff' }]}>
+                {DifficultyLabels[d]}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
+      <SubLabel>Süre</SubLabel>
+      <View style={styles.timeRow}>
+        {TIME_OPTIONS.map((t) => {
+          const selected = timeLimit === t;
+          return (
+            <Pressable
+              key={t}
+              onPress={() => onTimeLimit(t)}
+              style={[
+                styles.timeCard,
+                selected && { borderColor: tone, backgroundColor: Colors.ink },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.timeNumber,
+                  selected && { color: Colors.accent },
+                ]}
+              >
+                {t}
+              </Text>
+              <Text
+                style={[styles.timeUnit, selected && { color: Colors.metal }]}
+              >
+                saniye
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    </Section>
   );
 }
 
 function Section({
   title,
   icon,
-  accent,
+  tone,
+  description,
   children,
 }: {
   title: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
-  accent?: string;
+  tone: string;
+  description?: string;
   children: React.ReactNode;
 }) {
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <View style={[styles.sectionIconBox, accent ? { backgroundColor: accent } : null]}>
+        <View style={[styles.sectionIcon, { backgroundColor: tone }]}>
           <Ionicons name={icon} size={16} color="#fff" />
         </View>
-        <Text style={styles.sectionTitle}>{title}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.sectionTitle}>{title}</Text>
+          {description && <Text style={styles.sectionDesc}>{description}</Text>}
+        </View>
       </View>
       {children}
     </View>
   );
 }
 
-function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
-  return (
-    <View style={{ gap: 6 }}>
-      <Text style={styles.label}>{label}</Text>
-      {children}
-      {hint && <Text style={styles.fieldHint}>{hint}</Text>}
-    </View>
-  );
+function SubLabel({ children }: { children: React.ReactNode }) {
+  return <Text style={styles.subLabel}>{children}</Text>;
 }
 
 function Chip({
@@ -379,183 +345,172 @@ function Chip({
   icon,
   selected,
   onPress,
+  tone,
 }: {
   label: string;
   icon?: React.ComponentProps<typeof Ionicons>['name'];
   selected: boolean;
   onPress: () => void;
+  tone: string;
 }) {
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
         styles.chip,
-        selected && styles.chipSelected,
+        selected && { backgroundColor: tone, borderColor: tone },
         pressed && { opacity: 0.85 },
       ]}
     >
       {icon && (
-        <Ionicons name={icon} size={14} color={selected ? '#fff' : Colors.primary} />
+        <Ionicons
+          name={icon}
+          size={14}
+          color={selected ? '#fff' : Colors.primary}
+        />
       )}
-      <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{label}</Text>
+      <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  topBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
+    gap: Spacing.sm,
     marginBottom: Spacing.lg,
   },
-  teacherMark: {
-    width: 54,
-    height: 54,
-    borderRadius: 18,
-    backgroundColor: Colors.accent,
+  backBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    ...Shadow.sm,
+    ...Shadow.xs,
   },
-  title: { fontSize: Font.title, fontWeight: '900', color: Colors.primaryDark },
-  sub: { color: Colors.muted, marginTop: 2, fontWeight: '700' },
-  ruleStrip: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
+  topBarTitle: { flex: 1, gap: 2 },
+  eyebrow: {
+    fontSize: 10,
+    color: Colors.primary,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+  },
+  title: {
+    fontSize: Font.title - 2,
+    fontWeight: '900',
+    color: Colors.ink,
+    letterSpacing: -0.4,
+  },
+  teacherMark: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: Colors.accentSoft,
     alignItems: 'center',
-    backgroundColor: Colors.cream,
-    borderRadius: Radius.md,
-    padding: Spacing.md,
-    borderWidth: 1,
-    borderColor: Colors.accent,
-    marginBottom: Spacing.lg,
-  },
-  ruleText: {
-    flex: 1,
-    color: Colors.primaryDark,
-    fontWeight: '800',
-    lineHeight: Font.body * 1.35,
+    justifyContent: 'center',
   },
   section: {
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.md,
     gap: Spacing.sm,
     backgroundColor: Colors.surface,
     borderRadius: Radius.lg,
     borderWidth: 1,
     borderColor: Colors.border,
     padding: Spacing.md,
-    ...Shadow.sm,
+    ...Shadow.xs,
   },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
+    marginBottom: 4,
   },
-  sectionIconBox: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    backgroundColor: Colors.primary,
+  sectionIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   sectionTitle: {
-    fontSize: Font.body,
-    fontWeight: '900',
-    color: Colors.primaryDark,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  label: { fontSize: Font.small, color: Colors.muted, fontWeight: '800' },
-  fieldHint: { fontSize: 11, color: Colors.muted, fontWeight: '600', fontStyle: 'italic' },
-  input: {
-    backgroundColor: '#F9FBFD',
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: Radius.md,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 14,
     fontSize: Font.body + 1,
-    color: Colors.text,
-  },
-  // ── Code preview ──
-  codeBlock: {
-    gap: Spacing.sm,
-    alignItems: 'center',
-  },
-  codeEntryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.sm,
-    width: '100%',
-  },
-  digitRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: Spacing.sm,
-  },
-  digitBox: {
-    width: 52,
-    height: 62,
-    borderRadius: Radius.md,
-    borderWidth: 2,
-    borderColor: Colors.border,
-    backgroundColor: '#F9FBFD',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  digitBoxFilled: {
-    borderColor: Colors.accent,
-    backgroundColor: Colors.ink,
-    ...Shadow.sm,
-  },
-  digitInput: {
-    width: '100%',
-    height: '100%',
-    fontSize: Font.heading + 4,
     fontWeight: '900',
-    color: Colors.muted,
-    lineHeight: Font.heading + 8,
-    textAlign: 'center',
-    padding: 0,
+    color: Colors.ink,
+    letterSpacing: -0.2,
   },
-  digitInputFilled: {
-    color: Colors.accent,
-  },
-  eyeButton: {
-    width: 52,
-    height: 62,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    backgroundColor: '#F9FBFD',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  codeHint: {
+  sectionDesc: {
     fontSize: Font.small,
     color: Colors.muted,
-    fontWeight: '700',
+    fontWeight: '600',
+    marginTop: 1,
   },
-  // ── Chips / Categories ──
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
+  subLabel: {
+    color: Colors.muted,
+    fontSize: 11,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+    marginTop: 6,
+  },
+  groupRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  groupInputCard: {
+    flex: 1,
+    backgroundColor: Colors.surfaceMuted,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  groupBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  groupBadgeText: {
+    color: '#fff',
+    fontWeight: '900',
+    fontSize: Font.body - 2,
+  },
+  groupInput: {
+    flex: 1,
+    fontSize: Font.body,
+    color: Colors.ink,
+    fontWeight: '700',
+    paddingVertical: 4,
+  },
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: Radius.pill,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: Colors.border,
-    backgroundColor: '#F9FBFD',
+    backgroundColor: Colors.surfaceMuted,
   },
-  chipSelected: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  chipText: { fontSize: Font.small + 1, fontWeight: '900', color: Colors.text },
+  chipText: {
+    fontSize: Font.small,
+    fontWeight: '800',
+    color: Colors.ink,
+  },
   chipTextSelected: { color: '#fff' },
-  // ── Difficulty segments ──
   segmentRow: {
     flexDirection: 'row',
     gap: Spacing.sm,
@@ -566,23 +521,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    paddingVertical: 14,
+    paddingVertical: 12,
     borderRadius: Radius.md,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: Colors.border,
-    backgroundColor: '#F9FBFD',
+    backgroundColor: Colors.surfaceMuted,
   },
-  segmentDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
+  segmentDot: { width: 8, height: 8, borderRadius: 4 },
   segmentText: {
-    fontSize: Font.small + 1,
+    fontSize: Font.small,
     fontWeight: '900',
-    color: Colors.text,
+    color: Colors.ink,
   },
-  // ── Time cards ──
   timeRow: {
     flexDirection: 'row',
     gap: Spacing.sm,
@@ -593,36 +543,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: Spacing.md,
     borderRadius: Radius.md,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: Colors.border,
-    backgroundColor: '#F9FBFD',
-  },
-  timeCardSelected: {
-    borderColor: Colors.coral,
-    backgroundColor: Colors.ink,
-    ...Shadow.sm,
+    backgroundColor: Colors.surfaceMuted,
   },
   timeNumber: {
-    fontSize: Font.heading,
+    fontSize: Font.heading - 2,
     fontWeight: '900',
-    color: Colors.text,
-  },
-  timeNumberSelected: {
-    color: Colors.coral,
+    color: Colors.ink,
+    letterSpacing: -0.5,
   },
   timeUnit: {
     fontSize: 10,
     fontWeight: '900',
     color: Colors.muted,
     textTransform: 'uppercase',
+    letterSpacing: 0.6,
   },
-  timeUnitSelected: {
-    color: Colors.metal,
-  },
-  error: {
-    color: Colors.danger,
-    textAlign: 'center',
-    fontWeight: '800',
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radius.md,
+    backgroundColor: Colors.dangerSoft,
+    borderWidth: 1,
+    borderColor: Colors.danger,
     marginBottom: Spacing.sm,
+  },
+  errorText: {
+    color: Colors.danger,
+    fontWeight: '800',
+    fontSize: Font.small,
   },
 });

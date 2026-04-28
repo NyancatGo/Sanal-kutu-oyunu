@@ -1,166 +1,2417 @@
 [
-  { "id": "gk-e-1", "category": "genel-kultur", "difficulty": "easy", "question": "Türkiye'nin başkenti neresidir?", "answer": "Ankara", "type": "spoken" },
-  { "id": "gk-e-2", "category": "genel-kultur", "difficulty": "easy", "question": "Bir yılda kaç ay vardır?", "answer": "12", "type": "spoken" },
-  { "id": "gk-e-3", "category": "genel-kultur", "difficulty": "easy", "question": "Trafik ışıklarında dur anlamına gelen renk hangisidir?", "answer": "Kırmızı", "type": "spoken" },
-  { "id": "gk-e-4", "category": "genel-kultur", "difficulty": "easy", "question": "Türkiye'nin para birimi nedir?", "answer": "Türk lirası", "type": "spoken" },
-  { "id": "gk-e-5", "category": "genel-kultur", "difficulty": "easy", "question": "Dünyamızın doğal uydusunun adı nedir?", "answer": "Ay", "type": "spoken" },
-  { "id": "gk-e-6", "category": "genel-kultur", "difficulty": "easy", "question": "Haritada kuzeyi göstermek için en çok hangi işaret kullanılır?", "answer": "Pusula oku / N harfi", "teacherNote": "N harfi İngilizce north, yani kuzey anlamına gelir.", "type": "spoken" },
-  { "id": "gk-e-7", "category": "genel-kultur", "difficulty": "easy", "question": "Okullarda kitap ödünç alınan yere ne ad verilir?", "answer": "Kütüphane", "type": "spoken" },
-  { "id": "gk-e-8", "category": "genel-kultur", "difficulty": "easy", "question": "Türkiye bayrağında hangi iki sembol bulunur?", "answer": "Ay ve yıldız", "type": "spoken" },
-  { "id": "gk-e-9", "category": "genel-kultur", "difficulty": "easy", "question": "Bir haftada kaç gün vardır?", "answer": "7", "type": "spoken" },
-  { "id": "gk-e-10", "category": "genel-kultur", "difficulty": "easy", "question": "Deniz ve okyanus sularının tadı genellikle nasıldır?", "answer": "Tuzlu", "type": "spoken" },
-
-  { "id": "gk-m-1", "category": "genel-kultur", "difficulty": "medium", "question": "Dünyanın en büyük okyanusu hangisidir?", "answer": "Büyük Okyanus / Pasifik Okyanusu", "type": "spoken" },
-  { "id": "gk-m-2", "category": "genel-kultur", "difficulty": "medium", "question": "Türkiye'nin en uzun nehri hangisidir?", "answer": "Kızılırmak", "type": "spoken" },
-  { "id": "gk-m-3", "category": "genel-kultur", "difficulty": "medium", "question": "Dünya üzerinde en çok konuşulan dillerden biri olan İngilizcenin alfabesinde kaç harf vardır?", "answer": "26", "type": "spoken" },
-  { "id": "gk-m-4", "category": "genel-kultur", "difficulty": "medium", "question": "Bir ülkenin yönetim merkezinin bulunduğu şehre ne ad verilir?", "answer": "Başkent", "type": "spoken" },
-  { "id": "gk-m-5", "category": "genel-kultur", "difficulty": "medium", "question": "Türkiye'nin üç tarafını çevreleyen doğal yapı nedir?", "answer": "Denizler", "type": "spoken" },
-  { "id": "gk-m-6", "category": "genel-kultur", "difficulty": "medium", "question": "Bir yerin kuş bakışı ve küçültülmüş çizimine ne denir?", "answer": "Harita", "type": "spoken" },
-  { "id": "gk-m-7", "category": "genel-kultur", "difficulty": "medium", "question": "Kıtaları ve okyanusları gösteren küre biçimindeki modele ne denir?", "answer": "Dünya küresi", "type": "spoken" },
-  { "id": "gk-m-8", "category": "genel-kultur", "difficulty": "medium", "question": "Bir yılda dört mevsim yaşanmasının temel nedeni nedir?", "answer": "Dünya'nın Güneş etrafında dolanması ve eksen eğikliği", "teacherNote": "Çocuklar için 'Dünya'nın Güneş etrafında dönmesi' cevabı kısmen kabul edilebilir.", "type": "spoken" },
-  { "id": "gk-m-9", "category": "genel-kultur", "difficulty": "medium", "question": "Kütüphanede kitapların sessiz okunmasının temel nedeni nedir?", "answer": "Diğer okuyucuları rahatsız etmemek", "type": "spoken" },
-  { "id": "gk-m-10", "category": "genel-kultur", "difficulty": "medium", "question": "Deprem sırasında sağlam bir eşyanın yanında korunma hareketine ne ad verilir?", "answer": "Çök, kapan, tutun", "type": "spoken" },
-
-  { "id": "gk-h-1", "category": "genel-kultur", "difficulty": "hard", "question": "Türkiye'nin en yüksek dağı hangisidir?", "answer": "Ağrı Dağı", "type": "spoken" },
-  { "id": "gk-h-2", "category": "genel-kultur", "difficulty": "hard", "question": "Dünya haritasında ekvator çizgisi Dünya'yı hangi iki yarım küreye ayırır?", "answer": "Kuzey ve güney yarım küre", "type": "spoken" },
-  { "id": "gk-h-3", "category": "genel-kultur", "difficulty": "hard", "question": "Birleşmiş Milletler Güvenlik Konseyi'nin kaç daimi üyesi vardır?", "answer": "5", "teacherNote": "ABD, Rusya, Çin, Birleşik Krallık ve Fransa.", "type": "spoken" },
-  { "id": "gk-h-4", "category": "genel-kultur", "difficulty": "hard", "question": "Bir yerin deniz seviyesinden yüksekliğine ne denir?", "answer": "Rakım", "type": "spoken" },
-  { "id": "gk-h-5", "category": "genel-kultur", "difficulty": "hard", "question": "Bir ülkenin başka ülkelerle alışveriş yapmasına genel olarak ne ad verilir?", "answer": "Dış ticaret", "type": "spoken" },
-  { "id": "gk-h-6", "category": "genel-kultur", "difficulty": "hard", "question": "Kültürel miras denince ne anlaşılır?", "answer": "Geçmişten kalan ve toplum için değerli olan eserler, gelenekler ve bilgiler", "type": "spoken" },
-  { "id": "gk-h-7", "category": "genel-kultur", "difficulty": "hard", "question": "Küresel ısınmanın en temel nedeni hangi gazların atmosferde artmasıdır?", "answer": "Sera gazları", "teacherNote": "Karbondioksit örneği verilirse kabul edilebilir.", "type": "spoken" },
-  { "id": "gk-h-8", "category": "genel-kultur", "difficulty": "hard", "question": "Bir toplumda insanların uyması beklenen yazılı kurallar bütününe ne denir?", "answer": "Hukuk / yasalar", "type": "spoken" },
-  { "id": "gk-h-9", "category": "genel-kultur", "difficulty": "hard", "question": "Tarihi eserlerin korunmasının temel amacı nedir?", "answer": "Geçmişi ve kültürel mirası gelecek nesillere aktarmak", "type": "spoken" },
-  { "id": "gk-h-10", "category": "genel-kultur", "difficulty": "hard", "question": "Bir bilimsel bilginin güvenilir olması için neye dayanması gerekir?", "answer": "Kanıt, gözlem ve deney", "type": "spoken" },
-
-  { "id": "mat-e-1", "category": "matematik", "difficulty": "easy", "question": "7 + 8 kaç eder?", "answer": "15", "type": "spoken" },
-  { "id": "mat-e-2", "category": "matematik", "difficulty": "easy", "question": "3 kere 4 kaç eder?", "answer": "12", "type": "spoken" },
-  { "id": "mat-e-3", "category": "matematik", "difficulty": "easy", "question": "Bir düzinede kaç tane vardır?", "answer": "12", "type": "spoken" },
-  { "id": "mat-e-4", "category": "matematik", "difficulty": "easy", "question": "Bir saatte kaç dakika vardır?", "answer": "60", "type": "spoken" },
-  { "id": "mat-e-5", "category": "matematik", "difficulty": "easy", "question": "20 sayısından 6 çıkarılırsa kaç kalır?", "answer": "14", "type": "spoken" },
-  { "id": "mat-e-6", "category": "matematik", "difficulty": "easy", "question": "5'in iki katı kaçtır?", "answer": "10", "type": "spoken" },
-  { "id": "mat-e-7", "category": "matematik", "difficulty": "easy", "question": "Bir üçgenin kaç kenarı vardır?", "answer": "3", "type": "spoken" },
-  { "id": "mat-e-8", "category": "matematik", "difficulty": "easy", "question": "Bir karenin kaç köşesi vardır?", "answer": "4", "type": "spoken" },
-  { "id": "mat-e-9", "category": "matematik", "difficulty": "easy", "question": "10 sayısının yarısı kaçtır?", "answer": "5", "type": "spoken" },
-  { "id": "mat-e-10", "category": "matematik", "difficulty": "easy", "question": "9 ile 1'in toplamı kaçtır?", "answer": "10", "type": "spoken" },
-
-  { "id": "mat-m-1", "category": "matematik", "difficulty": "medium", "question": "15'in yarısı ile 20'nin yarısının toplamı kaçtır?", "answer": "17,5", "teacherNote": "7,5 + 10 = 17,5", "type": "spoken" },
-  { "id": "mat-m-2", "category": "matematik", "difficulty": "medium", "question": "Bir karenin kenar uzunluğu 6 ise çevresi kaç olur?", "answer": "24", "type": "spoken" },
-  { "id": "mat-m-3", "category": "matematik", "difficulty": "medium", "question": "72 sayısının yarısının yarısı kaçtır?", "answer": "18", "type": "spoken" },
-  { "id": "mat-m-4", "category": "matematik", "difficulty": "medium", "question": "Bir dikdörtgenin kısa kenarı 4, uzun kenarı 7 ise alanı kaçtır?", "answer": "28", "type": "spoken" },
-  { "id": "mat-m-5", "category": "matematik", "difficulty": "medium", "question": "45 sayısının 5'e bölümü kaçtır?", "answer": "9", "type": "spoken" },
-  { "id": "mat-m-6", "category": "matematik", "difficulty": "medium", "question": "Bir sayının çeyreği 6 ise bu sayı kaçtır?", "answer": "24", "type": "spoken" },
-  { "id": "mat-m-7", "category": "matematik", "difficulty": "medium", "question": "3 kalem 12 lira ise 1 kalem kaç liradır?", "answer": "4 lira", "type": "spoken" },
-  { "id": "mat-m-8", "category": "matematik", "difficulty": "medium", "question": "Bir açının ölçüsü 90 derece ise bu açıya ne denir?", "answer": "Dik açı", "type": "spoken" },
-  { "id": "mat-m-9", "category": "matematik", "difficulty": "medium", "question": "2, 4, 6, 8 dizisinde sonraki sayı kaçtır?", "answer": "10", "type": "spoken" },
-  { "id": "mat-m-10", "category": "matematik", "difficulty": "medium", "question": "100 liranın yüzde 25'i kaç liradır?", "answer": "25 lira", "type": "spoken" },
-
-  { "id": "mat-h-1", "category": "matematik", "difficulty": "hard", "question": "Bir üçgenin iç açılarının toplamı kaç derecedir?", "answer": "180 derece", "type": "spoken" },
-  { "id": "mat-h-2", "category": "matematik", "difficulty": "hard", "question": "144'ün karekökü kaçtır?", "answer": "12", "type": "spoken" },
-  { "id": "mat-h-3", "category": "matematik", "difficulty": "hard", "question": "Pi sayısının virgülden sonraki ilk iki basamağı nedir?", "answer": "14", "teacherNote": "Pi yaklaşık 3,14'tür.", "type": "spoken" },
-  { "id": "mat-h-4", "category": "matematik", "difficulty": "hard", "question": "12 ve 18 sayılarının en büyük ortak böleni kaçtır?", "answer": "6", "type": "spoken" },
-  { "id": "mat-h-5", "category": "matematik", "difficulty": "hard", "question": "Bir sayının yüzde 10'u 8 ise bu sayı kaçtır?", "answer": "80", "type": "spoken" },
-  { "id": "mat-h-6", "category": "matematik", "difficulty": "hard", "question": "3x + 6 = 21 denkleminde x kaçtır?", "answer": "5", "type": "spoken" },
-  { "id": "mat-h-7", "category": "matematik", "difficulty": "hard", "question": "Bir dikdörtgenin alanı 48, kısa kenarı 6 ise uzun kenarı kaçtır?", "answer": "8", "type": "spoken" },
-  { "id": "mat-h-8", "category": "matematik", "difficulty": "hard", "question": "2 üzeri 5 kaçtır?", "answer": "32", "type": "spoken" },
-  { "id": "mat-h-9", "category": "matematik", "difficulty": "hard", "question": "0,75 kesri yüzde olarak kaçtır?", "answer": "Yüzde 75", "type": "spoken" },
-  { "id": "mat-h-10", "category": "matematik", "difficulty": "hard", "question": "Bir sayının 3 katının 4 fazlası 25 ise sayı kaçtır?", "answer": "7", "type": "spoken" },
-
-  { "id": "fen-e-1", "category": "fen", "difficulty": "easy", "question": "Su kaç derecede donar?", "answer": "0 derece", "type": "spoken" },
-  { "id": "fen-e-2", "category": "fen", "difficulty": "easy", "question": "Güneş doğudan mı batıdan mı doğar?", "answer": "Doğudan", "type": "spoken" },
-  { "id": "fen-e-3", "category": "fen", "difficulty": "easy", "question": "İnsanda kaç tane göz vardır?", "answer": "2", "type": "spoken" },
-  { "id": "fen-e-4", "category": "fen", "difficulty": "easy", "question": "Bitkiler büyümek için hangi ışık kaynağına ihtiyaç duyar?", "answer": "Güneş", "type": "spoken" },
-  { "id": "fen-e-5", "category": "fen", "difficulty": "easy", "question": "Canlıların nefes almak için kullandığı gaz nedir?", "answer": "Oksijen", "type": "spoken" },
-  { "id": "fen-e-6", "category": "fen", "difficulty": "easy", "question": "Kulağımız hangi duyumuzla ilgilidir?", "answer": "İşitme", "type": "spoken" },
-  { "id": "fen-e-7", "category": "fen", "difficulty": "easy", "question": "Buz ısınınca hangi hale geçer?", "answer": "Sıvı hale / suya", "type": "spoken" },
-  { "id": "fen-e-8", "category": "fen", "difficulty": "easy", "question": "Dünya'nın ısı ve ışık kaynağı nedir?", "answer": "Güneş", "type": "spoken" },
-  { "id": "fen-e-9", "category": "fen", "difficulty": "easy", "question": "Mıknatıs hangi maddeleri daha kolay çeker?", "answer": "Demir gibi metal maddeleri", "type": "spoken" },
-  { "id": "fen-e-10", "category": "fen", "difficulty": "easy", "question": "İskeletimizin temel görevi nedir?", "answer": "Vücudu desteklemek ve korumak", "type": "spoken" },
-
-  { "id": "fen-m-1", "category": "fen", "difficulty": "medium", "question": "Güneş sistemindeki en büyük gezegen hangisidir?", "answer": "Jüpiter", "type": "spoken" },
-  { "id": "fen-m-2", "category": "fen", "difficulty": "medium", "question": "Suyun kimyasal formülü nedir?", "answer": "H2O", "type": "spoken" },
-  { "id": "fen-m-3", "category": "fen", "difficulty": "medium", "question": "İnsan vücudundaki en büyük organ hangisidir?", "answer": "Deri", "type": "spoken" },
-  { "id": "fen-m-4", "category": "fen", "difficulty": "medium", "question": "Bitkilerin ışık kullanarak besin üretmesine ne denir?", "answer": "Fotosentez", "type": "spoken" },
-  { "id": "fen-m-5", "category": "fen", "difficulty": "medium", "question": "Suyun gaz haline geçmesine ne denir?", "answer": "Buharlaşma", "type": "spoken" },
-  { "id": "fen-m-6", "category": "fen", "difficulty": "medium", "question": "Sesin yayılabilmesi için neye ihtiyaç vardır?", "answer": "Maddesel ortam", "teacherNote": "Hava, su veya katı ortam örnek verilebilir.", "type": "spoken" },
-  { "id": "fen-m-7", "category": "fen", "difficulty": "medium", "question": "Elektrik devresinde ampulün yanması için devre nasıl olmalıdır?", "answer": "Kapalı devre olmalıdır", "type": "spoken" },
-  { "id": "fen-m-8", "category": "fen", "difficulty": "medium", "question": "Gezegenlerin Güneş etrafında izlediği yola ne denir?", "answer": "Yörünge", "type": "spoken" },
-  { "id": "fen-m-9", "category": "fen", "difficulty": "medium", "question": "Besinleri öğütmeye başlayan organımız hangisidir?", "answer": "Ağız / dişler", "type": "spoken" },
-  { "id": "fen-m-10", "category": "fen", "difficulty": "medium", "question": "Kanın vücutta dolaşmasını sağlayan organ hangisidir?", "answer": "Kalp", "type": "spoken" },
-
-  { "id": "fen-h-1", "category": "fen", "difficulty": "hard", "question": "Işık hızı saniyede yaklaşık kaç kilometredir?", "answer": "300.000 kilometre", "teacherNote": "Tam değer yaklaşık 299.792 km/s'dir.", "type": "spoken" },
-  { "id": "fen-h-2", "category": "fen", "difficulty": "hard", "question": "Periyodik tabloda altının sembolü nedir?", "answer": "Au", "type": "spoken" },
-  { "id": "fen-h-3", "category": "fen", "difficulty": "hard", "question": "DNA'nın açılımı nedir?", "answer": "Deoksiribo nükleik asit", "type": "spoken" },
-  { "id": "fen-h-4", "category": "fen", "difficulty": "hard", "question": "Bir maddenin katı halden doğrudan gaz haline geçmesine ne denir?", "answer": "Süblimleşme", "type": "spoken" },
-  { "id": "fen-h-5", "category": "fen", "difficulty": "hard", "question": "Atomun merkezinde bulunan bölüme ne denir?", "answer": "Çekirdek", "type": "spoken" },
-  { "id": "fen-h-6", "category": "fen", "difficulty": "hard", "question": "Canlıların kalıtsal özelliklerini taşıyan temel yapı nedir?", "answer": "DNA / genler", "type": "spoken" },
-  { "id": "fen-h-7", "category": "fen", "difficulty": "hard", "question": "Dünya'nın kendi ekseni etrafında dönmesi hangi olayı oluşturur?", "answer": "Gece ve gündüz", "type": "spoken" },
-  { "id": "fen-h-8", "category": "fen", "difficulty": "hard", "question": "Basit makineler iş yaparken hangi büyüklüğü değiştirebilir?", "answer": "Kuvvetin yönünü veya büyüklüğünü", "type": "spoken" },
-  { "id": "fen-h-9", "category": "fen", "difficulty": "hard", "question": "Bir ekosistemde üreticilere örnek olarak hangi canlılar verilir?", "answer": "Bitkiler / algler", "type": "spoken" },
-  { "id": "fen-h-10", "category": "fen", "difficulty": "hard", "question": "Isının sıcak maddeden soğuk maddeye geçmesine ne denir?", "answer": "Isı alışverişi / ısı transferi", "type": "spoken" },
-
-  { "id": "tar-e-1", "category": "tarih", "difficulty": "easy", "question": "Türkiye Cumhuriyeti hangi yıl kurulmuştur?", "answer": "1923", "type": "spoken" },
-  { "id": "tar-e-2", "category": "tarih", "difficulty": "easy", "question": "İstiklal Marşı'nın şairi kimdir?", "answer": "Mehmet Akif Ersoy", "type": "spoken" },
-  { "id": "tar-e-3", "category": "tarih", "difficulty": "easy", "question": "Türkiye Cumhuriyeti'nin ilk cumhurbaşkanı kimdir?", "answer": "Mustafa Kemal Atatürk", "type": "spoken" },
-  { "id": "tar-e-4", "category": "tarih", "difficulty": "easy", "question": "23 Nisan hangi bayram olarak kutlanır?", "answer": "Ulusal Egemenlik ve Çocuk Bayramı", "type": "spoken" },
-  { "id": "tar-e-5", "category": "tarih", "difficulty": "easy", "question": "29 Ekim hangi bayramdır?", "answer": "Cumhuriyet Bayramı", "type": "spoken" },
-  { "id": "tar-e-6", "category": "tarih", "difficulty": "easy", "question": "Atatürk'ün doğduğu şehir hangisidir?", "answer": "Selanik", "type": "spoken" },
-  { "id": "tar-e-7", "category": "tarih", "difficulty": "easy", "question": "Kurtuluş Savaşı'nda Türk milletine önderlik eden kişi kimdir?", "answer": "Mustafa Kemal Atatürk", "type": "spoken" },
-  { "id": "tar-e-8", "category": "tarih", "difficulty": "easy", "question": "Tarihte eski dönemlerden kalan eşyalara genel olarak ne denir?", "answer": "Tarihi eser", "type": "spoken" },
-  { "id": "tar-e-9", "category": "tarih", "difficulty": "easy", "question": "Bir milletin geçmişte yaşadığı olayları inceleyen bilim dalı nedir?", "answer": "Tarih", "type": "spoken" },
-  { "id": "tar-e-10", "category": "tarih", "difficulty": "easy", "question": "30 Ağustos hangi zaferin bayramı olarak kutlanır?", "answer": "Zafer Bayramı", "type": "spoken" },
-
-  { "id": "tar-m-1", "category": "tarih", "difficulty": "medium", "question": "İstanbul hangi yıl fethedilmiştir?", "answer": "1453", "type": "spoken" },
-  { "id": "tar-m-2", "category": "tarih", "difficulty": "medium", "question": "Çanakkale Deniz Zaferi hangi tarihte kazanılmıştır?", "answer": "18 Mart 1915", "type": "spoken" },
-  { "id": "tar-m-3", "category": "tarih", "difficulty": "medium", "question": "Osmanlı Devleti'nin kurucusu kimdir?", "answer": "Osman Bey / Osman Gazi", "type": "spoken" },
-  { "id": "tar-m-4", "category": "tarih", "difficulty": "medium", "question": "TBMM hangi tarihte açılmıştır?", "answer": "23 Nisan 1920", "type": "spoken" },
-  { "id": "tar-m-5", "category": "tarih", "difficulty": "medium", "question": "Anadolu'da kurulan ilk Türk beyliklerinden biri hangisidir?", "answer": "Danişmentliler / Saltuklular / Mengücekler / Artuklular", "teacherNote": "Müfredat düzeyine göre uygun ilk Türk beyliği cevabı kabul edilebilir.", "type": "spoken" },
-  { "id": "tar-m-6", "category": "tarih", "difficulty": "medium", "question": "Yazının bulunması tarih çağlarının başlamasında neden önemlidir?", "answer": "Olayların yazılı olarak kaydedilmesini sağladığı için", "type": "spoken" },
-  { "id": "tar-m-7", "category": "tarih", "difficulty": "medium", "question": "Kurtuluş Savaşı'nı sona erdiren ve Türkiye'nin bağımsızlığını tanıtan antlaşma hangisidir?", "answer": "Lozan Antlaşması", "type": "spoken" },
-  { "id": "tar-m-8", "category": "tarih", "difficulty": "medium", "question": "Osmanlı Devleti'nde padişahların fermanlarının toplandığı yönetim merkezine ne denirdi?", "answer": "Divan-ı Hümayun", "teacherNote": "Yaş düzeyine göre 'divan' cevabı kabul edilebilir.", "type": "spoken" },
-  { "id": "tar-m-9", "category": "tarih", "difficulty": "medium", "question": "Milli Mücadele döneminde Samsun'a çıkan lider kimdir?", "answer": "Mustafa Kemal Atatürk", "type": "spoken" },
-  { "id": "tar-m-10", "category": "tarih", "difficulty": "medium", "question": "Anadolu Selçuklu Devleti'nin başkenti hangi şehirdi?", "answer": "Konya", "type": "spoken" },
-
-  { "id": "tar-h-1", "category": "tarih", "difficulty": "hard", "question": "Malazgirt Savaşı hangi yıl yapılmıştır?", "answer": "1071", "type": "spoken" },
-  { "id": "tar-h-2", "category": "tarih", "difficulty": "hard", "question": "Lozan Antlaşması hangi yıl imzalanmıştır?", "answer": "1923", "type": "spoken" },
-  { "id": "tar-h-3", "category": "tarih", "difficulty": "hard", "question": "Tanzimat Fermanı hangi yıl ilan edilmiştir?", "answer": "1839", "type": "spoken" },
-  { "id": "tar-h-4", "category": "tarih", "difficulty": "hard", "question": "Osmanlı Devleti'nde ilk anayasa olarak kabul edilen belge nedir?", "answer": "Kanun-ı Esasi", "type": "spoken" },
-  { "id": "tar-h-5", "category": "tarih", "difficulty": "hard", "question": "Anadolu kapılarının Türklere açılmasında önemli kabul edilen savaş hangisidir?", "answer": "Malazgirt Savaşı", "type": "spoken" },
-  { "id": "tar-h-6", "category": "tarih", "difficulty": "hard", "question": "Osmanlı Devleti'nin İstanbul'u fetheden padişahı kimdir?", "answer": "Fatih Sultan Mehmet", "type": "spoken" },
-  { "id": "tar-h-7", "category": "tarih", "difficulty": "hard", "question": "Kurtuluş Savaşı'nda düzenli ordunun kazandığı ilk önemli başarı hangi savaştır?", "answer": "Birinci İnönü Savaşı", "type": "spoken" },
-  { "id": "tar-h-8", "category": "tarih", "difficulty": "hard", "question": "Cumhuriyet'in ilanından sonra başkent olarak kabul edilen şehir hangisidir?", "answer": "Ankara", "type": "spoken" },
-  { "id": "tar-h-9", "category": "tarih", "difficulty": "hard", "question": "Mondros Ateşkes Antlaşması hangi savaşın sonunda imzalanmıştır?", "answer": "Birinci Dünya Savaşı", "type": "spoken" },
-  { "id": "tar-h-10", "category": "tarih", "difficulty": "hard", "question": "Tarih araştırmalarında para, kitabe ve arkeolojik buluntular hangi tür kaynaklara örnektir?", "answer": "Birinci el kaynaklar / maddi kaynaklar", "type": "spoken" },
-
-  { "id": "zek-e-1", "category": "zeka", "difficulty": "easy", "question": "Sabah Güneş hangi yönden doğar?", "answer": "Doğu", "type": "spoken" },
-  { "id": "zek-e-2", "category": "zeka", "difficulty": "easy", "question": "Yağmurdan sonra gökyüzünde oluşan renkli görüntü nedir?", "answer": "Gökkuşağı", "type": "spoken" },
-  { "id": "zek-e-3", "category": "zeka", "difficulty": "easy", "question": "Beş parmaklı, kolu olmayan ve ele takılan şey nedir?", "answer": "Eldiven", "type": "spoken" },
-  { "id": "zek-e-4", "category": "zeka", "difficulty": "easy", "question": "Hangi ayda 28 gün vardır?", "answer": "Hepsinde", "teacherNote": "Her ayda en az 28 gün vardır.", "type": "spoken" },
-  { "id": "zek-e-5", "category": "zeka", "difficulty": "easy", "question": "Gece görünür, gündüz kaybolmuş gibi olur; gökyüzündedir. Nedir?", "answer": "Yıldız", "type": "spoken" },
-  { "id": "zek-e-6", "category": "zeka", "difficulty": "easy", "question": "Kendisi küçük, gölgesi büyük olabilir. Bu neye bağlıdır?", "answer": "Işığın konumuna", "type": "spoken" },
-  { "id": "zek-e-7", "category": "zeka", "difficulty": "easy", "question": "Bir odada 4 köşe vardır. Her köşede bir çocuk oturursa odada kaç çocuk vardır?", "answer": "4", "type": "spoken" },
-  { "id": "zek-e-8", "category": "zeka", "difficulty": "easy", "question": "Seni takip eder ama dokunamaz. Işıkta görünür. Nedir?", "answer": "Gölge", "type": "spoken" },
-  { "id": "zek-e-9", "category": "zeka", "difficulty": "easy", "question": "İki elinde toplam 10 parmak varsa bir elde kaç parmak vardır?", "answer": "5", "type": "spoken" },
-  { "id": "zek-e-10", "category": "zeka", "difficulty": "easy", "question": "Bir kalem kutusunda 3 kırmızı, 2 mavi kalem var. Toplam kaç kalem vardır?", "answer": "5", "type": "spoken" },
-
-  { "id": "zek-m-1", "category": "zeka", "difficulty": "medium", "question": "Aynaya bakınca gördüğün ama tutamadığın şey nedir?", "answer": "Yansıma", "type": "spoken" },
-  { "id": "zek-m-2", "category": "zeka", "difficulty": "medium", "question": "Her sabah ortaya çıkar, gece kaybolur gibi olur. Nedir?", "answer": "Gün ışığı / Güneş ışığı", "type": "spoken" },
-  { "id": "zek-m-3", "category": "zeka", "difficulty": "medium", "question": "Ayakları olmayan ama yatağında koşan şey nedir?", "answer": "Nehir / su", "type": "spoken" },
-  { "id": "zek-m-4", "category": "zeka", "difficulty": "medium", "question": "Bir sınıfta 12 öğrenci vardır. 5'i dışarı çıkarsa sınıfta kaç öğrenci kalır?", "answer": "7", "type": "spoken" },
-  { "id": "zek-m-5", "category": "zeka", "difficulty": "medium", "question": "Bir kelime yanlış yazıldığında doğru cevabı bulmak için önce neye bakılır?", "answer": "Yazım kuralına / sözlüğe", "type": "spoken" },
-  { "id": "zek-m-6", "category": "zeka", "difficulty": "medium", "question": "2, 3, 5, 8 dizisinde sonraki sayı kaçtır?", "answer": "13", "teacherNote": "Her sayı kendinden önceki iki sayının toplamıdır.", "type": "spoken" },
-  { "id": "zek-m-7", "category": "zeka", "difficulty": "medium", "question": "Bir sepette 6 elma var. 2 elmayı sen aldın. Sende kaç elma olur?", "answer": "2", "type": "spoken" },
-  { "id": "zek-m-8", "category": "zeka", "difficulty": "medium", "question": "Bir saat 3'ü gösterirken akrep ile yelkovan arasında kaç derece vardır?", "answer": "90 derece", "type": "spoken" },
-  { "id": "zek-m-9", "category": "zeka", "difficulty": "medium", "question": "Bir otobüste 10 yolcu var. 3 yolcu inip 4 yolcu binerse kaç yolcu olur?", "answer": "11", "type": "spoken" },
-  { "id": "zek-m-10", "category": "zeka", "difficulty": "medium", "question": "Sadece soru sorarak kapalı bir kutudaki nesneyi bulmaya çalışırken en iyi ilk soru nasıl olmalıdır?", "answer": "Eleyici / genel bir soru", "teacherNote": "Örneğin 'canlı mı?' veya 'sert mi?' gibi seçenekleri azaltan sorular.", "type": "spoken" },
-
-  { "id": "zek-h-1", "category": "zeka", "difficulty": "hard", "question": "İki baba ve iki oğul balığa gider. Toplam üç balık yakalayıp kişi başı birer balık alırlar. Bu nasıl olur?", "answer": "Dede, baba ve oğul üç kişidir", "type": "spoken" },
-  { "id": "zek-h-2", "category": "zeka", "difficulty": "hard", "question": "Bir çiftçinin 17 koyunu var. Sekiz tanesi dışında hepsi ölürse kaç koyunu kalır?", "answer": "8", "type": "spoken" },
-  { "id": "zek-h-3", "category": "zeka", "difficulty": "hard", "question": "1, 4, 9, 16 dizisinde sonraki sayı kaçtır?", "answer": "25", "teacherNote": "Sayılar kare sayılardır.", "type": "spoken" },
-  { "id": "zek-h-4", "category": "zeka", "difficulty": "hard", "question": "Bir yarışta ikinci kişiyi geçersen kaçıncı olursun?", "answer": "İkinci", "type": "spoken" },
-  { "id": "zek-h-5", "category": "zeka", "difficulty": "hard", "question": "Üç anahtar ve üç kapı var. Her anahtar yalnız bir kapıyı açıyor. En az kaç denemede kesin eşleşmeyi bulabilirsin?", "answer": "En fazla 3 deneme", "teacherNote": "İlk iki anahtar denenince son eşleşme zorunlu hale gelir.", "type": "spoken" },
-  { "id": "zek-h-6", "category": "zeka", "difficulty": "hard", "question": "Bir cümledeki tüm kelimeleri alfabetik sıraya dizmek için önce neye bakarsın?", "answer": "Kelimelerin ilk harfine", "type": "spoken" },
-  { "id": "zek-h-7", "category": "zeka", "difficulty": "hard", "question": "Bir sınıfta herkes birbiriyle bir kez tokalaşırsa 4 kişi toplam kaç tokalaşma yapar?", "answer": "6", "type": "spoken" },
-  { "id": "zek-h-8", "category": "zeka", "difficulty": "hard", "question": "Bir terazi dengedeyken sol kefeye 2 kg, sağ kefeye de 2 kg eklenirse denge bozulur mu?", "answer": "Hayır, bozulmaz", "type": "spoken" },
-  { "id": "zek-h-9", "category": "zeka", "difficulty": "hard", "question": "Bir kelimenin harflerini değiştirip yeni anlamlı kelime oluşturmaya ne denir?", "answer": "Anagram", "type": "spoken" },
-  { "id": "zek-h-10", "category": "zeka", "difficulty": "hard", "question": "Bir problemi çözerken sonucu hemen bulamıyorsan en sağlıklı yöntem nedir?", "answer": "Problemi parçalara ayırmak ve adım adım denemek", "type": "spoken" }
+  {
+    "id": "gk-e-1",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Türkiye'nin başkenti neresidir?",
+    "answer": "Ankara",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-2",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Bir yılda kaç ay vardır?",
+    "answer": "12",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-3",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Trafik ışıklarında dur anlamına gelen renk hangisidir?",
+    "answer": "Kırmızı",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-4",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Türkiye'nin para birimi nedir?",
+    "answer": "Türk lirası",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-5",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Dünyamızın doğal uydusunun adı nedir?",
+    "answer": "Ay",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-6",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Haritada kuzeyi göstermek için en çok hangi işaret kullanılır?",
+    "answer": "Pusula oku / N harfi",
+    "teacherNote": "N harfi İngilizce north, yani kuzey anlamına gelir.",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-7",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Okullarda kitap ödünç alınan yere ne ad verilir?",
+    "answer": "Kütüphane",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-8",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Türkiye bayrağında hangi iki sembol bulunur?",
+    "answer": "Ay ve yıldız",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-9",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Bir haftada kaç gün vardır?",
+    "answer": "7",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-10",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Deniz ve okyanus sularının tadı genellikle nasıldır?",
+    "answer": "Tuzlu",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-1",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Dünyanın en büyük okyanusu hangisidir?",
+    "answer": "Büyük Okyanus / Pasifik Okyanusu",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-2",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Türkiye'nin en uzun nehri hangisidir?",
+    "answer": "Kızılırmak",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-3",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Dünya üzerinde en çok konuşulan dillerden biri olan İngilizcenin alfabesinde kaç harf vardır?",
+    "answer": "26",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-4",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Bir ülkenin yönetim merkezinin bulunduğu şehre ne ad verilir?",
+    "answer": "Başkent",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-5",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Türkiye'nin üç tarafını çevreleyen doğal yapı nedir?",
+    "answer": "Denizler",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-6",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Bir yerin kuş bakışı ve küçültülmüş çizimine ne denir?",
+    "answer": "Harita",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-7",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Kıtaları ve okyanusları gösteren küre biçimindeki modele ne denir?",
+    "answer": "Dünya küresi",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-8",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Bir yılda dört mevsim yaşanmasının temel nedeni nedir?",
+    "answer": "Dünya'nın Güneş etrafında dolanması ve eksen eğikliği",
+    "teacherNote": "Çocuklar için 'Dünya'nın Güneş etrafında dönmesi' cevabı kısmen kabul edilebilir.",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-9",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Kütüphanede kitapların sessiz okunmasının temel nedeni nedir?",
+    "answer": "Diğer okuyucuları rahatsız etmemek",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-10",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Deprem sırasında sağlam bir eşyanın yanında korunma hareketine ne ad verilir?",
+    "answer": "Çök, kapan, tutun",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-1",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Türkiye'nin en yüksek dağı hangisidir?",
+    "answer": "Ağrı Dağı",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-2",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Dünya haritasında ekvator çizgisi Dünya'yı hangi iki yarım küreye ayırır?",
+    "answer": "Kuzey ve güney yarım küre",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-3",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Birleşmiş Milletler Güvenlik Konseyi'nin kaç daimi üyesi vardır?",
+    "answer": "5",
+    "teacherNote": "ABD, Rusya, Çin, Birleşik Krallık ve Fransa.",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-4",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Bir yerin deniz seviyesinden yüksekliğine ne denir?",
+    "answer": "Rakım",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-5",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Bir ülkenin başka ülkelerle alışveriş yapmasına genel olarak ne ad verilir?",
+    "answer": "Dış ticaret",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-6",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Kültürel miras denince ne anlaşılır?",
+    "answer": "Geçmişten kalan ve toplum için değerli olan eserler, gelenekler ve bilgiler",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-7",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Küresel ısınmanın en temel nedeni hangi gazların atmosferde artmasıdır?",
+    "answer": "Sera gazları",
+    "teacherNote": "Karbondioksit örneği verilirse kabul edilebilir.",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-8",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Bir toplumda insanların uyması beklenen yazılı kurallar bütününe ne denir?",
+    "answer": "Hukuk / yasalar",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-9",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Tarihi eserlerin korunmasının temel amacı nedir?",
+    "answer": "Geçmişi ve kültürel mirası gelecek nesillere aktarmak",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-10",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Bir bilimsel bilginin güvenilir olması için neye dayanması gerekir?",
+    "answer": "Kanıt, gözlem ve deney",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-1",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "7 + 8 kaç eder?",
+    "answer": "15",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-2",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "3 kere 4 kaç eder?",
+    "answer": "12",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-3",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "Bir düzinede kaç tane vardır?",
+    "answer": "12",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-4",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "Bir saatte kaç dakika vardır?",
+    "answer": "60",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-5",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "20 sayısından 6 çıkarılırsa kaç kalır?",
+    "answer": "14",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-6",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "5'in iki katı kaçtır?",
+    "answer": "10",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-7",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "Bir üçgenin kaç kenarı vardır?",
+    "answer": "3",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-8",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "Bir karenin kaç köşesi vardır?",
+    "answer": "4",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-9",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "10 sayısının yarısı kaçtır?",
+    "answer": "5",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-10",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "9 ile 1'in toplamı kaçtır?",
+    "answer": "10",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-1",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "15'in yarısı ile 20'nin yarısının toplamı kaçtır?",
+    "answer": "17,5",
+    "teacherNote": "7,5 + 10 = 17,5",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-2",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "Bir karenin kenar uzunluğu 6 ise çevresi kaç olur?",
+    "answer": "24",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-3",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "72 sayısının yarısının yarısı kaçtır?",
+    "answer": "18",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-4",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "Bir dikdörtgenin kısa kenarı 4, uzun kenarı 7 ise alanı kaçtır?",
+    "answer": "28",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-5",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "45 sayısının 5'e bölümü kaçtır?",
+    "answer": "9",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-6",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "Bir sayının çeyreği 6 ise bu sayı kaçtır?",
+    "answer": "24",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-7",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "3 kalem 12 lira ise 1 kalem kaç liradır?",
+    "answer": "4 lira",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-8",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "Bir açının ölçüsü 90 derece ise bu açıya ne denir?",
+    "answer": "Dik açı",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-9",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "2, 4, 6, 8 dizisinde sonraki sayı kaçtır?",
+    "answer": "10",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-10",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "100 liranın yüzde 25'i kaç liradır?",
+    "answer": "25 lira",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-1",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "Bir üçgenin iç açılarının toplamı kaç derecedir?",
+    "answer": "180 derece",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-2",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "144'ün karekökü kaçtır?",
+    "answer": "12",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-3",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "Pi sayısının virgülden sonraki ilk iki basamağı nedir?",
+    "answer": "14",
+    "teacherNote": "Pi yaklaşık 3,14'tür.",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-4",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "12 ve 18 sayılarının en büyük ortak böleni kaçtır?",
+    "answer": "6",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-5",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "Bir sayının yüzde 10'u 8 ise bu sayı kaçtır?",
+    "answer": "80",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-6",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "3x + 6 = 21 denkleminde x kaçtır?",
+    "answer": "5",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-7",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "Bir dikdörtgenin alanı 48, kısa kenarı 6 ise uzun kenarı kaçtır?",
+    "answer": "8",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-8",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "2 üzeri 5 kaçtır?",
+    "answer": "32",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-9",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "0,75 kesri yüzde olarak kaçtır?",
+    "answer": "Yüzde 75",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-10",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "Bir sayının 3 katının 4 fazlası 25 ise sayı kaçtır?",
+    "answer": "7",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-1",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Su kaç derecede donar?",
+    "answer": "0 derece",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-2",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Güneş doğudan mı batıdan mı doğar?",
+    "answer": "Doğudan",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-3",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "İnsanda kaç tane göz vardır?",
+    "answer": "2",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-4",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Bitkiler büyümek için hangi ışık kaynağına ihtiyaç duyar?",
+    "answer": "Güneş",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-5",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Canlıların nefes almak için kullandığı gaz nedir?",
+    "answer": "Oksijen",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-6",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Kulağımız hangi duyumuzla ilgilidir?",
+    "answer": "İşitme",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-7",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Buz ısınınca hangi hale geçer?",
+    "answer": "Sıvı hale / suya",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-8",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Dünya'nın ısı ve ışık kaynağı nedir?",
+    "answer": "Güneş",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-9",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Mıknatıs hangi maddeleri daha kolay çeker?",
+    "answer": "Demir gibi metal maddeleri",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-10",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "İskeletimizin temel görevi nedir?",
+    "answer": "Vücudu desteklemek ve korumak",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-1",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Güneş sistemindeki en büyük gezegen hangisidir?",
+    "answer": "Jüpiter",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-2",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Suyun kimyasal formülü nedir?",
+    "answer": "H2O",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-3",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "İnsan vücudundaki en büyük organ hangisidir?",
+    "answer": "Deri",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-4",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Bitkilerin ışık kullanarak besin üretmesine ne denir?",
+    "answer": "Fotosentez",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-5",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Suyun gaz haline geçmesine ne denir?",
+    "answer": "Buharlaşma",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-6",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Sesin yayılabilmesi için neye ihtiyaç vardır?",
+    "answer": "Maddesel ortam",
+    "teacherNote": "Hava, su veya katı ortam örnek verilebilir.",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-7",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Elektrik devresinde ampulün yanması için devre nasıl olmalıdır?",
+    "answer": "Kapalı devre olmalıdır",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-8",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Gezegenlerin Güneş etrafında izlediği yola ne denir?",
+    "answer": "Yörünge",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-9",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Besinleri öğütmeye başlayan organımız hangisidir?",
+    "answer": "Ağız / dişler",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-10",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Kanın vücutta dolaşmasını sağlayan organ hangisidir?",
+    "answer": "Kalp",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-1",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Işık hızı saniyede yaklaşık kaç kilometredir?",
+    "answer": "300.000 kilometre",
+    "teacherNote": "Tam değer yaklaşık 299.792 km/s'dir.",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-2",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Periyodik tabloda altının sembolü nedir?",
+    "answer": "Au",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-3",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "DNA'nın açılımı nedir?",
+    "answer": "Deoksiribo nükleik asit",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-4",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Bir maddenin katı halden doğrudan gaz haline geçmesine ne denir?",
+    "answer": "Süblimleşme",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-5",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Atomun merkezinde bulunan bölüme ne denir?",
+    "answer": "Çekirdek",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-6",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Canlıların kalıtsal özelliklerini taşıyan temel yapı nedir?",
+    "answer": "DNA / genler",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-7",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Dünya'nın kendi ekseni etrafında dönmesi hangi olayı oluşturur?",
+    "answer": "Gece ve gündüz",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-8",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Basit makineler iş yaparken hangi büyüklüğü değiştirebilir?",
+    "answer": "Kuvvetin yönünü veya büyüklüğünü",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-9",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Bir ekosistemde üreticilere örnek olarak hangi canlılar verilir?",
+    "answer": "Bitkiler / algler",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-10",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Isının sıcak maddeden soğuk maddeye geçmesine ne denir?",
+    "answer": "Isı alışverişi / ısı transferi",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-1",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Türkiye Cumhuriyeti hangi yıl kurulmuştur?",
+    "answer": "1923",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-2",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "İstiklal Marşı'nın şairi kimdir?",
+    "answer": "Mehmet Akif Ersoy",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-3",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Türkiye Cumhuriyeti'nin ilk cumhurbaşkanı kimdir?",
+    "answer": "Mustafa Kemal Atatürk",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-4",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "23 Nisan hangi bayram olarak kutlanır?",
+    "answer": "Ulusal Egemenlik ve Çocuk Bayramı",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-5",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "29 Ekim hangi bayramdır?",
+    "answer": "Cumhuriyet Bayramı",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-6",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Atatürk'ün doğduğu şehir hangisidir?",
+    "answer": "Selanik",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-7",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Kurtuluş Savaşı'nda Türk milletine önderlik eden kişi kimdir?",
+    "answer": "Mustafa Kemal Atatürk",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-8",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Tarihte eski dönemlerden kalan eşyalara genel olarak ne denir?",
+    "answer": "Tarihi eser",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-9",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Bir milletin geçmişte yaşadığı olayları inceleyen bilim dalı nedir?",
+    "answer": "Tarih",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-10",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "30 Ağustos hangi zaferin bayramı olarak kutlanır?",
+    "answer": "Zafer Bayramı",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-1",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "İstanbul hangi yıl fethedilmiştir?",
+    "answer": "1453",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-2",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Çanakkale Deniz Zaferi hangi tarihte kazanılmıştır?",
+    "answer": "18 Mart 1915",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-3",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Osmanlı Devleti'nin kurucusu kimdir?",
+    "answer": "Osman Bey / Osman Gazi",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-4",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "TBMM hangi tarihte açılmıştır?",
+    "answer": "23 Nisan 1920",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-5",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Anadolu'da kurulan ilk Türk beyliklerinden biri hangisidir?",
+    "answer": "Danişmentliler / Saltuklular / Mengücekler / Artuklular",
+    "teacherNote": "Müfredat düzeyine göre uygun ilk Türk beyliği cevabı kabul edilebilir.",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-6",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Yazının bulunması tarih çağlarının başlamasında neden önemlidir?",
+    "answer": "Olayların yazılı olarak kaydedilmesini sağladığı için",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-7",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Kurtuluş Savaşı'nı sona erdiren ve Türkiye'nin bağımsızlığını tanıtan antlaşma hangisidir?",
+    "answer": "Lozan Antlaşması",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-8",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Osmanlı Devleti'nde padişahların fermanlarının toplandığı yönetim merkezine ne denirdi?",
+    "answer": "Divan-ı Hümayun",
+    "teacherNote": "Yaş düzeyine göre 'divan' cevabı kabul edilebilir.",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-9",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Milli Mücadele döneminde Samsun'a çıkan lider kimdir?",
+    "answer": "Mustafa Kemal Atatürk",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-10",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Anadolu Selçuklu Devleti'nin başkenti hangi şehirdi?",
+    "answer": "Konya",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-1",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Malazgirt Savaşı hangi yıl yapılmıştır?",
+    "answer": "1071",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-2",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Lozan Antlaşması hangi yıl imzalanmıştır?",
+    "answer": "1923",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-3",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Tanzimat Fermanı hangi yıl ilan edilmiştir?",
+    "answer": "1839",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-4",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Osmanlı Devleti'nde ilk anayasa olarak kabul edilen belge nedir?",
+    "answer": "Kanun-ı Esasi",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-5",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Anadolu kapılarının Türklere açılmasında önemli kabul edilen savaş hangisidir?",
+    "answer": "Malazgirt Savaşı",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-6",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Osmanlı Devleti'nin İstanbul'u fetheden padişahı kimdir?",
+    "answer": "Fatih Sultan Mehmet",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-7",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Kurtuluş Savaşı'nda düzenli ordunun kazandığı ilk önemli başarı hangi savaştır?",
+    "answer": "Birinci İnönü Savaşı",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-8",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Cumhuriyet'in ilanından sonra başkent olarak kabul edilen şehir hangisidir?",
+    "answer": "Ankara",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-9",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Mondros Ateşkes Antlaşması hangi savaşın sonunda imzalanmıştır?",
+    "answer": "Birinci Dünya Savaşı",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-10",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Tarih araştırmalarında para, kitabe ve arkeolojik buluntular hangi tür kaynaklara örnektir?",
+    "answer": "Birinci el kaynaklar / maddi kaynaklar",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-1",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Sabah Güneş hangi yönden doğar?",
+    "answer": "Doğu",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-2",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Yağmurdan sonra gökyüzünde oluşan renkli görüntü nedir?",
+    "answer": "Gökkuşağı",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-3",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Beş parmaklı, kolu olmayan ve ele takılan şey nedir?",
+    "answer": "Eldiven",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-4",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Hangi ayda 28 gün vardır?",
+    "answer": "Hepsinde",
+    "teacherNote": "Her ayda en az 28 gün vardır.",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-5",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Gece görünür, gündüz kaybolmuş gibi olur; gökyüzündedir. Nedir?",
+    "answer": "Yıldız",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-6",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Kendisi küçük, gölgesi büyük olabilir. Bu neye bağlıdır?",
+    "answer": "Işığın konumuna",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-7",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Bir odada 4 köşe vardır. Her köşede bir çocuk oturursa odada kaç çocuk vardır?",
+    "answer": "4",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-8",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Seni takip eder ama dokunamaz. Işıkta görünür. Nedir?",
+    "answer": "Gölge",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-9",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "İki elinde toplam 10 parmak varsa bir elde kaç parmak vardır?",
+    "answer": "5",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-10",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Bir kalem kutusunda 3 kırmızı, 2 mavi kalem var. Toplam kaç kalem vardır?",
+    "answer": "5",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-1",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Aynaya bakınca gördüğün ama tutamadığın şey nedir?",
+    "answer": "Yansıma",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-2",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Her sabah ortaya çıkar, gece kaybolur gibi olur. Nedir?",
+    "answer": "Gün ışığı / Güneş ışığı",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-3",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Ayakları olmayan ama yatağında koşan şey nedir?",
+    "answer": "Nehir / su",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-4",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir sınıfta 12 öğrenci vardır. 5'i dışarı çıkarsa sınıfta kaç öğrenci kalır?",
+    "answer": "7",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-5",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir kelime yanlış yazıldığında doğru cevabı bulmak için önce neye bakılır?",
+    "answer": "Yazım kuralına / sözlüğe",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-6",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "2, 3, 5, 8 dizisinde sonraki sayı kaçtır?",
+    "answer": "13",
+    "teacherNote": "Her sayı kendinden önceki iki sayının toplamıdır.",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-7",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir sepette 6 elma var. 2 elmayı sen aldın. Sende kaç elma olur?",
+    "answer": "2",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-8",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir saat 3'ü gösterirken akrep ile yelkovan arasında kaç derece vardır?",
+    "answer": "90 derece",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-9",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir otobüste 10 yolcu var. 3 yolcu inip 4 yolcu binerse kaç yolcu olur?",
+    "answer": "11",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-10",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Sadece soru sorarak kapalı bir kutudaki nesneyi bulmaya çalışırken en iyi ilk soru nasıl olmalıdır?",
+    "answer": "Eleyici / genel bir soru",
+    "teacherNote": "Örneğin 'canlı mı?' veya 'sert mi?' gibi seçenekleri azaltan sorular.",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-1",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "İki baba ve iki oğul balığa gider. Toplam üç balık yakalayıp kişi başı birer balık alırlar. Bu nasıl olur?",
+    "answer": "Dede, baba ve oğul üç kişidir",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-2",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir çiftçinin 17 koyunu var. Sekiz tanesi dışında hepsi ölürse kaç koyunu kalır?",
+    "answer": "8",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-3",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "1, 4, 9, 16 dizisinde sonraki sayı kaçtır?",
+    "answer": "25",
+    "teacherNote": "Sayılar kare sayılardır.",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-4",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir yarışta ikinci kişiyi geçersen kaçıncı olursun?",
+    "answer": "İkinci",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-5",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Üç anahtar ve üç kapı var. Her anahtar yalnız bir kapıyı açıyor. En az kaç denemede kesin eşleşmeyi bulabilirsin?",
+    "answer": "En fazla 3 deneme",
+    "teacherNote": "İlk iki anahtar denenince son eşleşme zorunlu hale gelir.",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-6",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir cümledeki tüm kelimeleri alfabetik sıraya dizmek için önce neye bakarsın?",
+    "answer": "Kelimelerin ilk harfine",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-7",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir sınıfta herkes birbiriyle bir kez tokalaşırsa 4 kişi toplam kaç tokalaşma yapar?",
+    "answer": "6",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-8",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir terazi dengedeyken sol kefeye 2 kg, sağ kefeye de 2 kg eklenirse denge bozulur mu?",
+    "answer": "Hayır, bozulmaz",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-9",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir kelimenin harflerini değiştirip yeni anlamlı kelime oluşturmaya ne denir?",
+    "answer": "Anagram",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-10",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir problemi çözerken sonucu hemen bulamıyorsan en sağlıklı yöntem nedir?",
+    "answer": "Problemi parçalara ayırmak ve adım adım denemek",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-11",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Bir gün kaç saattir?",
+    "answer": "24",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-12",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Türkiye hangi kıtalar arasında yer alır?",
+    "answer": "Asya ve Avrupa",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-13",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Okullarda ders aralarında verilen kısa dinlenmeye ne denir?",
+    "answer": "Teneffüs",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-14",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Posta göndermek için zarfın üzerine ne yazılır?",
+    "answer": "Adres",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-15",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Bir yılda kaç mevsim vardır?",
+    "answer": "4",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-16",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Telefonla acil sağlık yardımı için Türkiye'de hangi numara aranır?",
+    "answer": "112",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-17",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Kitapların yazar adının yazdığı ilk sayfalara genel olarak ne denir?",
+    "answer": "Künye / giriş sayfası",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-18",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Bir ülkenin kendi parasına genel olarak ne denir?",
+    "answer": "Para birimi",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-19",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Suyun içilebilir haline ne denir?",
+    "answer": "Temiz su / içme suyu",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-e-20",
+    "category": "genel-kultur",
+    "difficulty": "easy",
+    "question": "Takvimde hafta sonu günlerinden biri hangisidir?",
+    "answer": "Cumartesi veya pazar",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-11",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Birleşmiş Milletler hangi amaçla kurulmuş uluslararası bir kuruluştur?",
+    "answer": "Barış ve iş birliği sağlamak",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-12",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Dünya'nın kendi ekseni etrafında dönmesi yaklaşık ne kadar sürer?",
+    "answer": "24 saat / 1 gün",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-13",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Bir şehirde yerel yönetimin başındaki kişiye ne denir?",
+    "answer": "Belediye başkanı",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-14",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Geri dönüşümün temel amacı nedir?",
+    "answer": "Atıkları yeniden kullanmak ve kaynakları korumak",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-15",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Bir ürünün nerede ve ne zaman üretildiğini gösteren bilgiye ne denir?",
+    "answer": "Etiket bilgisi",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-16",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Bir toplumda ortak yaşamı düzenleyen yazılı kurallara ne denir?",
+    "answer": "Kanun / yasa",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-17",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Dünya'nın Güneş etrafındaki hareketi hangi zaman birimini oluşturur?",
+    "answer": "Yıl",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-18",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Bir haritada renklerin ve sembollerin anlamını açıklayan bölüme ne denir?",
+    "answer": "Lejant / işaretler tablosu",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-19",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Bir haberde olayın tarafsız verilmesi ne anlama gelir?",
+    "answer": "Yorum katmadan aktarmak",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-m-20",
+    "category": "genel-kultur",
+    "difficulty": "medium",
+    "question": "Bir ülkedeki insanların seçme hakkını kullanmasına ne denir?",
+    "answer": "Oy kullanmak / seçim",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-11",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Bir ülkenin nüfusunun yaş, cinsiyet ve eğitim gibi özelliklerini inceleyen alana ne denir?",
+    "answer": "Demografi",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-12",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Küresel ticarette ülkelerin birbirine bağımlı hale gelmesine ne denir?",
+    "answer": "Küreselleşme",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-13",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Bir bilginin doğruluğunu farklı kaynaklarla kontrol etmeye ne denir?",
+    "answer": "Kaynak doğrulama / teyit",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-14",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Bir ülkenin başka ülkelerle resmi ilişkilerini yürüten alana ne denir?",
+    "answer": "Diplomasi",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-15",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Doğal kaynakların gelecek kuşakları da düşünerek kullanılmasına ne denir?",
+    "answer": "Sürdürülebilirlik",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-16",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Bir toplumun dil, sanat, gelenek ve yaşam biçimi bütününe ne denir?",
+    "answer": "Kültür",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-17",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Yer kabuğundaki levhaların hareketini inceleyen bilimsel yaklaşıma ne denir?",
+    "answer": "Levha tektoniği",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-18",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Bir ülkenin temel hak ve özgürlüklerini düzenleyen en üst hukuk belgesi nedir?",
+    "answer": "Anayasa",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-19",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Bir olayın neden ve sonuç ilişkisi içinde incelenmesine ne denir?",
+    "answer": "Analiz",
+    "type": "spoken"
+  },
+  {
+    "id": "gk-h-20",
+    "category": "genel-kultur",
+    "difficulty": "hard",
+    "question": "Bir bölgede uzun yıllar görülen hava olaylarının ortalamasına ne denir?",
+    "answer": "İklim",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-11",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "6 + 7 kaç eder?",
+    "answer": "13",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-12",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "18 sayısından 9 çıkarılırsa kaç kalır?",
+    "answer": "9",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-13",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "4 kere 5 kaç eder?",
+    "answer": "20",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-14",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "30'un yarısı kaçtır?",
+    "answer": "15",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-15",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "Bir dikdörtgenin kaç köşesi vardır?",
+    "answer": "4",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-16",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "2 deste kalemde kaç kalem vardır?",
+    "answer": "20",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-17",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "11 ile 6'nın toplamı kaçtır?",
+    "answer": "17",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-18",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "Bir saatin çeyreği kaç dakikadır?",
+    "answer": "15 dakika",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-19",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "8'in iki katı kaçtır?",
+    "answer": "16",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-e-20",
+    "category": "matematik",
+    "difficulty": "easy",
+    "question": "25 sayısından 5 çıkarılırsa kaç kalır?",
+    "answer": "20",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-11",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "Bir sınıfta 24 öğrenci vardır. Öğrencilerin yarısı kızsa kaç kız vardır?",
+    "answer": "12",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-12",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "Bir üçgenin bir açısı 60, diğer açısı 50 derece ise üçüncü açı kaç derecedir?",
+    "answer": "70 derece",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-13",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "9 kalem 45 lira ise 1 kalem kaç liradır?",
+    "answer": "5 lira",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-14",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "Bir dikdörtgenin alanı 36, kısa kenarı 4 ise uzun kenarı kaçtır?",
+    "answer": "9",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-15",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "120 sayısının yüzde 10'u kaçtır?",
+    "answer": "12",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-16",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "5, 10, 20, 40 dizisinde sonraki sayı kaçtır?",
+    "answer": "80",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-17",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "Bir sayının üçte biri 7 ise bu sayı kaçtır?",
+    "answer": "21",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-18",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "48 sayısı 6'ya bölünürse kaç olur?",
+    "answer": "8",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-19",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "Bir karenin çevresi 32 ise bir kenarı kaçtır?",
+    "answer": "8",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-m-20",
+    "category": "matematik",
+    "difficulty": "medium",
+    "question": "Bir otobüste 18 yolcu var. 7 kişi binip 5 kişi inerse kaç yolcu olur?",
+    "answer": "20",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-11",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "2x - 4 = 12 denkleminde x kaçtır?",
+    "answer": "8",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-12",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "225'in karekökü kaçtır?",
+    "answer": "15",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-13",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "15 ve 25 sayılarının en büyük ortak böleni kaçtır?",
+    "answer": "5",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-14",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "Bir sayının yüzde 20'si 18 ise sayı kaçtır?",
+    "answer": "90",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-15",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "3 üzeri 4 kaçtır?",
+    "answer": "81",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-16",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "Bir üçgenin iki açısı 35 ve 75 derece ise üçüncü açı kaçtır?",
+    "answer": "70 derece",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-17",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "0,6 kesri yüzde olarak kaçtır?",
+    "answer": "Yüzde 60",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-18",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "Bir dikdörtgenin çevresi 50, kısa kenarı 10 ise uzun kenarı kaçtır?",
+    "answer": "15",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-19",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "Bir sayının 4 katının 3 eksiği 29 ise sayı kaçtır?",
+    "answer": "8",
+    "type": "spoken"
+  },
+  {
+    "id": "mat-h-20",
+    "category": "matematik",
+    "difficulty": "hard",
+    "question": "18 ve 24 sayılarının en küçük ortak katı kaçtır?",
+    "answer": "72",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-11",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Bitkilerin kökleri genellikle toprağın hangi kısmında bulunur?",
+    "answer": "Toprağın içinde",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-12",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Sıvı haldeki su soğuyunca hangi hale geçebilir?",
+    "answer": "Katı hale / buz",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-13",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Gözümüz hangi duyumuzla ilgilidir?",
+    "answer": "Görme",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-14",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Dünya üzerinde yaşam için en gerekli sıvılardan biri nedir?",
+    "answer": "Su",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-15",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Güneş bir yıldız mıdır?",
+    "answer": "Evet",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-16",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Canlılar büyümek için besine ihtiyaç duyar mı?",
+    "answer": "Evet",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-17",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Katı maddelerin belirli bir şekli var mıdır?",
+    "answer": "Evet",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-18",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Elektrikli araçlar çalışmak için hangi enerjiye ihtiyaç duyar?",
+    "answer": "Elektrik enerjisi",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-19",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "Rüzgarı doğrudan görebilir miyiz?",
+    "answer": "Hayır, etkilerini görürüz",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-e-20",
+    "category": "fen",
+    "difficulty": "easy",
+    "question": "İnsanların nefes alıp verirken kullandığı organlardan biri hangisidir?",
+    "answer": "Akciğer",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-11",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Maddenin katı, sıvı ve gaz hallerine genel olarak ne denir?",
+    "answer": "Maddenin halleri",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-12",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Isı alan bir maddenin sıcaklığı genellikle nasıl değişir?",
+    "answer": "Artar",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-13",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Bir devrede pil ne işe yarar?",
+    "answer": "Enerji sağlar",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-14",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Besin zincirinde bitkiler genellikle hangi rolü üstlenir?",
+    "answer": "Üretici",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-15",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Dünya'nın çevresini saran gaz tabakasına ne denir?",
+    "answer": "Atmosfer",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-16",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Bir cismin hareketini yavaşlatan sürtünme kuvveti hangi yönde etki eder?",
+    "answer": "Hareketin ters yönünde",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-17",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Karışımları ayırmak için mıknatıs hangi tür maddelerde işe yarar?",
+    "answer": "Manyetik / demir içeren maddelerde",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-18",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Gece ve gündüzün oluşmasının nedeni nedir?",
+    "answer": "Dünya'nın kendi ekseni etrafında dönmesi",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-19",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Kuvvet bir cismin hangi özelliğini değiştirebilir?",
+    "answer": "Hızını, yönünü veya şeklini",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-m-20",
+    "category": "fen",
+    "difficulty": "medium",
+    "question": "Sıcaklık ölçmek için kullanılan araca ne denir?",
+    "answer": "Termometre",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-11",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Fotosentez sırasında bitkiler hangi gazı havadan alır?",
+    "answer": "Karbondioksit",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-12",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Elektrik akımının geçmesine izin veren maddelere ne denir?",
+    "answer": "İletken",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-13",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Bir maddenin yoğunluğu hangi iki büyüklükle ilişkilidir?",
+    "answer": "Kütle ve hacim",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-14",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Güneş enerjisini elektrik enerjisine çeviren panellere ne denir?",
+    "answer": "Güneş paneli / solar panel",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-15",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Canlıların yaşadığı doğal çevreye ne denir?",
+    "answer": "Habitat",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-16",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Sesin boşlukta yayılamamasının nedeni nedir?",
+    "answer": "Maddesel ortama ihtiyaç duyması",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-17",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Bir elektrik devresinde direncin görevi genel olarak nedir?",
+    "answer": "Akımı sınırlamak / zorlaştırmak",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-18",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Kalıtsal özelliklerin nesilden nesile aktarılmasını sağlayan yapılara ne denir?",
+    "answer": "Genler",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-19",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Bir maddenin sıvı halden gaz hale geçmesine ne denir?",
+    "answer": "Buharlaşma",
+    "type": "spoken"
+  },
+  {
+    "id": "fen-h-20",
+    "category": "fen",
+    "difficulty": "hard",
+    "question": "Dünya'nın Güneş etrafında izlediği yola ne denir?",
+    "answer": "Yörünge",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-11",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Atatürk'ün soyadı kanunu ile aldığı soyadı nedir?",
+    "answer": "Atatürk",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-12",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "19 Mayıs hangi bayram olarak kutlanır?",
+    "answer": "Atatürk'ü Anma, Gençlik ve Spor Bayramı",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-13",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Eski yazılı belgelerin saklandığı yerlere ne denir?",
+    "answer": "Arşiv",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-14",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Geçmişte yaşamış insanların kullandığı eşyalara ne denir?",
+    "answer": "Tarihi eser / kalıntı",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-15",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Cumhuriyet Bayramı hangi ayda kutlanır?",
+    "answer": "Ekim",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-16",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Bir olayın yaşandığı zamanı gösteren çizelgeye ne denir?",
+    "answer": "Zaman çizelgesi",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-17",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Kurtuluş Savaşı'nın amacı genel olarak neydi?",
+    "answer": "Bağımsızlığı kazanmak",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-18",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Tarihi olayları inceleyen kişiye ne denir?",
+    "answer": "Tarihçi",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-19",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Bayramlarda göndere çekilen milli sembolümüz nedir?",
+    "answer": "Bayrak",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-e-20",
+    "category": "tarih",
+    "difficulty": "easy",
+    "question": "Eski dönemlerde para yerine kullanılan değiş tokuş yöntemine ne denir?",
+    "answer": "Takas",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-11",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Sivas Kongresi hangi mücadele döneminde yapılmıştır?",
+    "answer": "Milli Mücadele / Kurtuluş Savaşı",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-12",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Osmanlı Devleti'nin başkenti uzun süre hangi şehir olmuştur?",
+    "answer": "İstanbul",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-13",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Atatürk'ün Samsun'a çıkışı hangi tarihtedir?",
+    "answer": "19 Mayıs 1919",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-14",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Anadolu'da milli cemiyetlerin birleştiği kongre hangisidir?",
+    "answer": "Sivas Kongresi",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-15",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Tarihte olayları oluş sırasına göre dizmeye ne denir?",
+    "answer": "Kronoloji",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-16",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Osmanlı Devleti'nde padişahın yönetim yetkisini sınırlayan ilk anayasa nedir?",
+    "answer": "Kanun-ı Esasi",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-17",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Ankara'nın başkent seçilmesinde hangi özelliği etkili olmuştur?",
+    "answer": "Anadolu'nun ortasında ve güvenli konumda olması",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-18",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Kurtuluş Savaşı sonunda imzalanan barış antlaşması hangisidir?",
+    "answer": "Lozan Antlaşması",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-19",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Osmanlı Devleti'nde asker yetiştiren ünlü ocak hangisidir?",
+    "answer": "Yeniçeri Ocağı",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-m-20",
+    "category": "tarih",
+    "difficulty": "medium",
+    "question": "Tarihi kaynaklarda olayın yaşandığı döneme ait kaynaklara ne denir?",
+    "answer": "Birinci el kaynak",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-11",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Amasya Genelgesi'nin Milli Mücadele açısından önemi nedir?",
+    "answer": "Milli Mücadele'nin gerekçesini ve yöntemini açıklaması",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-12",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Mudanya Ateşkes Antlaşması hangi savaştan sonra imzalanmıştır?",
+    "answer": "Büyük Taarruz / Kurtuluş Savaşı sonrası",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-13",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Osmanlı Devleti'nde toprak sistemlerinden biri olan tımarın temel amacı neydi?",
+    "answer": "Asker yetiştirmek ve üretimi sürdürmek",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-14",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Tarih öncesi dönemlerin yazılı belgelerle incelenememesinin nedeni nedir?",
+    "answer": "Yazının henüz kullanılmaması",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-15",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Sanayi İnkılabı ilk olarak hangi ülkede başlamıştır?",
+    "answer": "İngiltere",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-16",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Fransız İhtilali'nin yaydığı önemli fikirlerden biri nedir?",
+    "answer": "Milliyetçilik / özgürlük / eşitlik",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-17",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Osmanlı Devleti'nde modernleşme hareketlerinin hızlandığı dönemlerden biri hangisidir?",
+    "answer": "Tanzimat Dönemi",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-18",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Kapitülasyonlar genel olarak hangi alanda ayrıcalık sağlamıştır?",
+    "answer": "Ekonomik ve ticari alanda",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-19",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Kurtuluş Savaşı'nın askeri safhasını bitiren gelişme hangisidir?",
+    "answer": "Mudanya Ateşkes Antlaşması",
+    "type": "spoken"
+  },
+  {
+    "id": "tar-h-20",
+    "category": "tarih",
+    "difficulty": "hard",
+    "question": "Bir tarihi olayın farklı kaynaklarla karşılaştırılarak incelenmesi neden önemlidir?",
+    "answer": "Daha doğru ve tarafsız bilgiye ulaşmak için",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-11",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Bir sepette 4 elma, 3 armut var. Sepette toplam kaç meyve vardır?",
+    "answer": "7",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-12",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Kırmızı ışıkta durulur, yeşil ışıkta ne yapılır?",
+    "answer": "Geçilir",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-13",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Bir şey hem ıslak hem kuru olabilir mi? Havlu için cevap nedir?",
+    "answer": "Evet, havlu kuruturken ıslanır",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-14",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Bir masada 4 ayak varsa 2 masada kaç ayak vardır?",
+    "answer": "8",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-15",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Kapıyı açmak için genellikle ne kullanılır?",
+    "answer": "Anahtar",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-16",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Bir kalemin ucu bittiğinde yazmaya devam etmek için ne yapılır?",
+    "answer": "Açılır / yenisi kullanılır",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-17",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Aynı anda hem yukarı hem aşağı giden şey nedir?",
+    "answer": "Merdiven",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-18",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Bir elinde 2, diğer elinde 3 bilye varsa toplam kaç bilyen vardır?",
+    "answer": "5",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-19",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Gündüz görünür, gece görünmez gibi olur; yerde oluşur. Nedir?",
+    "answer": "Gölge",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-e-20",
+    "category": "zeka",
+    "difficulty": "easy",
+    "question": "Bir kitabın sayfalarını okumak için önce ne yapılır?",
+    "answer": "Kitap açılır",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-11",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir odada 3 lamba var. Her lambanın bir düğmesi varsa toplam kaç düğme gerekir?",
+    "answer": "3",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-12",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir sırada Ali, Ayşe'nin önünde; Ayşe de Mehmet'in önünde. En arkada kim vardır?",
+    "answer": "Mehmet",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-13",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir kutuda 5 kırmızı, 5 mavi top var. En az kaç top çekersen aynı renkten iki top garanti olur?",
+    "answer": "3",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-14",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir saat 6'yı gösterirken akrep ve yelkovan arasında kaç derece vardır?",
+    "answer": "180 derece",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-15",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir kelimede harf sayısını bulmak için ne sayılır?",
+    "answer": "Harfler",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-16",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "1, 2, 4, 8 dizisinde sonraki sayı kaçtır?",
+    "answer": "16",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-17",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir sınıfta 5 sıra var. Her sırada 2 öğrenci oturursa toplam kaç öğrenci oturur?",
+    "answer": "10",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-18",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir problemi çözmek için ilk adım genellikle nedir?",
+    "answer": "Soruyu anlamak",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-19",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir kelimenin tersi istenirse hangi ilişki aranır?",
+    "answer": "Zıt anlam",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-m-20",
+    "category": "zeka",
+    "difficulty": "medium",
+    "question": "Bir şeklin aynadaki görüntüsü hangi kavramla açıklanır?",
+    "answer": "Yansıma",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-11",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir odada 5 kişi var. Herkes herkesle bir kez tokalaşırsa kaç tokalaşma olur?",
+    "answer": "10",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-12",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir tren elektrikliyse dumanı hangi yöne gider?",
+    "answer": "Duman çıkmaz",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-13",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir yarışta sonuncuyu geçebilir misin?",
+    "answer": "Hayır",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-14",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir kutuda sadece kırmızı ve mavi kalemler var. Aynı renkten üç kalem garanti etmek için en az kaç kalem alınır?",
+    "answer": "5",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-15",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir saatte akrep 2 ile 3 arasındayken yelkovan 6'daysa saat kaçtır?",
+    "answer": "2 buçuk / 02:30",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-16",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir örüntüde sayı her adımda 3 artıyorsa 4, 7, 10'dan sonra ne gelir?",
+    "answer": "13",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-17",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir kelimeden bir harf çıkarınca yeni anlamlı kelime oluşuyorsa bu işlem neyi gerektirir?",
+    "answer": "Harfleri dikkatli denemeyi / akıl yürütmeyi",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-18",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir terazide 1 büyük küp 2 küçük küpe eşitse 2 büyük küp kaç küçük küpe eşittir?",
+    "answer": "4 küçük küp",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-19",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir problemi farklı yoldan çözmek neyi gösterir?",
+    "answer": "Esnek düşünmeyi",
+    "type": "spoken"
+  },
+  {
+    "id": "zek-h-20",
+    "category": "zeka",
+    "difficulty": "hard",
+    "question": "Bir dizide 2, 6, 12, 20 sayıları varsa artışlar hangi sayılardır?",
+    "answer": "4, 6, 8",
+    "type": "spoken"
+  }
 ]

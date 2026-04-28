@@ -7,181 +7,118 @@ import { ScreenContainer } from '@/components/ScreenContainer';
 import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 
-const STEPS = [
-  { icon: 'school-outline', text: 'Öğretmen oyunu kurar', detail: 'Şifre, kategori & zorluk' },
-  { icon: 'extension-puzzle-outline', text: 'Kartlardan şifre çözülür', detail: 'Fiziksel ipuçları' },
-  { icon: 'lock-open-outline', text: 'Kilit doğru kodla açılır', detail: '4 haneli mekanik kilit' },
-  { icon: 'trophy-outline', text: 'Final sorusu kazandırır', detail: 'Sözlü cevap, öğretmen puanlar' },
+const FLOW = [
+  { icon: 'help-circle', label: 'Soru', tone: Colors.primary },
+  { icon: 'key', label: 'Hane', tone: Colors.accent },
+  { icon: 'lock-open', label: 'Kilit', tone: Colors.teal },
+  { icon: 'trophy', label: 'Final', tone: Colors.coral },
 ] as const;
 
 export default function Home() {
   const { dispatch } = useGame();
+  const enter = useRef(new Animated.Value(0)).current;
   const float = useRef(new Animated.Value(0)).current;
-  const spark = useRef(new Animated.Value(0)).current;
-  const heroFade = useRef(new Animated.Value(0)).current;
-  const stepAnims = useRef(STEPS.map(() => new Animated.Value(0))).current;
 
   useEffect(() => {
-    // Hero entrance
-    Animated.timing(heroFade, {
+    Animated.timing(enter, {
       toValue: 1,
-      duration: 600,
+      duration: 520,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     }).start();
-
-    // Step cards stagger entrance
-    Animated.stagger(
-      100,
-      stepAnims.map((a) =>
-        Animated.spring(a, {
-          toValue: 1,
-          tension: 120,
-          friction: 10,
-          useNativeDriver: true,
-        }),
-      ),
-    ).start();
-
-    // Lock float loop
-    const floatLoop = Animated.loop(
+    const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(float, {
           toValue: 1,
-          duration: 2600,
+          duration: 2400,
           easing: Easing.inOut(Easing.quad),
           useNativeDriver: true,
         }),
         Animated.timing(float, {
           toValue: 0,
-          duration: 2600,
+          duration: 2400,
           easing: Easing.inOut(Easing.quad),
           useNativeDriver: true,
         }),
       ]),
     );
-    const sparkLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(spark, {
-          toValue: 1,
-          duration: 1800,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(spark, {
-          toValue: 0,
-          duration: 1800,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-    floatLoop.start();
-    sparkLoop.start();
-    return () => {
-      floatLoop.stop();
-      sparkLoop.stop();
-    };
-  }, [float, spark, heroFade, stepAnims]);
+    loop.start();
+    return () => loop.stop();
+  }, [enter, float]);
 
-  const bodyTranslate = float.interpolate({ inputRange: [0, 1], outputRange: [0, -6] });
-  const shackleTranslate = float.interpolate({ inputRange: [0, 1], outputRange: [0, -2] });
-  const sparkOpacity = spark.interpolate({ inputRange: [0, 1], outputRange: [0.35, 0.9] });
-  const heroScale = heroFade.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1] });
-  const heroTranslateY = heroFade.interpolate({ inputRange: [0, 1], outputRange: [16, 0] });
+  const enterY = enter.interpolate({ inputRange: [0, 1], outputRange: [16, 0] });
+  const floatY = float.interpolate({ inputRange: [0, 1], outputRange: [0, -6] });
 
   return (
-    <ScreenContainer scroll>
+    <ScreenContainer>
+      <View style={styles.brandRow}>
+        <View style={styles.brandMark}>
+          <Ionicons name="lock-closed" size={18} color={Colors.accent} />
+        </View>
+        <Text style={styles.brandText}>Şifre Kutusu</Text>
+        <View style={styles.versionPill}>
+          <Text style={styles.versionText}>v1.0</Text>
+        </View>
+      </View>
+
       <Animated.View
         style={[
-          styles.hero,
-          {
-            opacity: heroFade,
-            transform: [{ scale: heroScale }, { translateY: heroTranslateY }],
-          },
+          styles.heroCard,
+          { opacity: enter, transform: [{ translateY: enterY }] },
         ]}
       >
-        {/* Decorative glow behind lock */}
-        <View style={styles.heroGlow} />
-
-        <View style={styles.lockScene}>
-          <Animated.View
-            style={[styles.shackle, { transform: [{ translateY: shackleTranslate }] }]}
-          />
-          <Animated.View
-            style={[styles.lockBody, { transform: [{ translateY: bodyTranslate }] }]}
-          >
-            <Ionicons name="lock-closed" size={54} color={Colors.ink} />
-            <Animated.View style={[styles.lockSpark, { opacity: sparkOpacity }]} />
-          </Animated.View>
-        </View>
-
-        <View style={styles.titleBlock}>
-          <View style={styles.badgePill}>
-            <Ionicons name="game-controller-outline" size={12} color={Colors.primary} />
-            <Text style={styles.eyebrow}>Hibrit eğitsel challenge</Text>
+        <Animated.View style={[styles.heroLockWrap, { transform: [{ translateY: floatY }] }]}>
+          <View style={styles.heroLockGlow} />
+          <View style={styles.heroLock}>
+            <Ionicons name="lock-closed" size={42} color={Colors.ink} />
           </View>
-          <Text style={styles.title}>Şifre Kutusu</Text>
-          <Text style={styles.subtitle}>
-            Fiziksel ipuçlarını çöz, sanal kilidi aç, final sorusunda turu kazan.
-          </Text>
+        </Animated.View>
+
+        <Text style={styles.title}>Sınıf İçi Şifre Yarışı</Text>
+        <Text style={styles.subtitle}>
+          İki grup, dört hane, bir kilit ve final sorusu. Doğru cevap kazandırır,
+          kilidi açan finale kalır.
+        </Text>
+
+        <View style={styles.flowRow}>
+          {FLOW.map((step, idx) => (
+            <React.Fragment key={step.label}>
+              <View style={styles.flowItem}>
+                <View style={[styles.flowIcon, { backgroundColor: step.tone }]}>
+                  <Ionicons name={step.icon} size={16} color="#fff" />
+                </View>
+                <Text style={styles.flowLabel}>{step.label}</Text>
+              </View>
+              {idx < FLOW.length - 1 && (
+                <Ionicons
+                  name="chevron-forward"
+                  size={14}
+                  color={Colors.mutedSoft}
+                />
+              )}
+            </React.Fragment>
+          ))}
         </View>
       </Animated.View>
 
-      <View style={styles.sectionLabel}>
-        <Ionicons name="list-outline" size={16} color={Colors.primary} />
-        <Text style={styles.sectionLabelText}>Nasıl Oynanır?</Text>
-      </View>
+      <View style={{ flex: 1 }} />
 
-      <View style={styles.steps}>
-        {STEPS.map((step, index) => {
-          const anim = stepAnims[index];
-          const translateY = anim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [20, 0],
-          });
-          return (
-            <Animated.View
-              key={step.text}
-              style={[
-                styles.step,
-                { opacity: anim, transform: [{ translateY }] },
-              ]}
-            >
-              <View style={styles.stepLeft}>
-                <View style={styles.stepNumBadge}>
-                  <Text style={styles.stepNum}>{index + 1}</Text>
-                </View>
-                {index < STEPS.length - 1 && <View style={styles.stepLine} />}
-              </View>
-              <View style={styles.stepContent}>
-                <View style={styles.stepIcon}>
-                  <Ionicons name={step.icon} size={20} color={Colors.primaryDark} />
-                </View>
-                <View style={styles.stepTextBlock}>
-                  <Text style={styles.stepText}>{step.text}</Text>
-                  <Text style={styles.stepDetail}>{step.detail}</Text>
-                </View>
-              </View>
-            </Animated.View>
-          );
-        })}
-      </View>
-
-      <View style={styles.teacherPanel}>
-        <View style={styles.teacherHeader}>
-          <View style={styles.teacherBadge}>
-            <Ionicons name="school" size={18} color="#fff" />
+      <View style={styles.footer}>
+        <View style={styles.teacherRow}>
+          <View style={styles.teacherIcon}>
+            <Ionicons name="school" size={16} color="#fff" />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.teacherTitle}>Öğretmen Paneli</Text>
-            <Text style={styles.teacherSub}>Kurulum ekranı basılı tutma ile açılır.</Text>
+            <Text style={styles.teacherHint}>
+              Yanlışlıkla açılmaması için basılı tutun.
+            </Text>
           </View>
         </View>
         <HoldButton
           label="Oyunu Kur"
-          holdLabel="Açılıyor..."
-          icon="school-outline"
+          holdLabel="Açılıyor…"
+          icon="settings-outline"
           onComplete={() => {
             dispatch({ type: 'UNLOCK_TEACHER' });
             router.push('/setup');
@@ -193,191 +130,146 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  hero: {
-    alignItems: 'center',
-    gap: Spacing.lg,
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.sm,
-  },
-  heroGlow: {
-    position: 'absolute',
-    top: 20,
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: Colors.accent,
-    opacity: 0.12,
-  },
-  lockScene: {
-    width: 190,
-    height: 190,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  shackle: {
-    position: 'absolute',
-    top: 4,
-    width: 120,
-    height: 112,
-    borderTopWidth: 16,
-    borderLeftWidth: 16,
-    borderRightWidth: 16,
-    borderColor: Colors.teal,
-    borderTopLeftRadius: 64,
-    borderTopRightRadius: 64,
-  },
-  lockBody: {
-    width: 146,
-    height: 122,
-    borderRadius: 34,
-    backgroundColor: Colors.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#E3A90E',
-    ...Shadow.lg,
-  },
-  lockSpark: {
-    position: 'absolute',
-    right: 22,
-    top: 20,
-    width: 26,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: Colors.surface,
-    opacity: 0.75,
-    transform: [{ rotate: '-18deg' }],
-  },
-  titleBlock: { alignItems: 'center', gap: Spacing.sm },
-  badgePill: {
+  brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 6,
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+  },
+  brandMark: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    backgroundColor: Colors.ink,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  brandText: {
+    flex: 1,
+    fontSize: Font.bodyLg,
+    fontWeight: '900',
+    color: Colors.ink,
+    letterSpacing: -0.3,
+  },
+  versionPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: Radius.pill,
-    backgroundColor: Colors.softBlue,
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: Colors.primary,
+    borderColor: Colors.border,
   },
-  eyebrow: {
-    color: Colors.primary,
-    fontSize: Font.small,
-    fontWeight: '900',
-    textTransform: 'uppercase',
-  },
-  title: {
-    fontSize: Font.title + 8,
-    fontWeight: '900',
-    color: Colors.primaryDark,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: Font.body,
+  versionText: {
+    fontSize: 10,
     color: Colors.muted,
-    textAlign: 'center',
-    lineHeight: Font.body * 1.45,
-    paddingHorizontal: Spacing.sm,
-  },
-  // ── Section label ──
-  sectionLabel: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: Spacing.xl,
-    marginBottom: Spacing.sm,
-    paddingLeft: 4,
-  },
-  sectionLabelText: {
-    fontSize: Font.small,
-    color: Colors.primary,
     fontWeight: '900',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0.6,
   },
-  // ── Steps ──
-  steps: { gap: 0 },
-  step: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    minHeight: 72,
-  },
-  stepLeft: {
-    alignItems: 'center',
-    width: 30,
-  },
-  stepNumBadge: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: Colors.teal,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stepNum: {
-    color: '#fff',
-    fontWeight: '900',
-    fontSize: Font.small,
-  },
-  stepLine: {
-    flex: 1,
-    width: 2,
-    backgroundColor: Colors.border,
-    marginVertical: 4,
-  },
-  stepContent: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Spacing.sm,
-    padding: Spacing.sm,
-    paddingLeft: Spacing.sm,
-    borderRadius: Radius.md,
+  heroCard: {
     backgroundColor: Colors.surface,
+    borderRadius: Radius.xl,
+    padding: Spacing.lg,
+    paddingTop: Spacing.xl,
     borderWidth: 1,
     borderColor: Colors.border,
-    marginBottom: Spacing.sm,
-    ...Shadow.sm,
-  },
-  stepIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: Radius.md,
-    backgroundColor: Colors.cream,
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stepTextBlock: {
-    flex: 1,
-    gap: 2,
-    paddingTop: 2,
-  },
-  stepText: { color: Colors.text, fontSize: Font.body, fontWeight: '800' },
-  stepDetail: { color: Colors.muted, fontSize: Font.small - 1, fontWeight: '600' },
-  // ── Teacher panel ──
-  teacherPanel: {
-    marginTop: Spacing.xl,
-    padding: Spacing.md,
-    borderRadius: Radius.lg,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
     gap: Spacing.md,
     ...Shadow.md,
   },
-  teacherHeader: {
+  heroLockWrap: {
+    width: 110,
+    height: 110,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroLockGlow: {
+    position: 'absolute',
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    backgroundColor: Colors.accent,
+    opacity: 0.15,
+  },
+  heroLock: {
+    width: 86,
+    height: 86,
+    borderRadius: 26,
+    backgroundColor: Colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Shadow.md,
+  },
+  title: {
+    fontSize: Font.title,
+    fontWeight: '900',
+    color: Colors.ink,
+    textAlign: 'center',
+    letterSpacing: -0.4,
+  },
+  subtitle: {
+    fontSize: Font.body - 1,
+    color: Colors.muted,
+    textAlign: 'center',
+    fontWeight: '600',
+    lineHeight: (Font.body - 1) * 1.5,
+    paddingHorizontal: Spacing.sm,
+  },
+  flowRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: Spacing.sm,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: Colors.divider,
+  },
+  flowItem: { alignItems: 'center', gap: 6 },
+  flowIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  flowLabel: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: Colors.primaryDark,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  footer: {
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    gap: Spacing.md,
+    ...Shadow.sm,
+  },
+  teacherRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
   },
-  teacherBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+  teacherIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
     backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  teacherTitle: { color: Colors.primaryDark, fontSize: Font.heading - 2, fontWeight: '900' },
-  teacherSub: { color: Colors.muted, fontWeight: '700', fontSize: Font.small },
+  teacherTitle: {
+    color: Colors.ink,
+    fontSize: Font.body,
+    fontWeight: '900',
+  },
+  teacherHint: {
+    color: Colors.muted,
+    fontSize: Font.small,
+    fontWeight: '600',
+    marginTop: 1,
+  },
 });

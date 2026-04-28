@@ -1,6 +1,49 @@
 import React, { createContext, useContext, useReducer, useMemo } from 'react';
-import type { GameAction, GameState } from '@/types/game';
-import { EMPTY_COOLDOWN, INITIAL_STATE, newRoundState } from '@/utils/resetGame';
+import type { GameAction, GameState, GroupId, RevealedDigitsMap } from '@/types/game';
+import type { Question } from '@/types/question';
+import { INITIAL_STATE } from '@/utils/resetGame';
+
+function otherGroup(groupId: GroupId): GroupId {
+  return groupId === 1 ? 2 : 1;
+}
+
+function appendUsed(state: GameState, questionId: string): string[] {
+  return state.usedQuestionIds.includes(questionId)
+    ? state.usedQuestionIds
+    : [...state.usedQuestionIds, questionId];
+}
+
+function nextTurnState(
+  state: GameState,
+  groupId: GroupId,
+  nextQuestion: Question | null,
+): GameState {
+  const groupHasFullCode = state.revealedDigits[groupId].length >= 4;
+  if (groupHasFullCode) {
+    return {
+      ...state,
+      phase: 'code-entry',
+      activeGroup: groupId,
+      readyMode: null,
+      currentQuestion: null,
+      codeHandoff: null,
+      lastCodeError: null,
+    };
+  }
+
+  return {
+    ...state,
+    phase: 'ready',
+    activeGroup: groupId,
+    readyMode: 'normal',
+    currentQuestion: nextQuestion,
+    codeHandoff: null,
+    lastCodeError: null,
+    usedQuestionIds: nextQuestion
+      ? appendUsed(state, nextQuestion.id)
+      : state.usedQuestionIds,
+  };
+}
 
 function reducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
@@ -13,100 +56,156 @@ function reducer(state: GameState, action: GameAction): GameState {
     case 'SETUP_GAME':
       return {
         ...INITIAL_STATE,
-        config: action.payload,
-        phase: 'player-select',
-        activePlayer: 1,
-        playerCooldownUntil: { ...EMPTY_COOLDOWN },
+        config: action.payload.config,
+        secretCodes: action.payload.secretCodes,
+        phase: 'starter-selection',
+        activeGroup: 1,
+        readyMode: null,
+        currentQuestion: action.payload.firstQuestion,
+        codeHandoff: null,
+        usedQuestionIds: [action.payload.firstQuestion.id],
       };
 
-    case 'SELECT_PLAYER_FOR_CODE': {
-      if (state.phase !== 'player-select') return state;
-      if (state.currentQuestion !== null) return state;
-      const cooldownUntil = state.playerCooldownUntil[action.payload.playerId] ?? 0;
-      if (action.payload.now < cooldownUntil) return state;
+    case 'CONFIRM_FIRST_GROUP':
+      if (state.phase !== 'starter-selection') return state;
       return {
         ...state,
-        phase: 'code',
-        activePlayer: action.payload.playerId,
+        phase: 'ready',
+        activeGroup: action.payload.groupId,
+        readyMode: 'normal',
+      };
+
+    case 'START_READY_QUESTION':
+      if (state.phase !== 'ready') return state;
+      if (state.readyMode === 'normal' && state.currentQuestion) {
+        return { ...state, phase: 'question', codeHandoff: null, lastCodeError: null };
+      }
+      if (state.readyMode === 'final' && state.finalQuestion) {
+        return { ...state, phase: 'final-question', codeHandoff: null, lastCodeError: null };
+      }
+      return state;
+
+    case 'NORMAL_ANSWER_CORRECT': {
+      if (state.phase !== 'question') return state;
+      const currentDigits = state.revealedDigits[state.activeGroup];
+      if (currentDigits.length >= 4) {
+        return {
+          ...state,
+          phase: 'code-entry',
+          readyMode: null,
+          currentQuestion: null,
+          codeHandoff: null,
+        };
+      }
+      const position = currentDigits.length;
+      const digit = state.secretCodes[state.activeGroup][position];
+      const revealedDigits: RevealedDigitsMap = {
+        ...state.revealedDigits,
+        [state.activeGroup]: [...currentDigits, digit],
+      };
+      return {
+        ...state,
+        phase: 'digit-reveal',
+        readyMode: null,
+        revealedDigits,
+        lastDigitReveal: {
+          groupId: state.activeGroup,
+          digit,
+          position,
+        },
+        codeHandoff: null,
         lastCodeError: null,
       };
     }
 
-    case 'SELECT_PLAYER_FOR_QUESTION': {
-      if (state.phase !== 'player-select') return state;
-      if (!state.currentQuestion || state.failedQuestionPlayer === null) return state;
-      if (state.failedQuestionPlayer === action.payload.playerId) return state;
-      const cooldownUntil = state.playerCooldownUntil[action.payload.playerId] ?? 0;
-      if (action.payload.now < cooldownUntil) return state;
-      return {
-        ...state,
-        phase: 'question',
-        activePlayer: action.payload.playerId,
-      };
-    }
-
-    case 'CODE_FAIL':
-      if (state.phase !== 'code') return state;
-      if (action.payload.playerId !== state.activePlayer) return state;
-      return {
-        ...state,
-        phase: 'player-select',
-        playerCooldownUntil: {
-          ...state.playerCooldownUntil,
-          [action.payload.playerId]: action.payload.cooldownUntil,
-        },
-        lastCodeError: action.payload.message,
-      };
+    case 'NORMAL_ANSWER_WRONG_OR_TIMEOUT':
+      if (state.phase !== 'question') return state;
+      return nextTurnState(state, otherGroup(state.activeGroup), action.payload.nextQuestion);
 
     case 'CLEAR_CODE_ERROR':
       return { ...state, lastCodeError: null };
 
-    case 'CODE_SUCCESS':
-      if (state.phase !== 'code') return state;
+    case 'CONTINUE_AFTER_DIGIT_REVEAL': {
+      if (state.phase !== 'digit-reveal') return state;
+      if (state.revealedDigits[state.activeGroup].length >= 4) {
+        return {
+          ...state,
+          phase: 'code-entry',
+          readyMode: null,
+          currentQuestion: null,
+          codeHandoff: null,
+          lastCodeError: null,
+        };
+      }
+      return nextTurnState(state, otherGroup(state.activeGroup), action.payload.nextQuestion);
+    }
+
+    case 'CODE_FAIL':
+      if (state.phase !== 'code-entry') return state;
       return {
         ...state,
-        phase: 'reveal',
-        currentQuestion: action.payload.question,
-        usedQuestionIds: [...state.usedQuestionIds, action.payload.question.id],
+        phase: 'code-handoff',
+        readyMode: null,
+        currentQuestion: null,
+        codeHandoff: {
+          fromGroup: state.activeGroup,
+          toGroup: otherGroup(state.activeGroup),
+          message: action.payload.message,
+          nextQuestion: action.payload.nextQuestion,
+        },
+        lastCodeError: action.payload.message,
+      };
+
+    case 'CONFIRM_CODE_HANDOFF':
+      if (state.phase !== 'code-handoff' || !state.codeHandoff) return state;
+      return {
+        ...nextTurnState(
+          state,
+          state.codeHandoff.toGroup,
+          state.codeHandoff.nextQuestion,
+        ),
+        codeHandoff: null,
         lastCodeError: null,
       };
 
-    case 'START_QUESTION':
-      if (state.phase !== 'reveal') return state;
-      return { ...state, phase: 'question' };
+    case 'CODE_SUCCESS':
+      if (state.phase !== 'code-entry') return state;
+      return {
+        ...state,
+        phase: 'ready',
+        readyMode: 'final',
+        currentQuestion: null,
+        finalQuestion: action.payload.finalQuestion,
+        finalFailedGroup: null,
+        codeHandoff: null,
+        usedQuestionIds: appendUsed(state, action.payload.finalQuestion.id),
+        lastCodeError: null,
+      };
 
-    case 'ANSWER_CORRECT': {
-      if (state.phase !== 'question') return state;
-      const winner: 'p1' | 'p2' = state.activePlayer === 1 ? 'p1' : 'p2';
+    case 'FINAL_ANSWER_CORRECT': {
+      if (state.phase !== 'final-question') return state;
+      const winner = state.activeGroup === 1 ? 'g1' : 'g2';
       return {
         ...state,
         phase: 'result',
         result: winner,
-        scores: {
-          ...state.scores,
-          [winner]: state.scores[winner] + 1,
-        },
       };
     }
 
-    case 'ANSWER_WRONG_OR_TIMEOUT': {
-      if (state.phase !== 'question') return state;
-      if (state.failedQuestionPlayer !== null) {
+    case 'FINAL_ANSWER_WRONG_OR_TIMEOUT': {
+      if (state.phase !== 'final-question') return state;
+      if (state.finalFailedGroup !== null) {
         return { ...state, phase: 'result', result: 'none' };
       }
       return {
         ...state,
-        phase: 'player-select',
-        failedQuestionPlayer: state.activePlayer,
-        playerCooldownUntil: {
-          ...state.playerCooldownUntil,
-          [state.activePlayer]: action.payload.cooldownUntil,
-        },
+        phase: 'ready',
+        activeGroup: otherGroup(state.activeGroup),
+        readyMode: 'final',
+        finalFailedGroup: state.activeGroup,
+        codeHandoff: null,
       };
     }
-
-    case 'NEW_ROUND':
-      return newRoundState(state);
 
     case 'RESET_GAME':
       return INITIAL_STATE;
