@@ -136,7 +136,6 @@ export default function Reveal() {
       type: 'CONTINUE_AFTER_DIGIT_REVEAL',
       payload: { nextQuestion },
     });
-    router.replace(completed ? '/code-entry' : '/question');
   };
 
   return (

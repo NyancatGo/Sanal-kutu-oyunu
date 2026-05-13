@@ -39,7 +39,9 @@ export function ScoreStrip({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={showDigits ? 'Şifreleri gizle' : 'Şifreleri göster'}
-          onPress={() => setShowDigits((visible) => !visible)}
+          onPress={showDigits ? () => setShowDigits(false) : undefined}
+          onLongPress={!showDigits ? () => setShowDigits(true) : undefined}
+          delayLongPress={800}
           hitSlop={6}
           style={({ pressed }) => [
             styles.revealButton,
