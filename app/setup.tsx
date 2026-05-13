@@ -43,6 +43,7 @@ export default function Setup() {
   const [finalCategory, setFinalCategory] = useState<Category>(state.config.finalCategory);
   const [finalDifficulty, setFinalDifficulty] = useState<Difficulty>(state.config.finalDifficulty);
   const [finalTimeLimit, setFinalTimeLimit] = useState<number>(state.config.finalTimeLimit || 30);
+  const [codeTimeLimit, setCodeTimeLimit] = useState<number>(state.config.codeTimeLimit || 30);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -74,6 +75,7 @@ export default function Setup() {
       finalCategory,
       finalDifficulty,
       finalTimeLimit,
+      codeTimeLimit,
     };
 
     setError(null);
@@ -154,6 +156,38 @@ export default function Setup() {
         onDifficulty={setFinalDifficulty}
         onTimeLimit={setFinalTimeLimit}
       />
+
+      <Section title="Kilit Süresi" icon="lock-open" tone={Colors.accent} description="Şifreyi girmek için verilen süre.">
+        <View style={styles.timeRow}>
+          {[20, 30, 45, 60].map((t) => {
+            const selected = codeTimeLimit === t;
+            return (
+              <Pressable
+                key={t}
+                onPress={() => setCodeTimeLimit(t)}
+                style={[
+                  styles.timeCard,
+                  selected && { borderColor: Colors.accent, backgroundColor: Colors.ink },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.timeNumber,
+                    selected && { color: Colors.accent },
+                  ]}
+                >
+                  {t}
+                </Text>
+                <Text
+                  style={[styles.timeUnit, selected && { color: Colors.metal }]}
+                >
+                  saniye
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </Section>
 
       {error && (
         <View style={styles.errorBox}>

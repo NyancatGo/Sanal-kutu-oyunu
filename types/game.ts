@@ -25,6 +25,7 @@ export type GameConfig = {
   finalCategory: Category;
   finalDifficulty: Difficulty;
   finalTimeLimit: number;
+  codeTimeLimit: number;
 };
 
 export type ReadyMode = 'normal' | 'final';

@@ -7,7 +7,7 @@ import { CombinationLock, type CombinationLockStatus } from '@/components/Combin
 import { ScoreStrip } from '@/components/ScoreStrip';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { Timer } from '@/components/Timer';
-import { CODE_TIME_LIMIT, Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
+import { Colors, Font, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useGame } from '@/context/GameContext';
 import { useTimer } from '@/hooks/useTimer';
 import { getRandomQuestion } from '@/utils/getRandomQuestion';
@@ -85,8 +85,10 @@ export default function CodeEntry() {
     sendBackToQuestion('Süre doldu. Sıra diğer gruba geçti.');
   }, [canAttempt, sendBackToQuestion]);
 
+  const codeTimeLimit = state.config.codeTimeLimit;
+
   const { remaining } = useTimer({
-    seconds: CODE_TIME_LIMIT,
+    seconds: codeTimeLimit,
     running:
       state.phase === 'code-entry' &&
       canAttempt &&
@@ -178,12 +180,12 @@ export default function CodeEntry() {
         </View>
         <Text style={styles.title}>Kilidi Aç</Text>
         <Text style={styles.sub}>
-          Kağıda yazdığınız 4 haneli şifreyi 20 saniye içinde girin.
+          Kağıda yazdığınız 4 haneli şifreyi {codeTimeLimit} saniye içinde girin.
         </Text>
       </View>
 
       <View style={styles.timerWrap}>
-        <Timer remaining={remaining} total={CODE_TIME_LIMIT} variant="compact" />
+        <Timer remaining={remaining} total={codeTimeLimit} variant="compact" />
       </View>
 
       <CombinationLock

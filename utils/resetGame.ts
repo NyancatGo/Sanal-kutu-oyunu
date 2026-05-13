@@ -9,6 +9,7 @@ export const DEFAULT_CONFIG: GameConfig = {
   finalCategory: 'genel-kultur',
   finalDifficulty: 'easy',
   finalTimeLimit: 30,
+  codeTimeLimit: 30,
 };
 
 export const EMPTY_SECRET_CODES: SecretCodeMap = { 1: '', 2: '' };

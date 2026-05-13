@@ -157,7 +157,7 @@ export default function CodeHandoff() {
             />
             <Text style={styles.noteText}>
               {nextGroupHasFullCode
-                ? 'Onaydan sonra 20 saniyelik kilit denemesi başlar.'
+                ? `Onaydan sonra ${state.config.codeTimeLimit} saniyelik kilit denemesi başlar.`
                 : 'Onaydan sonra diğer grubun sorusu başlayacak.'}
             </Text>
           </View>
